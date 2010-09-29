@@ -32,7 +32,7 @@
 class Token
 {
 	public:
-		enum TokenType {NONE = 0, FAIL, END, ID, NUM,  STR,
+		enum TokenType {NONE = 0, FAIL, END, ID, NUM,  STR, T, F,
 			O_PARAN, C_PARAN,O_BRACE, C_BRACE, O_BRACKET, C_BRACKET,
 			PLUS_EQ, PLUS, MINUS, TIMES, DIVIDE,
 			LESS, LESS_EQ, EQ, NOT_EQ, GREATER, GREATER_EQ,
