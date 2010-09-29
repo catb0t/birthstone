@@ -120,7 +120,7 @@ Token &Token::operator =(const Token &token)
 std::ostream &operator <<(std::ostream &stream, const Token &token)
 {
 	// TODO: make sure this matches enum TokenType exactly
-	static std::string typeName[] = {"NONE", "FAIL", "END", "ID", "NUM", "STR",
+   static std::string typeName[] = {"NONE", "FAIL", "END", "ID", "NUM", "STR", "T", "F",
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
       "PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
       "LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
@@ -172,9 +172,13 @@ void Lexer::setupKeywords()
 		sKeywords["print"] 	 =	Token::PRINT;
 		sKeywords["def"] 		 =	Token::DEF;
 		sKeywords["class"] 	 = Token::CLASS;
-		sKeywords["and"]		 = Token::AND;
+		
+      sKeywords["and"]		 = Token::AND;
 		sKeywords["or"]		 =	Token::OR;
 		sKeywords["not"]		 =	Token::NOT;
+      
+      sKeywords["true"]     = Token::T;
+      sKeywords["false"]    = Token::F;
 	}
 }
 
@@ -450,7 +454,7 @@ const Token &Lexer::getNext()
 			Lexer lex(stream);
 			Token token = lex.getNext();
 			
-			std::cout << '\t';
+			std::cout << "   ";
 			while ((token.getType() != Token::END) /*&& (token.getType() != FAIL)*/)
 			{
  				std::cout << token << ' ';
