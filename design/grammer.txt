@@ -1,0 +1,5 @@
+code     := block code | expr code | stmt code | 0
+block    := '{' code '}'
+expr     := term  '+' expr | term  '-' expr | 0
+term     := term '*' factor | term '/' factor | factor
+factor   := str | bool | num | id | '(' expr ')'
