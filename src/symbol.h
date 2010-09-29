@@ -18,60 +18,27 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
-#ifndef BS_LEXER_H
-#define BS_LEXER_H
+#ifndef BS_SYMBOL_H
+#define BS_SYMBOL_H
 
-#include "symbol.h"
-using Sym::Symbol;
+namespace Sym {
+   
+   enum Symbol 
+   {
+      // Terminals:
+      NONE = 0, FAIL, END, ID, NUM,  STR, T, F,
+      O_PARAN, C_PARAN,O_BRACE, C_BRACE, O_BRACKET, C_BRACKET,
+      PLUS_EQ, PLUS, MINUS, TIMES, DIVIDE,
+      LESS, LESS_EQ, EQ, NOT_EQ, GREATER, GREATER_EQ,
+      IF, ELIF, ELSE, PRINT, DEF, CLASS,
+      DO, WHILE, UNTIL, FOR, IN, BREAK, CONT, READ,
+      ASSIGN, INIT, AND, OR, NOT, COMMA, SC,
+      
+      // Non-terminals:
+      CODE, STMT, EXPR, TERM, FACTOR
+      
+      };
+      
+}
 
-#include <map>
-#include <string>
-#include <istream>
-
-/******************************************************************************
-*
-******************************************************************************/
-class Token
-{
-	public:
-		
-		
-      Token(Symbol type = Sym::NONE);
-		Token(Symbol type, const std::string &str);
-		Token(Symbol type, const double &num);
-		Token(const Token &token);
-		~Token();
-
-		Symbol   getType() const;
-		std::string getStr()  const;
-		double      getNum()  const;
-		Token &operator =(const Token &token);
-
-	private:
-		Symbol mType;
-		void *mVal;
-};
-
-/******************************************************************************
-*
-******************************************************************************/
-class Lexer
-{
-	public:
-		Lexer(std::istream *input);
-		Lexer(std::istream &input);
-		~Lexer();
-
-		const Token &getNext();
-	private:
-		void setupKeywords();
-
-		std::istream *mInput;
-		unsigned int  mLineNum;
-		Token         mToken;
-		
-		static std::map <std::string, Symbol> sKeywords;
-};
-std::map <std::string, Symbol> Lexer::sKeywords;
-
-#endif //ifndef BS_LEXER_H
+#endif // BS_SYMBOL_H

@@ -20,29 +20,32 @@
 ******************************************************************************/
 
 #include "lexer.h"
+#include <ostream>
+#include <cctype>
+#include <cstdlib>
 #include <iostream>
 
-Token::Token(TokenType type) : mType(type), mVal(NULL) {}
+Token::Token(Symbol type) : mType(type), mVal(NULL) {}
 
-Token::Token(TokenType type, const std::string &str) : mType(type), mVal(NULL)
+Token::Token(Symbol type, const std::string &str) : mType(type), mVal(NULL)
 {
-	if ((mType == ID) || (mType == FAIL) || (mType == STR))
+   if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 		mVal = reinterpret_cast<void *>(new std::string(str));
 	else
 	{
-		mType = FAIL;
+      mType = Sym::FAIL;
 		std::string error = "ERROR: only FAIL, STR, and ID types can have string values";
 		mVal = reinterpret_cast<void *>(new std::string(error));
 	}
 }
 
-Token::Token(TokenType type, const double &num) : mType(type), mVal(NULL)
+Token::Token(Symbol type, const double &num) : mType(type), mVal(NULL)
 {
-	if (mType == NUM)
+   if (mType == Sym::NUM)
 		mVal = reinterpret_cast<void *>(new double(num));
 	else
 	{
-		mType = FAIL;
+      mType = Sym::FAIL;
 		std::string error = "ERROR: only NUM type tokens can have numerical values";
 		mVal = reinterpret_cast<void *>(new std::string(error));
 	}
@@ -52,10 +55,10 @@ Token::Token(const Token &token) : mType(token.mType), mVal(NULL)
 {
 	if (token.mVal)
 	{
-		if ((token.mType == ID) || (token.mType == FAIL) || (token.mType == STR))
+      if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
 			mVal = reinterpret_cast<void *>(new std::string(
 						*reinterpret_cast<std::string *>(token.mVal)));
-		else if (token.mType == NUM)
+      else if (token.mType == Sym::NUM)
 			mVal = reinterpret_cast<void *>(new double(
 						*reinterpret_cast<double *>(token.mVal)));
 	}
@@ -66,19 +69,19 @@ Token::~Token()
 {
 	if (mVal)
 	{
-		if ((mType == ID) || (mType == FAIL) || (mType == STR))
+      if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 			delete  reinterpret_cast<std::string *>(mVal);
-		else if (mType == NUM)
+      else if (mType == Sym::NUM)
 			delete  reinterpret_cast<double *>(mVal);
 		mVal = NULL;
 	}
 }
 
-Token::TokenType Token::getType() const { return mType; }
+Symbol Token::getType() const { return mType; }
 
 std::string Token::getStr() const
 {
-	if (mVal && ((mType == ID) || (mType == FAIL) || (mType == STR)))
+   if (mVal && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
 		return *reinterpret_cast<std::string *>(mVal);
 	else
 		return "";
@@ -86,7 +89,7 @@ std::string Token::getStr() const
 
 double Token::getNum() const
 {
-	if (mVal && mType == NUM)
+   if (mVal && mType == Sym::NUM)
 		return *reinterpret_cast<double *>(mVal);
 	else
 		return 0.0;
@@ -96,9 +99,9 @@ Token &Token::operator =(const Token &token)
 {
 	if (mVal)
 	{
-		if ((mType == ID) || (mType == FAIL) || (mType == STR))
+      if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 			delete  reinterpret_cast<std::string *>(mVal);
-		else if (mType == NUM)
+      else if (mType == Sym::NUM)
 			delete  reinterpret_cast<double *>(mVal);
 		mVal = NULL;
 	}
@@ -107,10 +110,10 @@ Token &Token::operator =(const Token &token)
 	
 	if (token.mVal)
 	{
-		if ((token.mType == ID) || (token.mType == FAIL) || (token.mType == STR))
+      if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
 			mVal = reinterpret_cast<void *>(new std::string(
 						*reinterpret_cast<std::string *>(token.mVal)));
-		else if (token.mType == NUM)
+      else if (token.mType == Sym::NUM)
 			mVal = reinterpret_cast<void *>(new double(
 						*reinterpret_cast<double *>(token.mVal)));
 	}
@@ -119,7 +122,7 @@ Token &Token::operator =(const Token &token)
 
 std::ostream &operator <<(std::ostream &stream, const Token &token)
 {
-	// TODO: make sure this matches enum TokenType exactly
+	// TODO: make sure this matches enum Symbol exactly
    static std::string typeName[] = {"NONE", "FAIL", "END", "ID", "NUM", "STR", "T", "F",
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
       "PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
@@ -130,11 +133,11 @@ std::ostream &operator <<(std::ostream &stream, const Token &token)
 		
 	stream << '<' << typeName[token.getType()];
 
-	if ((token.getType() == Token::STR) || (token.getType() == Token::FAIL))
+	if ((token.getType() == Sym::STR) || (token.getType() == Sym::FAIL))
 		stream << ", \"" << token.getStr() <<'"';
-	else if (token.getType() == Token::ID) 
+	else if (token.getType() == Sym::ID) 
 		stream << ", " << token.getStr();
-	else if (token.getType() == Token::NUM)
+	else if (token.getType() == Sym::NUM)
 		stream << ", " << token.getNum();
 	stream << '>';
 	return stream;
@@ -142,13 +145,13 @@ std::ostream &operator <<(std::ostream &stream, const Token &token)
 
 
 Lexer::Lexer(std::istream *input) 
-	: mInput(input), mLineNum(0), mToken(Token::END)  
+   : mInput(input), mLineNum(0), mToken(Sym::END)  
 { 
 	setupKeywords(); 
 }
 
 Lexer::Lexer(std::istream &input) 
-	: mInput(&input), mLineNum(0), mToken(Token::END) 
+   : mInput(&input), mLineNum(0), mToken(Sym::END) 
 {
 	 setupKeywords(); 
 }
@@ -159,26 +162,26 @@ void Lexer::setupKeywords()
 {
 	if (sKeywords.empty())
 	{
-		sKeywords["if"]       =	Token::IF;
-		sKeywords["elif"]     = Token::ELIF;
-		sKeywords["else"]     =	Token::ELSE;
-		sKeywords["while"]    =	Token::WHILE;
-		sKeywords["until"]    =	Token::UNTIL;
-		sKeywords["for"]      =	Token::FOR;
-		sKeywords["in"]       =	Token::IN;
-		sKeywords["break"]    =	Token::BREAK;
-		sKeywords["continue"] =	Token::CONT;
-		sKeywords["read"] 	 =	Token::READ;
-		sKeywords["print"] 	 =	Token::PRINT;
-		sKeywords["def"] 		 =	Token::DEF;
-		sKeywords["class"] 	 = Token::CLASS;
+		sKeywords["if"]       =	Sym::IF;
+		sKeywords["elif"]     = Sym::ELIF;
+		sKeywords["else"]     =	Sym::ELSE;
+		sKeywords["while"]    =	Sym::WHILE;
+		sKeywords["until"]    =	Sym::UNTIL;
+		sKeywords["for"]      =	Sym::FOR;
+		sKeywords["in"]       =	Sym::IN;
+		sKeywords["break"]    =	Sym::BREAK;
+		sKeywords["continue"] =	Sym::CONT;
+		sKeywords["read"] 	 =	Sym::READ;
+		sKeywords["print"] 	 =	Sym::PRINT;
+		sKeywords["def"] 		 =	Sym::DEF;
+		sKeywords["class"] 	 = Sym::CLASS;
 		
-      sKeywords["and"]		 = Token::AND;
-		sKeywords["or"]		 =	Token::OR;
-		sKeywords["not"]		 =	Token::NOT;
+      sKeywords["and"]		 = Sym::AND;
+		sKeywords["or"]		 =	Sym::OR;
+		sKeywords["not"]		 =	Sym::NOT;
       
-      sKeywords["true"]     = Token::T;
-      sKeywords["false"]    = Token::F;
+      sKeywords["true"]     = Sym::T;
+      sKeywords["false"]    = Sym::F;
 	}
 }
 
@@ -191,7 +194,7 @@ const Token &Lexer::getNext()
 // 	if (mInput->fail())
 // 		mToken = Token(FAIL, "reading file failed");
 	/*else*/ if (mInput->eof())
-					mToken = Token(Token::END);
+					mToken = Token(Sym::END);
 	else if (ch == '#')
 	{
 		do
@@ -217,42 +220,42 @@ const Token &Lexer::getNext()
 	else if (ch == '(')
 	{
 		mInput->get();
-		mToken = Token::O_PARAN;
+		mToken = Sym::O_PARAN;
 	}
 	else if (ch == ')')
 	{
 		mInput->get();
-		mToken = Token::C_PARAN;
+		mToken = Sym::C_PARAN;
 	}
 	else if (ch == '[')
 	{
 		mInput->get();
-		mToken = Token::O_BRACKET;
+		mToken = Sym::O_BRACKET;
 	}
 	else if (ch == ']')
 	{
 		mInput->get();
-		mToken = Token::C_BRACKET;
+		mToken = Sym::C_BRACKET;
 	}
 	else if (ch == '{')
 	{
 		mInput->get();
-		mToken = Token::O_BRACE;
+		mToken = Sym::O_BRACE;
 	}
 	else if (ch == '}')
 	{
 		mInput->get();
-		mToken = Token::C_BRACE;
+		mToken = Sym::C_BRACE;
 	}
 	else if (ch == ';')
 	{
 		mInput->get();
-		mToken = Token::SC;
+		mToken = Sym::SC;
 	}
 	else if (ch == ',')
 	{
 		mInput->get();
-		mToken = Token::COMMA;
+		mToken = Sym::COMMA;
 	}
 	else if (isalpha(ch) || ch == '_')
 	{
@@ -265,28 +268,30 @@ const Token &Lexer::getNext()
 			ch = mInput->peek();
 		} while (!(mInput->eof()) && (isalnum(ch) || ch == '_'));
 		
-		std::map <std::string, Token::TokenType>::iterator it = sKeywords.find(mTokenStr);
+		std::map <std::string, Sym::Symbol>::iterator it = sKeywords.find(mTokenStr);
 		if (it != sKeywords.end()) // keyword
 			mToken = Token(it->second);
 		else //identifier
-			mToken = Token(Token::ID, mTokenStr);
+			mToken = Token(Sym::ID, mTokenStr);
 	}
-	else if (ch == '"')
+   else if ((ch == '"') || (ch == '\''))
 	{
+      char quote = ch;
 		std::string mTokenStr;
 		mTokenStr.reserve(20);
 
 		mInput->get();
 		ch = mInput->peek();
 
-		while (ch != '"')
+      while (!(mInput->eof()) && (ch != quote))
 		{
 			mTokenStr += ch;
 			mInput->get();
 			ch = mInput->peek();
+         
 		} 
 		mInput->get();
-		mToken = Token(Token::STR, mTokenStr);
+		mToken = Token(Sym::STR, mTokenStr);
 	}
 	else if (ch == '+')
 	{
@@ -295,20 +300,20 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token::PLUS_EQ;
+			mToken = Sym::PLUS_EQ;
 		}
 		else
-			mToken = Token::PLUS;
+			mToken = Sym::PLUS;
 	}
 	else if (ch == '*')
 	{
 		mInput->get();
-		mToken = Token::TIMES;
+		mToken = Sym::TIMES;
 	}
 	else if (ch == '/')
 	{
 		mInput->get();
-		mToken = Token::DIVIDE;
+		mToken = Sym::DIVIDE;
 	}
 	else if ((ch == '-') || (ch == '.') || isdigit(ch))
 	{
@@ -322,13 +327,13 @@ const Token &Lexer::getNext()
 			mInput->get();
 			ch = mInput->peek();
 			if ((!isdigit(ch) && (ch != '.')) 
-				|| (mToken.getType() == Token::NUM) || (mToken.getType() == Token::ID)) 
+				|| (mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::ID)) 
 				minus = true;
 			else
 				mTokenStr += '-';
 		}
 		if (minus)
-			mToken = Token(Token::MINUS);
+			mToken = Token(Sym::MINUS);
 		else
 		{
 			bool foundPoint = false;
@@ -339,7 +344,7 @@ const Token &Lexer::getNext()
 				mInput->get();
 				ch = mInput->peek();
 			} while(!(mInput->eof()) && (isdigit(ch) || (!foundPoint && (ch == '.'))));
-			mToken = Token(Token::NUM, atof(mTokenStr.c_str()));
+			mToken = Token(Sym::NUM, atof(mTokenStr.c_str()));
 		}
 	}
 	else if (ch == '<')
@@ -349,10 +354,10 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Token::LESS_EQ);
+			mToken = Token(Sym::LESS_EQ);
 		}
 		else
-			mToken = Token(Token::LESS);
+			mToken = Token(Sym::LESS);
 	}
 	else if (ch == '>')
 	{
@@ -361,10 +366,10 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Token::GREATER_EQ);
+			mToken = Token(Sym::GREATER_EQ);
 		}
 		else
-			mToken = Token(Token::GREATER);
+			mToken = Token(Sym::GREATER);
 	}
 	else if (ch == '=')
 	{
@@ -373,10 +378,10 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Token::EQ);
+			mToken = Token(Sym::EQ);
 		}
 		else
-			mToken = Token(Token::ASSIGN);
+			mToken = Token(Sym::ASSIGN);
 	}
 	else if (ch == '&')
 	{
@@ -385,10 +390,10 @@ const Token &Lexer::getNext()
 		if (ch == '&')
 		{
 			mInput->get();
-			mToken = Token(Token::AND);
+			mToken = Token(Sym::AND);
 		}
 		else
-			mToken = Token(Token::FAIL, std::string("expected: \"&&\" found \"&") + ch + "\"");
+			mToken = Token(Sym::FAIL, std::string("expected: \"&&\" found \"&") + ch + "\"");
 	}
 	
 	else if (ch == '|')
@@ -398,10 +403,10 @@ const Token &Lexer::getNext()
 		if (ch == '|')
 		{
 			mInput->get();
-			mToken = Token(Token::OR);
+			mToken = Token(Sym::OR);
 		}
 		else
-			mToken = Token(Token::FAIL, std::string("expected: \"||\" found \"|") + ch + "\"");
+			mToken = Token(Sym::FAIL, std::string("expected: \"||\" found \"|") + ch + "\"");
 	}
 	else if (ch == '!')
 	{
@@ -410,10 +415,10 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Token::EQ);
+			mToken = Token(Sym::EQ);
 		}
 		else
-			mToken = Token(Token::NOT);
+			mToken = Token(Sym::NOT);
 	}
 	else if (ch == ':')
 	{
@@ -422,15 +427,15 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Token::INIT);
+			mToken = Token(Sym::INIT);
 		}
 		else
-			mToken = Token(Token::FAIL, std::string("expected: ':=' found ':") + ch + "'");
+			mToken = Token(Sym::FAIL, std::string("expected: ':=' found ':") + ch + "'");
 	}
 	else
 	{
 		mInput->get();
-		mToken = Token(Token::FAIL, std::string("Invalid mToken: '") + ch + '\'');
+		mToken = Token(Sym::FAIL, std::string("Invalid mToken: '") + ch + '\'');
 	}
 	
 	return mToken;
@@ -455,7 +460,7 @@ const Token &Lexer::getNext()
 			Token token = lex.getNext();
 			
 			std::cout << "   ";
-			while ((token.getType() != Token::END) /*&& (token.getType() != FAIL)*/)
+			while ((token.getType() != Sym::END) /*&& (token.getType() != FAIL)*/)
 			{
  				std::cout << token << ' ';
 				token = lex.getNext();

@@ -18,60 +18,7 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
-#ifndef BS_LEXER_H
-#define BS_LEXER_H
+#ifndef BS_PARSER_H
+#define BS_PARSER_H
 
-#include "symbol.h"
-using Sym::Symbol;
-
-#include <map>
-#include <string>
-#include <istream>
-
-/******************************************************************************
-*
-******************************************************************************/
-class Token
-{
-	public:
-		
-		
-      Token(Symbol type = Sym::NONE);
-		Token(Symbol type, const std::string &str);
-		Token(Symbol type, const double &num);
-		Token(const Token &token);
-		~Token();
-
-		Symbol   getType() const;
-		std::string getStr()  const;
-		double      getNum()  const;
-		Token &operator =(const Token &token);
-
-	private:
-		Symbol mType;
-		void *mVal;
-};
-
-/******************************************************************************
-*
-******************************************************************************/
-class Lexer
-{
-	public:
-		Lexer(std::istream *input);
-		Lexer(std::istream &input);
-		~Lexer();
-
-		const Token &getNext();
-	private:
-		void setupKeywords();
-
-		std::istream *mInput;
-		unsigned int  mLineNum;
-		Token         mToken;
-		
-		static std::map <std::string, Symbol> sKeywords;
-};
-std::map <std::string, Symbol> Lexer::sKeywords;
-
-#endif //ifndef BS_LEXER_H
+#endif // not defined BS_PARSER_H
