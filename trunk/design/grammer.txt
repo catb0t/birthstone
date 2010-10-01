@@ -1,14 +1,18 @@
-CODE     ->    LOOP CODE | COND CODE | BLOCK CODE | STMT CODE | e
 
-COND		-> 	IF ( COMP ) BLOCK COND2 | IF ( COMP ) STMT COND2
-COND2		->		ELIF( COMP ) BLOCK COND3 | ELIF ( COMP ) STMT COND3 | e
-COND3		->		ELSE BLOCK | ELSE STMT | e
+
+COND_IF	-> 	if ( COMP ) BLOCK COND2 | if ( COMP ) STMT COND2
+COND_ELIF->		elif( COMP ) BLOCK COND3 | elif ( COMP ) STMT COND3 | e
+COND_ELSE->		else BLOCK | else STMT | e
 
 LOOP		->		WLOOP | DLOOP | FLOOP
-WLOOP		->		WHILE ( COMP ) BLOCK | WHILE ( COMP ) STMT
-DLOOP		->		DO BLOCK WHILE ( COMP ) ; | DO STMT WHILE ( COMP ) ;
-FLOOP		->		FOR ( ASGNMT ; COMP; EXPR ) BLOCK | FOR ( ASGNMT ; COMP; EXPR ) STMT
+WLOOP		->		while ( COMP ) BLOCK | while ( COMP ) STMT
+DLOOP		->		do BLOCK while ( COMP ) ; | do STMT while ( COMP ) ;
+FLOOP		->		for ( ASGNMT ; COMP; EXPR ) BLOCK | for ( ASGNMT ; COMP; EXPR ) STMT
 
+PRSTMT	->		print STMT
+RDSTMT	->		read  STMT
+
+CODE     ->    LOOP CODE | COND CODE | BLOCK CODE | STMT CODE | e
 BLOCK    ->    { CODE }
 STMT     ->		ASGNMT ;
 ASGNMT	->		ORX ASGMT2
@@ -23,12 +27,12 @@ EXPR     ->    TERM EXPR2
 EXPR2		->		OP1 ASGMNT | e		 
 TERM     ->    FACTOR TERM2
 TERM2		->		OP0 ASGMNT | e
-FACTOR   ->    str | bool | num | id | '(' ASGMNT ')'
+FACTOR   ->    str | t | f | num | id | '(' ASGMNT ')'
 
-OP0		->		* | / 
+OP0		->		* | /
 OP1		->		+ | -
-OP2		->		< | <= | == | != | >= | > 
+OP2		->		< | <= | == | != | >= | >
 OP3		->		&&
-OP4		->		||
+OP4		->  	||
 OP5		->		= | := | +=
 
