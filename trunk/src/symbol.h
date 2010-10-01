@@ -35,7 +35,9 @@ namespace Sym {
       ASSIGN, INIT, AND, OR, NOT, COMMA, SC,
       
       // Non-terminals:
-      CODE, BLOCK, STMT, EXPR, TERM, FACTOR
+      CODE, COND, COND2, COND3, LOOP, WLOOP, DLOOP, FLOOP, BLOCK, STMT, 
+		ASGNMT, ASGNMT2, ORX, ORX2, ANDX, ANDX2, COMP, COMP2,
+		EXPR, EXPR2, TERM, TERM2, FACTOR
       
       };
       
