@@ -1,7 +1,7 @@
 ,,,,,,,,,,
 ,"STR","BOOL","NUM","{","}","+","-","*","/","(empty)"
-"code","expr code","expr code","expr code","block code","ERR","ERR","ERR","ERR","ERR",
-"block","ERR","ERR","ERR","{ code }","ERR","ERR","ERR","ERR","ERR","ERR"
+"code","expr code","expr code","expr code","block code","FAIL","FAIL","FAIL","FAIL","FAIL",
+"block","FAIL","FAIL","FAIL","{ code }","FAIL","FAIL","FAIL","FAIL","FAIL","FAIL"
 "stmt",,,,,,,,,,
 "expr",,,,,,,,,,
 "term",,,,,,,,,,
