@@ -18,39 +18,16 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
-#ifndef BS_PARSER_H
-#define BS_PARSER_H
-#include <map>
-#include <istream>
-#include <stack>
-#include "symbol.h"
-using Sym::Symbol;
 
-class SymTable
+#include "parser.h"
+
+Parser::Parser(std::istream &input) : mLexer(input) {}
+
+void Parser::setupTable()
 {
-};
+	if (sTable.empty())
+	{
 
-/******************************************************************************
-* A Birthstone parser.
-******************************************************************************/
-class Parser
-{
-	public:
-		Parser(std::istream &input);
-
-		void run();
-	private:
-		void act(int action);
-		void setupTable();
 		
-		Lexer mLexer;
-		static map<Symbol, map<Symbol, int> > sTable; // Parse table
-		stack<Symbol> mStack; // Symbol stack
-	
-};
-std::map<Symbol, map<Symbol,int> > Parser::mTable;
-
-
-
-
-#endif // not defined BS_PARSER_H
+	}
+}

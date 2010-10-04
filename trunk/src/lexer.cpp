@@ -29,13 +29,13 @@ Token::Token(Symbol type) : mType(type), mVal(NULL) {}
 
 Token::Token(Symbol type, const std::string &str) : mType(type), mVal(NULL)
 {
-   if ((mType == Sym::ID) || (mType == Sym::ERR) || (mType == Sym::STR))
+   if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 		mVal = reinterpret_cast<void *>(new std::string(str));
 	else
 	{
-      mType = Sym::ERR;
-		std::string error = "ERROR: only ERR, STR, and ID types can have string values";
-		mVal = reinterpret_cast<void *>(new std::string(error));
+      mType = Sym::FAIL;
+		std::string FAILor = "FAILOR: only FAIL, STR, and ID types can have string values";
+		mVal = reinterpret_cast<void *>(new std::string(FAILor));
 	}
 }
 
@@ -45,9 +45,9 @@ Token::Token(Symbol type, const double &num) : mType(type), mVal(NULL)
 		mVal = reinterpret_cast<void *>(new double(num));
 	else
 	{
-      mType = Sym::ERR;
-		std::string error = "ERROR: only NUM type tokens can have numerical values";
-		mVal = reinterpret_cast<void *>(new std::string(error));
+      mType = Sym::FAIL;
+		std::string FAILor = "FAILOR: only NUM type tokens can have numerical values";
+		mVal = reinterpret_cast<void *>(new std::string(FAILor));
 	}
 }
 
@@ -55,7 +55,7 @@ Token::Token(const Token &token) : mType(token.mType), mVal(NULL)
 {
 	if (token.mVal)
 	{
-      if ((token.mType == Sym::ID) || (token.mType == Sym::ERR) || (token.mType == Sym::STR))
+      if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
 			mVal = reinterpret_cast<void *>(new std::string(
 						*reinterpret_cast<std::string *>(token.mVal)));
       else if (token.mType == Sym::NUM)
@@ -69,7 +69,7 @@ Token::~Token()
 {
 	if (mVal)
 	{
-      if ((mType == Sym::ID) || (mType == Sym::ERR) || (mType == Sym::STR))
+      if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 			delete  reinterpret_cast<std::string *>(mVal);
       else if (mType == Sym::NUM)
 			delete  reinterpret_cast<double *>(mVal);
@@ -81,7 +81,7 @@ Symbol Token::getType() const { return mType; }
 
 std::string Token::getStr() const
 {
-   if (mVal && ((mType == Sym::ID) || (mType == Sym::ERR) || (mType == Sym::STR)))
+   if (mVal && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
 		return *reinterpret_cast<std::string *>(mVal);
 	else
 		return "";
@@ -99,7 +99,7 @@ Token &Token::operator =(const Token &token)
 {
 	if (mVal)
 	{
-      if ((mType == Sym::ID) || (mType == Sym::ERR) || (mType == Sym::STR))
+      if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 			delete  reinterpret_cast<std::string *>(mVal);
       else if (mType == Sym::NUM)
 			delete  reinterpret_cast<double *>(mVal);
@@ -110,7 +110,7 @@ Token &Token::operator =(const Token &token)
 	
 	if (token.mVal)
 	{
-      if ((token.mType == Sym::ID) || (token.mType == Sym::ERR) || (token.mType == Sym::STR))
+      if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
 			mVal = reinterpret_cast<void *>(new std::string(
 						*reinterpret_cast<std::string *>(token.mVal)));
       else if (token.mType == Sym::NUM)
@@ -123,7 +123,7 @@ Token &Token::operator =(const Token &token)
 std::ostream &operator <<(std::ostream &stream, const Token &token)
 {
 	// TODO: make sure this matches enum Symbol exactly
-   static std::string typeName[] = {"NONE", "ERR", "END", "ID", "NUM", "STR", "T", "F",
+   static std::string typeName[] = {"NONE", "FAIL", "END", "ID", "NUM", "STR", "T", "F",
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
       "PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
       "LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
@@ -133,7 +133,7 @@ std::ostream &operator <<(std::ostream &stream, const Token &token)
 		
 	stream << '<' << typeName[token.getType()];
 
-	if ((token.getType() == Sym::STR) || (token.getType() == Sym::ERR))
+	if ((token.getType() == Sym::STR) || (token.getType() == Sym::FAIL))
 		stream << ", \"" << token.getStr() <<'"';
 	else if (token.getType() == Sym::ID) 
 		stream << ", " << token.getStr();
@@ -144,13 +144,7 @@ std::ostream &operator <<(std::ostream &stream, const Token &token)
 }
 
 
-Lexer::Lexer(std::istream *input) 
-   : mInput(input), mLineNum(0), mToken(Sym::END)  
-{ 
-	setupKeywords(); 
-}
-
-Lexer::Lexer(std::istream &input) 
+Lexer::Lexer(std::istream &input)
    : mInput(&input), mLineNum(0), mToken(Sym::END) 
 {
 	 setupKeywords(); 
@@ -190,9 +184,9 @@ const Token &Lexer::getNext()
 	
 	char ch = mInput->peek();
 	
-// TODO: reenable read file ERRure?
-// 	if (mInput->ERR())
-// 		mToken = Token(ERR, "reading file ERRed");
+// TODO: reenable read file FAILure?
+// 	if (mInput->FAIL())
+// 		mToken = Token(FAIL, "reading file FAILed");
 	/*else*/ if (mInput->eof())
 					mToken = Token(Sym::END);
 	else if (ch == '#')
@@ -393,7 +387,7 @@ const Token &Lexer::getNext()
 			mToken = Token(Sym::AND);
 		}
 		else
-			mToken = Token(Sym::ERR, std::string("expected: \"&&\" found \"&") + ch + "\"");
+			mToken = Token(Sym::FAIL, std::string("expected: \"&&\" found \"&") + ch + "\"");
 	}
 	
 	else if (ch == '|')
@@ -406,7 +400,7 @@ const Token &Lexer::getNext()
 			mToken = Token(Sym::OR);
 		}
 		else
-			mToken = Token(Sym::ERR, std::string("expected: \"||\" found \"|") + ch + "\"");
+			mToken = Token(Sym::FAIL, std::string("expected: \"||\" found \"|") + ch + "\"");
 	}
 	else if (ch == '!')
 	{
@@ -430,12 +424,12 @@ const Token &Lexer::getNext()
 			mToken = Token(Sym::INIT);
 		}
 		else
-			mToken = Token(Sym::ERR, std::string("expected: ':=' found ':") + ch + "'");
+			mToken = Token(Sym::FAIL, std::string("expected: ':=' found ':") + ch + "'");
 	}
 	else
 	{
 		mInput->get();
-		mToken = Token(Sym::ERR, std::string("Invalid mToken: '") + ch + '\'');
+		mToken = Token(Sym::FAIL, std::string("Invalid mToken: '") + ch + '\'');
 	}
 	
 	return mToken;
@@ -460,12 +454,12 @@ const Token &Lexer::getNext()
 			Token token = lex.getNext();
 			
 			std::cout << "   ";
-			while ((token.getType() != Sym::END) /*&& (token.getType() != ERR)*/)
+			while ((token.getType() != Sym::END) /*&& (token.getType() != FAIL)*/)
 			{
  				std::cout << token << ' ';
 				token = lex.getNext();
 			}
-			// 			std::cerr << token; // show the <END> token
+			// 			std::cFAIL << token; // show the <END> token
 			std::cout << std::endl;
 		}
 	}

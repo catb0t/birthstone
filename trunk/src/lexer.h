@@ -58,7 +58,6 @@ class Token
 class Lexer
 {
 	public:
-		Lexer(std::istream *input);
 		Lexer(std::istream &input);
 		~Lexer();
 
