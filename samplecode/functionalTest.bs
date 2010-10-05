@@ -1,0 +1,39 @@
+
+# Requirements 1 and 2
+hi  := "hello";
+num := 1.23;
+b   := true;
+print "variable: " + hi  + "   literal: hello";
+print "variable: " + num + "   literal: " + 1.23;
+print "variable: " + b   + "   literal: " + true;
+
+# Requirement 3
+
+# Requirement 4
+if (true)
+{
+  print 1;
+}
+else
+{
+  print 2;
+}
+
+if (false)
+{
+  print 3;
+}
+else if (true)
+{
+  print 4;
+}
+
+# Requirement 5
+i := 0;
+while (i < 10)
+{
+	i = i + 1;
+	print i;
+}
+
+# Requirement 6

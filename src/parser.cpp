@@ -21,33 +21,6 @@
 
 #include "parser.h"
 
-Parser::Parser(std::istream &input) : mLexer(input) {}
+Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE) {}
 
-void Parser::setupTable()
-{
-	if (sTable.empty())
-	{
-		sTable[TERM][O_PARAN]  = 100; // TERM -> FACTOR TERM2
-		sTable[TERM][F]        = 100; 
-		sTable[TERM][T]        = 100;
-		sTable[TERM][ID]       = 100;
-		sTable[TERM][NUM]      = 100;
-		sTable[TERM][STR]      = 100;
-		
-		sTable[TERM2][C_PARAN] = 110; // TERM2 -> e
-		sTable[TERM2][PLUS]    = 111; // TERM2 -> PLUS  TERM
-		sTable[TERM2][MINUS]   = 112; // TERM2 -> MINUS TERM
-		
-		sTable[FACTOR][O_PARAN]= 120; // FACTOR -> ( TERM )
-		sTable[FACTOR][STR]    = 121; // FACTOR -> STR
-		sTable[FACTOR][ID]     = 122; // FACTOR -> ID
-		sTable[FACTOR][NUM]    = 123; // FACTOR -> NUM
-		sTable[FACTOR][T]      = 124; // FACTOR -> T
-		sTable[FACTOR][F]      = 125; // FACTOR -> F
-	}
-}
 
-void Parser::act(int action)
-{
-	
-}
