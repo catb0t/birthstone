@@ -24,6 +24,7 @@
 #include <istream>
 #include <stack>
 #include "symbol.h"
+
 using Sym::Symbol;
 
 class SymTable
@@ -37,20 +38,15 @@ class Parser
 {
 	public:
 		Parser(std::istream &input);
-
 		void run();
-	private:
-		void act(int action);
-		void setupTable();
 		
+		void code()
+	private:
+
 		Lexer mLexer;
-		static map<Symbol, map<Symbol, int> > sTable; // Parse table
-		stack<Symbol> mStack; // Symbol stack
-	
+		Token mToken;
+		SymTable
 };
-std::map<Symbol, map<Symbol,int> > Parser::mTable;
-
-
 
 
 #endif // not defined BS_PARSER_H
