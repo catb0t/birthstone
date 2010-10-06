@@ -23,6 +23,7 @@
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(NONE) {}
 
+void add(
 bool Parser::accept(Symbol sym)
 {
 	if (mToken.getType() == sym)

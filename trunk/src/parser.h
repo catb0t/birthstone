@@ -71,7 +71,7 @@ class Parser
 
 		Lexer mLexer;
 		Token mToken;
-		
+		std::stack
 };
 
 
