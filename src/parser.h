@@ -25,10 +25,10 @@
 #include <stack>
 #include <memory>
 #include "symbol.h"
-#include "object.h"
+// #include "object.h"
 
 using namespace Sym;
-typedef std::auto_ptr P;
+// typedef std::auto_ptr P;
 
 class SymTable
 {
@@ -49,23 +49,23 @@ class Parser
 		bool expect(Symbol sym);
 		bool error(string msg);	
 		
-		P<Obj> code();
+		Token code();
 
-		P<Obj> ifCond();
-		P<Obj> elifCond();
-		P<Obj> elseCond();
+		Token ifCond();
+		Token elifCond();
+		Token elseCond();
 
-		P<Obj> whileLoop();
+		Token whileLoop();
 
-		P<Obj> block();
-		P<Obj> stmt();
-		P<Obj> asgnmt();
-		P<Obj> orOp();
-		P<Obj> andOp();
-		P<Obj> comp();
-		P<Obj> expr();
-		P<Obj> term();
-		P<Obj> factor();
+		Token block();
+		Token stmt();
+		Token asgnmt();
+		Token orOp();
+		Token andOp();
+		Token comp();
+		Token expr();
+		Token term();
+		Token factor();
 		
 	private:
 

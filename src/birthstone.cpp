@@ -24,6 +24,7 @@
 #include "object.h"
 
 #include <iostream>
+#include <ifstream>
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -32,8 +33,28 @@ int main(int argc, char *argv[])
 	bool interactive = true;
 	if (argc > 1)
 	{
-   	filename = argv[1];
-		interactive = false;
+		ifstream input(argv[1]);
+		if (input.good())
+			Parser(input).run();
+		else
+		{
+			cerr << "error: could not read input file. " << endl;
+		}
 	}
+	else // interactive mode
+	{
+		cout << "birthstone interactive shell" << endl;
+		do
+		{
+			string str;
+			stringstream input;
+			cout << "bs> ";
+			getline(cin, str);
+			input.str(str);
+			Parser(input).run();
+		} while (true/* TODO:  stop when quit of exit is entered*/)
+	}
+
+	
 	return 0;
 }

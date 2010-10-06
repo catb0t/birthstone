@@ -32,7 +32,7 @@ namespace Sym {
       LESS, LESS_EQ, EQ, NOT_EQ, GREATER, GREATER_EQ,
       IF, ELIF, ELSE, PRINT, DEF, CLASS,
       DO, WHILE, UNTIL, FOR, IN, BREAK, CONT, READ,
-      ASSIGN, INIT, AND, OR, NOT, COMMA, SC,
+      ASSIGN, INIT, AND, OR, NOT, COMMA, SC, EXIT,
       
       // Non-terminals:
       COND_IF, COND_ELIF, COND_ELSE,

@@ -18,12 +18,17 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
-
+#include <iostream>
 #include "parser.h"
+
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(NONE) {}
 
-void add(
+void Parser::add(Token token)
+{
+	// TODO: void Parser::add(Token token)
+}
+
 bool Parser::accept(Symbol sym)
 {
 	if (mToken.getType() == sym)
@@ -33,83 +38,89 @@ bool Parser::accept(Symbol sym)
 		
 		return true;
 	}
-	//else
+
+	// else:
 	return false;
 }
 
 bool Parser::expect(Symbol sym)
 {
-	// TODO: bool Parser::expect()
+	if (accept(sym))
+		return true;
+
+	// else:
+	error ("unexpected symbol");
+	return false;
 }
 
 bool Parser::error(string msg)
 {
-	// TODO: bool Parser::error(string msg)
+	std::cerr << lexer.getLine() << msg << endl;
 }
 
-P<Obj> Parser::code()
+Token Parser::code()
 {
-	// TODO: P<Obj> Parser::code()
+	// TODO: Token Parser::code()
 }
 
-P<Obj> Parser::ifCond()
+Token Parser::ifCond()
 {
-	// TODO: P<Obj> Parser::ifCond()
+	// TODO: Token Parser::ifCond()
 }
-P<Obj> Parser::elifCond()
+Token Parser::elifCond()
 {
-	// TODO: P<Obj> Parser::elifCond()
+	// TODO: Token Parser::elifCond()
 }
-P<Obj> Parser::elseCond()
+Token Parser::elseCond()
 {
-	// TODO: P<Obj> Parser::elseCond()
-}
-
-P<Obj> Parser::whileLoop()
-{
-	// TODO: P<Obj> Parser::whileLoop()
+	// TODO: Token Parser::elseCond()
 }
 
-P<Obj> Parser::block()
+Token Parser::whileLoop()
 {
-	// TODO: P<Obj> Parser::block()
+	// TODO: Token Parser::whileLoop()
+}
+
+Token Parser::block()
+{
+	// TODO: Token Parser::block()
 };
-P<Obj> Parser::stmt()
+Token Parser::stmt()
 {
-	// TODO: P<Obj> Parser::stmt()
+	// TODO: Token Parser::stmt()
 }
 
-P<Obj> Parser::asgnmt()
+Token Parser::asgnmt()
 {
-	// TODO: P<Obj> Parser::asgnmt()
+	// TODO: Token Parser::asgnmt()
 }
 
-P<Obj> Parser::orOp()
+Token Parser::orOp()
 {
-	// TODO: P<Obj> Parser::orOp()
+	// TODO: Token Parser::orOp()
 }
 
-P<Obj> Parser::andOp()
+Token Parser::andOp()
 {
-	// TODO: P<Obj> Parser::andOp()
+	// TODO: Token Parser::andOp()
 }
 
-P<Obj> Parser::comp()
+Token Parser::comp()
 {
-	// TODO: P<Obj> Parser::comp()
+	// TODO: Token Parser::comp()
 }
 
-P<Obj> Parser::expr()
+Token Parser::expr()
 {
-	// TODO: P<Obj> Parser::expr()
+	// TODO: Token Parser::expr()
 }
 
-P<Obj> Parser::term()
+Token Parser::term()
 {
-	// TODO: P<Obj> Parser::term()
+	// TODO: Token Parser::term()
 }
 
-P<Obj> Parser::factor()
+Token Parser::factor()
 {
-	// TODO: P<Obj> Parser::factor()
+	// TODO: Token Parser::factor()
 }

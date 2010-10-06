@@ -42,9 +42,10 @@ class Token
 		Token(const Token &token);
 		~Token();
 
-		Symbol   getType() const;
+		Symbol      getType() const;
 		std::string getStr()  const;
 		double      getNum()  const;
+		
 		Token &operator =(const Token &token);
 
 	private:
@@ -62,6 +63,7 @@ class Lexer
 		~Lexer();
 
 		const Token &getNext();
+		unsigned int getLine() const;
 	private:
 		void setupKeywords();
 
