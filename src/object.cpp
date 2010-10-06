@@ -19,23 +19,34 @@
  *                                                                         *
  ***************************************************************************/
 #include "object.h"
+/***********************************  Num  ***********************************/
 
-/*********************************  Number  **********************************/ 
-
-Type Number::getType() const
+ObjType Num::getType() const
 {
 	return BS_NUM;
 }
 
-/********************************* Boolean  **********************************/ 
-const char Boolean::F = 0;
-const char Boolean::T = 1;
-Boolean::Boolean(bool val) : mVal(val ? T : F) {}
 
-Boolean::operator bool() const { return mVal; }
+/**********************************  Bool ************************************/
+const char Bool::F = 0;
+const char Bool::T = 1;
+Bool::Bool(bool val) : mVal(val ? T : F) {}
 
-Type Boolean::getType() const
+Bool::operator bool() const { return mVal; }
+
+ObjType Bool::getType() const
 {
 	return BS_BOOL;
+}
+
+
+
+/**********************************  Str  ************************************/
+Str::Str (std::string str="") : mStr(str) { }
+Str::operator std::string() const { return mStr; }
+
+ObjType Str::getType() const
+{
+	return BS_STR;
 }
 
