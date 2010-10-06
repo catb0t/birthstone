@@ -21,48 +21,55 @@
 #ifndef BS_OBJECT_H
 #define BS_OBJECT_H
 #include <string>
-enum Type {BS_STR, BS_NUM, BS_BOOL};
-
-class Object
-{
-	public:
-		virtual Type getType() = 0;
-	protected:
-
-	private:	
-};
-
-
-class Number : public Object
-{
-	public:
-		Number(double num = 0.0);
-		Type getType() const;
-		operator double() const;
-	private:
-		double mNum;
-}; 
-
-class Boolean : public Object
-{
-	public:
-		static const char T;
-		static const char F;
-		
-		Boolean(bool val = false);
-		
-		Type getType() const;
-		operator bool() const;
-		
-	private:
-		char mVal;
+	enum ObjType {BS_STR, BS_NUM, BS_BOOL};
 	
-};
-
-class String : public Object
-{
-	public:
+	class Obj
+	{
+		public:
+			virtual ObjType getType() = 0;
+		protected:
+	
+		private:	
+	};
+	
+	
+	class Num : public Obj
+	{
+		public:
+			Num(double num = 0.0);
+			ObjType getType() const;
+			operator double() const;
+		private:
+			double mNum;
+	}; 
+	
+	class Bool : public Obj
+	{
+		public:
+			static const char T;
+			static const char F;
+			
+			Bool(bool val = false);
+			
+			ObjType getType() const;
+			operator bool() const;
+			
+			
+		private:
+			char mVal;
 		
-}
+	};
+	
+	class Str : public Obj
+	{
+		public:
+			Str (std::string str="");
 
+			ObjType getType() const;
+			
+			operator std::string() const;
+
+		private:
+			std::string mStr;
+	}
 #endif // BS_OBJECT_H

@@ -23,16 +23,19 @@
 #include <map>
 #include <istream>
 #include <stack>
+#include <memory>
 #include "symbol.h"
+#include "object.h"
 
-using Sym::Symbol;
+using namespace Sym;
+typedef std::auto_ptr P;
 
 class SymTable
 {
 };
 
 /******************************************************************************
-* A Birthstone parser.
+* Birthstone parser.
 ******************************************************************************/
 class Parser
 {
@@ -40,12 +43,35 @@ class Parser
 		Parser(std::istream &input);
 		void run();
 		
-		void code()
+	protected:
+		void add(Token token);
+		bool accept(Symbol sym);
+		bool expect(Symbol sym);
+		bool error(string msg);	
+		
+		P<Obj> code();
+
+		P<Obj> ifCond();
+		P<Obj> elifCond();
+		P<Obj> elseCond();
+
+		P<Obj> whileLoop();
+
+		P<Obj> block();
+		P<Obj> stmt();
+		P<Obj> asgnmt();
+		P<Obj> orOp();
+		P<Obj> andOp();
+		P<Obj> comp();
+		P<Obj> expr();
+		P<Obj> term();
+		P<Obj> factor();
+		
 	private:
 
 		Lexer mLexer;
 		Token mToken;
-		SymTable
+		
 };
 
 
