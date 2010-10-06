@@ -79,6 +79,7 @@ Token::~Token()
 
 Symbol Token::getType() const { return mType; }
 
+
 std::string Token::getStr() const
 {
    if (mVal && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
@@ -176,8 +177,13 @@ void Lexer::setupKeywords()
       
       sKeywords["true"]     = Sym::T;
       sKeywords["false"]    = Sym::F;
+
+		sKeywords["exit"]    = Sym::EXIT;
+		sKeywords["quit"]    = Sym::EXIT;
 	}
 }
+
+unsigned int Lexer::getLine() const { return mLineNum; }
 
 const Token &Lexer::getNext()
 {
