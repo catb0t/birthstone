@@ -23,8 +23,10 @@
 #include <map>
 #include <istream>
 #include <stack>
+#include <string>
 #include <memory>
 #include "symbol.h"
+#include "lexer.h"
 // #include "object.h"
 
 using namespace Sym;
@@ -47,9 +49,9 @@ class Parser
 		void add(const Token &token);
 		bool accept(Symbol sym);
 		bool expect(Symbol sym);
-		bool error(string msg);	
+		bool error(std::string msg);	
 		
-		const Token &code();
+		Token code();
 
 		const Token &print();
 		const Token &read();
@@ -77,5 +79,42 @@ class Parser
 		std::stack<Token> mTokenStk;
 };
 
+
+inline
+void Parser::run()
+{
+	code();
+}
+
+inline
+void Parser::add(const Token &token)
+{
+	mTokenStk.push(token);
+}
+
+inline
+bool Parser::accept(Symbol sym)
+{
+	if (mToken.getType() == sym)
+	{
+		add(mToken);
+		mToken.getType() == mLexer.getNext().getType();
+
+		return true;
+	}
+
+	// else:
+	return false;
+}
+
+bool Parser::expect(Symbol sym)
+{
+	if (accept(sym))
+		return true;
+
+	// else:
+	error ("unexpected symbol");
+	return false;
+}
 
 #endif // not defined BS_PARSER_H

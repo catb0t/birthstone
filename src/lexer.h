@@ -64,6 +64,8 @@ class Lexer
 
 		const Token &getNext();
 		unsigned int getLine() const;
+
+		operator bool();
 	private:
 		void setupKeywords();
 

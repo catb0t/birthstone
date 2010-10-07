@@ -20,16 +20,17 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
-
-#include "object.h"
-
 #include <iostream>
-#include <ifstream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include "parser.h"
 using namespace std;
 
-int main(int argc, char *argv[])
+
+int main(int argc, char **argv)
 {
-	String filename;
+	string filename;
 	bool interactive = true;
 	if (argc > 1)
 	{
@@ -43,17 +44,18 @@ int main(int argc, char *argv[])
 	}
 	else // interactive mode
 	{
+		string str;
+		stringstream input;
 		Parser parser(input);
 		cout << "birthstone interactive shell" << endl;
 		do
 		{
-			string str;
-			stringstream input;
+
 			cout << "bs> ";
 			getline(cin, str);
 			input.str(str);
 			parser.run();
-		} while (true/* TODO:  stop when quit or exit is entered*/)
+		} while (true/* TODO:  stop when quit or exit is entered*/);
 	}
 
 	

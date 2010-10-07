@@ -71,5 +71,5 @@
 
 		private:
 			std::string mStr;
-	}
+	};
 #endif // BS_OBJECT_H
