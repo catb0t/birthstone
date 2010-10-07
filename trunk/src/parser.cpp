@@ -24,43 +24,21 @@
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(NONE) {}
 
-void Parser::add(const Token &token)
+bool Parser::error(std::string msg)
 {
-	mTokenStk.push(token);
+	std::cerr << mLexer.getLine() << msg << std::endl;
 }
 
-bool Parser::accept(Symbol sym)
+Token Parser::code()
 {
-	if (mToken.getType() == sym)
-	{
-		add(mToken);
-		mToken == mParser.getNext();
-		
-		return true;
-	}
-
-	// else:
-	return false;
-}
-
-bool Parser::expect(Symbol sym)
-{
-	if (accept(sym))
-		return true;
-
-	// else:
-	error ("unexpected symbol");
-	return false;
-}
-
-bool Parser::error(string msg)
-{
-	std::cerr << lexer.getLine() << msg << endl;
-}
-
-const Token &Parser::code()
-{
+	Token token = Sym::NONE;
+	if ((token = print()).getType()  != Sym::NONE )
+		;
+	else if ((token = read()).getType() != Sym::NONE)
+		;
 	// TODO: const Token &Parser::code()
+
+	return token;
 }
 
 
