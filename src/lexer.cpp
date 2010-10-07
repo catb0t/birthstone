@@ -190,9 +190,9 @@ const Token &Lexer::getNext()
 	
 	char ch = mInput->peek();
 	
-// TODO: reenable read file FAILure?
-// 	if (mInput->FAIL())
-// 		mToken = Token(FAIL, "reading file FAILed");
+// TODO: reenable read file failure?
+// 	if (mInput->fail())
+// 		mToken = Token(FAIL, "reading file failed");
 	/*else*/ if (mInput->eof())
 					mToken = Token(Sym::END);
 	else if (ch == '#')
