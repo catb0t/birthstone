@@ -24,9 +24,9 @@
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(NONE) {}
 
-void Parser::add(Token token)
+void Parser::add(const Token &token)
 {
-	// TODO: void Parser::add(Token token)
+	mTokenStk.push(token);
 }
 
 bool Parser::accept(Symbol sym)
@@ -58,69 +58,85 @@ bool Parser::error(string msg)
 	std::cerr << lexer.getLine() << msg << endl;
 }
 
-Token Parser::code()
+const Token &Parser::code()
 {
-	// TODO: Token Parser::code()
+	// TODO: const Token &Parser::code()
 }
 
-Token Parser::ifCond()
+
+const Token &Parser::print()
 {
-	// TODO: Token Parser::ifCond()
-}
-Token Parser::elifCond()
-{
-	// TODO: Token Parser::elifCond()
-}
-Token Parser::elseCond()
-{
-	// TODO: Token Parser::elseCond()
+	// TODO: const Token &Parser::print()
 }
 
-Token Parser::whileLoop()
+const Token &Parser::read()
 {
-	// TODO: Token Parser::whileLoop()
+	// TODO: const Token &Parser::read()
 }
 
-Token Parser::block()
+
+const Token &Parser::ifCond()
 {
-	// TODO: Token Parser::block()
+	// TODO: const Token &Parser::ifCond()
+}
+
+const Token &Parser::elifCond()
+{
+	// TODO: const Token &Parser::elifCond()
+}
+
+const Token &Parser::elseCond()
+{
+	// TODO: const Token &Parser::elseCond()
+}
+
+
+const Token &Parser::whileLoop()
+{
+	// TODO: const Token &Parser::whileLoop()
+}
+
+
+const Token &Parser::block()
+{
+	// TODO: const Token &Parser::block()
 };
-Token Parser::stmt()
+const Token &Parser::stmt()
 {
-	// TODO: Token Parser::stmt()
+	// TODO: const Token &Parser::stmt()
 }
 
-Token Parser::asgnmt()
+const Token &Parser::asgnmt()
 {
-	// TODO: Token Parser::asgnmt()
+	// TODO: const Token &Parser::asgnmt()
 }
 
-Token Parser::orOp()
+const Token &Parser::orOp()
 {
-	// TODO: Token Parser::orOp()
+	// TODO: const Token &Parser::orOp()
 }
 
-Token Parser::andOp()
+const Token &Parser::andOp()
 {
-	// TODO: Token Parser::andOp()
+	// TODO: const Token &Parser::andOp()
 }
 
-Token Parser::comp()
+const Token &Parser::comp()
 {
-	// TODO: Token Parser::comp()
+	// TODO: const Token &Parser::comp()
 }
 
-Token Parser::expr()
+const Token &Parser::expr()
 {
-	// TODO: Token Parser::expr()
+	// TODO: const Token &Parser::expr()
 }
 
-Token Parser::term()
+const Token &Parser::term()
 {
-	// TODO: Token Parser::term()
+	// TODO: const Token &Parser::term()
 }
 
-Token Parser::factor()
+const Token &Parser::factor()
 {
-	// TODO: Token Parser::factor()
+	// TODO: const Token &Parser::factor()
 }

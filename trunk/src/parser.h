@@ -44,34 +44,37 @@ class Parser
 		void run();
 		
 	protected:
-		void add(Token token);
+		void add(const Token &token);
 		bool accept(Symbol sym);
 		bool expect(Symbol sym);
 		bool error(string msg);	
 		
-		Token code();
+		const Token &code();
 
-		Token ifCond();
-		Token elifCond();
-		Token elseCond();
+		const Token &print();
+		const Token &read();
+		
+		const Token &ifCond();
+		const Token &elifCond();
+		const Token &elseCond();
 
-		Token whileLoop();
+		const Token &whileLoop();
 
-		Token block();
-		Token stmt();
-		Token asgnmt();
-		Token orOp();
-		Token andOp();
-		Token comp();
-		Token expr();
-		Token term();
-		Token factor();
+		const Token &block();
+		const Token &stmt();
+		const Token &asgnmt();
+		const Token &orOp();
+		const Token &andOp();
+		const Token &comp();
+		const Token &expr();
+		const Token &term();
+		const Token &factor();
 		
 	private:
 
 		Lexer mLexer;
 		Token mToken;
-		std::stack
+		std::stack<Token> mTokenStk;
 };
 
 

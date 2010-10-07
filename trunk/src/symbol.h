@@ -33,14 +33,17 @@ namespace Sym {
       IF, ELIF, ELSE, PRINT, DEF, CLASS,
       DO, WHILE, UNTIL, FOR, IN, BREAK, CONT, READ,
       ASSIGN, INIT, AND, OR, NOT, COMMA, SC, EXIT,
-      
-      // Non-terminals:
-      COND_IF, COND_ELIF, COND_ELSE,
-		LOOP, WLOOP, DLOOP, FLOOP,
-		CODE, BLOCK, STMT, ASGNMT, ASGNMT2,
-		ORX, ORX2, ANDX, ANDX2, COMP, COMP2,
-		EXPR, EXPR2, TERM, TERM2, FACTOR,
-		OP0, OP1, OP2, OP3, OP4, OP5
+
+#warning remove non-terminals if not being used      
+//       // Non-terminals:
+// 		CODE,
+//       COND, COND2, COND_ELIF, COND_ELIF2, COND_ELSE, COND_ELSE2
+// 		LOOP, WLOOP, DLOOP, FLOOP, IO_STMT
+// 		BLOCK, STMT, ASGNMT, ASGNMT2,
+// 		ORX, ORX2, ANDX, ANDX2, COMP, COMP2,
+// 		EXPR, EXPR2, TERM, TERM2, FACTOR,
+// 		OP0, OP1, OP2, OP3, OP4, OP5,
+// 		LAST
       };
       
 }
