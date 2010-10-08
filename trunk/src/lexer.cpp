@@ -120,7 +120,6 @@ Token &Token::operator =(const Token &token)
 	}
 }
 
-Token::operator bool() { return mType /* != Sym::NONE */ ; }
 
 std::ostream &operator <<(std::ostream &stream, const Token &token)
 {
