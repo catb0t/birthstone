@@ -74,16 +74,10 @@ bool Parser::toBool (const Token &t)
 }
 
 
-inline void Parser::add(const Token &token)
-{
-	mStack.push(token);
-}
-
 inline bool Parser::accept(Symbol sym)
 {
 	if (mToken.getType() == sym)
 	{
-		add(mToken);
 		mToken = mLexer.getNext();
 
 		return true;
@@ -189,8 +183,8 @@ bool Parser::ignoreBlock()
 {
 	if (accept(Sym::O_BRACE))
 	{
-		while ((mToken != C_BRACE) && (mToken != END))
-			mToken == mLexer.getNext();
+		while ((mToken.getType() != C_BRACE) && (mToken.getType() != END))
+			mToken = mLexer.getNext();
 		expect(Sym::C_BRACE);
 		return true;
 	} 
@@ -201,7 +195,7 @@ bool Parser::ignoreBlock()
 
 bool Parser::ignoreStmt()
 {
-	while ((mToken != SC) && (mToken != END))
+	while ((mToken.getType() != SC) && (mToken.getType() != END))
 		mToken = mLexer.getNext();
 	expect(Sym::SC);
 	return true;
@@ -289,11 +283,7 @@ Token Parser::comp()
 Token Parser::sum()
 {
 	Token token = product();
-	if (accept(Sym::PLUS))
-	{
-		bool token2 = toBool(asgnmt());
-		token = token && token2;
-	}
+
 	// TODO: Token Parser::sum()
 	return token;
 }
