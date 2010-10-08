@@ -33,8 +33,8 @@ bool Parser::error(std::string msg)
 
 Token Parser::code()
 {
-	while (token.getType !=  Sym::END)
-		block() || ifCond() || whileLoop() || read() || print () || stmt();
+	while (token.getType() !=  Sym::END)
+		block() || ifCond() || whileLoop() || read() || print() || stmt();
 }
 
 
