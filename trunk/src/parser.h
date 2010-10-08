@@ -67,13 +67,14 @@ class Parser
 		
 		bool block();
 		bool stmt();
-		bool asgnmt();
-		bool orOp();
-		bool andOp();
-		bool comp();
-		bool expr();
-		bool term();
-		bool factor();
+		
+		Token asgnmt();
+		Token orOp();
+		Token andOp();
+		Token comp();
+		Token sum();
+		Token product();
+		Token factor();
 
 
 		
@@ -81,7 +82,6 @@ class Parser
 
 		Lexer mLexer;
 		Token mToken;
-		std::stack<Token> mStack;
 		std::map<std::string,Token> mSymTbl;
 };
 
