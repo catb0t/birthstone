@@ -59,7 +59,7 @@ Token::Token(Symbol type, const double &num) : mType(type)
 
 Token::Token(Symbol type, bool boolean)
 {
-	if (mType == Sym::BOOLEAN)
+	if (mType == Sym::BOOL)
 		mVal.b = boolean;
 	else
 	{
@@ -75,7 +75,7 @@ Token::Token(const Token &token) : mType(token.mType)
 			mVal.s = new std::string(*token.mVal.s);
       else if (token.mType == Sym::NUM)
 			mVal.d = token.mVal.d;
-		else if (token.mType == Sym::BOOLEAN)
+		else if (token.mType == Sym::BOOL)
 			mVal.b = token.mVal.b;
 }
 
@@ -110,7 +110,7 @@ double Token::getNum() const
 
 bool Token::getBool() const
 {
-	if (mType == Sym::BOOLEAN)
+	if (mType == Sym::BOOL)
 		return mVal.b;
 	else
 		return false;
@@ -131,22 +131,23 @@ Token &Token::operator =(const Token &token)
 			mVal.s = new std::string(*token.mVal.s);
       else if (token.mType == Sym::NUM)
 			mVal.d = token.mVal.d;
-		else if (token.mType == Sym::BOOLEAN)
+		else if (token.mType == Sym::BOOL)
 			mVal.b = token.mVal.b;
 }
 
 
 std::ostream &operator <<(std::ostream &stream, const Token &token)
 {
-#warning "TODO: make the typeName array match the Symbol enum
+
 	// TODO: make sure this matches enum Symbol exactly
-   static std::string typeName[] = {"NONE", "FAIL", "END", "ID", "NUM", "STR", "T", "F",
+   static std::string typeName[] = {
+		"NONE", "FAIL", "END", "ID", "NUM", "STR", "BOOL",
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
-      "PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
-      "LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
-      "IF", "ELIF", "ELSE", "PRINT", "DEF", "CLASS",
-      "DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
-      "ASSIGN", "INIT", "AND", "OR", "NOT", "COMMA", "SC"};
+		"PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
+		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
+		"IF", "ELIF", "ELSE", "PRINT", "DEF", "CLASS",
+		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
+		"ASSIGN", "INIT", "AND", "OR", "NOT", "COMMA", "SC", "QUIT"};
 		
 	stream << '<' << typeName[token.getType()];
 
@@ -193,8 +194,8 @@ void Lexer::setupKeywords()
 		sKeywords["or"]		 =	Sym::OR;
 		sKeywords["not"]		 =	Sym::NOT;
       
-		sKeywords["true"]     = Token(Sym::BOOLEAN, true);
-		sKeywords["false"]    = Token(Sym::BOOLEAN, false);
+		sKeywords["true"]     = Token(Sym::BOOL, true);
+		sKeywords["false"]    = Token(Sym::BOOL, false);
 
 		//TODO: make quit work
 // 		sKeywords["exit"]     = Sym::S_QUIT;

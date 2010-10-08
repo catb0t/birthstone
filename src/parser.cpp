@@ -35,7 +35,7 @@ std::string Parser::toStr  (const Token &t)
 {
 	if (t.getType() == Sym::STR)
 		return t.getStr();
-	else 	if (t.getType() == Sym::BOOLEAN)
+	else 	if (t.getType() == Sym::BOOL)
 		return (t.getBool() ? "true" : "false");
 	else 	if (t.getType() == NUM)
 	{
@@ -54,7 +54,7 @@ double Parser::toNum  (const Token &t)
 		return t.getNum();
 	else if (t.getType() == Sym::STR)
 		return atof(t.getStr().c_str());
-	else 	if (t.getType() == Sym::BOOLEAN)
+	else 	if (t.getType() == Sym::BOOL)
 		return static_cast<double>(t.getBool());
 	// else:
 	error("toNum(): invalid type for conversion");
@@ -62,7 +62,7 @@ double Parser::toNum  (const Token &t)
 }
 bool Parser::toBool (const Token &t)
 {
-	if (t.getType() == Sym::BOOLEAN)
+	if (t.getType() == Sym::BOOL)
 		return t.getBool();
 	if (t.getType() == NUM)
 		return t.getNum() /*!= 0 */ ;
@@ -254,9 +254,9 @@ Token Parser::orOp()
 		lVal = lVal || rVal;
 	}
 	if (lVal)
-		return Token(Sym::BOOLEAN, true);
+		return Token(Sym::BOOL, true);
 	//else:
-	return Token(Sym::BOOLEAN, false);
+	return Token(Sym::BOOL, false);
 }
 
 Token Parser::andOp()
@@ -268,14 +268,15 @@ Token Parser::andOp()
 		lVal = lVal && rVal;
 	}
 	if (lVal)
-		return Token(Sym::BOOLEAN, true);
+		return Token(Sym::BOOL, true);
 	//else:
-	return Token(Sym::BOOLEAN, false);;
+	return Token(Sym::BOOL, false);;
 }
 
 Token Parser::comp()
 {
 	Token token = sum();
+
 	// TODO: Token Parser::comp()
 	return token;
 }
@@ -283,7 +284,26 @@ Token Parser::comp()
 Token Parser::sum()
 {
 	Token token = product();
-
+	if (accept(Sym::PLUS))
+	{
+		Token token2 = asgnmt();
+		if (token.getType() == Sym::STR)
+			token = Token(Sym::STR, token.getStr() + toStr(token2));
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::NUM, token.getNum() + toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			error("cannot add to a bool");
+		
+	}
+	else if (accept(Sym::MINUS))
+	{
+		if (token.getType() == Sym::STR)
+			error("cannot subtract from a string")
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::NUM, token.getNum() + toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			error("cannot subtract from a bool");
+	}
 	// TODO: Token Parser::sum()
 	return token;
 }
