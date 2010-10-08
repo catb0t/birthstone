@@ -19,6 +19,7 @@
 *                                                                             *
 ******************************************************************************/
 #include <iostream>
+#include <cstdlib>
 #include "parser.h"
 
 
@@ -27,12 +28,13 @@ Parser::Parser(std::istream &input) : mLexer(input), mToken(NONE) {}
 bool Parser::error(std::string msg)
 {
 	std::cerr << mLexer.getLine() << msg << std::endl;
+	exit(1);
 }
 
 Token Parser::code()
 {
 	Token token = Sym::NONE;
-	if ((token = print()).getType()  != Sym::NONE )
+	if (print()).getType()  != Sym::NONE )
 		;
 	else if ((token = read()).getType() != Sym::NONE)
 		;
