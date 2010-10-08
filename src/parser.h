@@ -30,11 +30,7 @@
 // #include "object.h"
 
 using namespace Sym;
-// typedef std::auto_ptr P;
 
-class SymTable
-{
-};
 
 /******************************************************************************
 * Birthstone parser.
@@ -46,6 +42,10 @@ class Parser
 		void run();
 		
 	protected:
+		std::string toStr  (const Token &t);
+		double      toNum  (const Token &t);
+		bool        toBool (const Token &t);
+
 		void add(const Token &token);
 		bool accept(Symbol sym);
 		bool expect(Symbol sym);
@@ -71,50 +71,20 @@ class Parser
 		bool expr();
 		bool term();
 		bool factor();
+
+
 		
 	private:
 
 		Lexer mLexer;
 		Token mToken;
 		std::stack<Token> mTokenStk;
+		std::map<std::string,Token> mSymTable;
 };
 
 
-inline
-void Parser::run()
-{
-	code();
-}
 
-inline
-void Parser::add(const Token &token)
-{
-	mTokenStk.push(token);
-}
 
-inline
-bool Parser::accept(Symbol sym)
-{
-	if (mToken.getType() == sym)
-	{
-		add(mToken);
-		mToken.getType() == mLexer.getNext().getType();
 
-		return true;
-	}
-
-	// else:
-	return false;
-}
-
-bool Parser::expect(Symbol sym)
-{
-	if (accept(sym))
-		return true;
-
-	// else:
-	error ("unexpected symbol");
-	return false;
-}
 
 #endif // not defined BS_PARSER_H

@@ -25,6 +25,8 @@
 #include <cstdlib>
 #include <iostream>
 
+std::map <std::string, Symbol> Lexer::sKeywords;
+
 Token::Token(Symbol type) : mType(type), mVal(NULL) {}
 
 Token::Token(Symbol type, const std::string &str) : mType(type), mVal(NULL)
@@ -34,8 +36,8 @@ Token::Token(Symbol type, const std::string &str) : mType(type), mVal(NULL)
 	else
 	{
       mType = Sym::FAIL;
-		std::string FAILor = "FAILOR: only FAIL, STR, and ID types can have string values";
-		mVal = reinterpret_cast<void *>(new std::string(FAILor));
+		std::string error = "ERROR: only FAIL, STR, and ID types can have string values";
+		mVal = reinterpret_cast<void *>(new std::string(error));
 	}
 }
 
@@ -178,8 +180,9 @@ void Lexer::setupKeywords()
       sKeywords["true"]     = Sym::T;
       sKeywords["false"]    = Sym::F;
 
-		sKeywords["exit"]    = Sym::EXIT;
-		sKeywords["quit"]    = Sym::EXIT;
+		//TODO: make quit work
+// 		sKeywords["exit"]     = Sym::S_QUIT;
+// 		sKeywords["quit"]     = Sym::S_QUIT;
 	}
 }
 
