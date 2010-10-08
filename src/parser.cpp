@@ -131,13 +131,12 @@ bool Parser::print()
 	if (accept(Sym::PRINT))
 	{
 		std::string str = "";
-		if (assign())
+		if (!accept(Sym::SC))
 		{
-			str = toStr(mStack.top());
-			mStack.pop();
-
+			str = toStr(asgnmt());
+			expect(Sym::SC);
 		}
-		accept(Sym::SC);
+
 		std::cout << str << std::endl;
 		return true;
 	}
@@ -157,11 +156,9 @@ bool Parser::ifCond()
 	{
 		bool condition;
 		expect(Sym::O_PARAN);
-		asgnmt();
+		condition = toBool(asgnmt());
 		expect(Sym::C_PARAN);
 		
-		condition = toBool(mStack.top());
-		mStack.pop();
 		if (condition)
 		{
 			block() || stmt();
@@ -240,16 +237,15 @@ bool Parser::stmt()
 	{
 		asgnmt();
 		expect(Sym::SC);
-		mStack.pop();
 		return true;
 	}
 }
 
 
-bool Parser::asgnmt()
+Token Parser::asgnmt()
 {
-	orOp();
-	// TODO: bool Parser::asgnmt()
+	Token token = orOp();
+	// TODO: Token Parser::asgnmt()
 // 	if (accept(Sym::ASSIGN))
 // 	{
 // 		
@@ -257,62 +253,63 @@ bool Parser::asgnmt()
 // 	else if (accept(Sym::INIT))
 // 	{
 // 	}
-	return true;
+	return token;
 
 }
 
-bool Parser::orOp()
+Token Parser::orOp()
 {
-	andOp();
+	Bool lVal = toBool(andOp());
 	if (accept(Sym::OR))
 	{
-		bool lValue;
-		bool rValue;
-		asgnmt();
-
-		rValue = toBool(mStack.top());
-		mStack.pop();
-		lValue = toBool(mStack.top());
-		mStack.pop();
-		mStack.push(lValue || rValue);
+		bool rVal = toBool(asgnmt());
+		lVal = lVal || rVal;
 	}
-	return true;
+	if (lVal)
+		return Token(Sym::T);
+	//else:
+	return Token(Sym::F);
 }
 
-bool Parser::andOp()
+Token Parser::andOp()
 {
-	comp();
+	Bool lVal = toBool(comp());
 	if (accept(Sym::AND))
 	{
-		bool lValue;
-		bool rValue;
-		asgnmt();
-
-		rValue = toBool(mStack.top());
-		mStack.pop();
-		lValue = toBool(mStack.top());
-		mStack.pop();
-		mStack.push(lValue && rValue);
+		bool rVal = toBool(asgnmt());
+		lVal = lVal && rVal;
 	}
-	return true;
+	if (lVal)
+		return Token(Sym::T);
+	//else:
+	return Token(Sym::F);
 }
 
-bool Parser::comp()
+Token Parser::comp()
 {
-	// TODO: bool Parser::comp()
+	Token token = sum();
+	// TODO: Token Parser::comp()
+	return token;
 }
 
-bool Parser::expr()
+Token Parser::sum()
 {
-	// TODO: bool Parser::expr()
+	Token token = product();
+	if (accept(Sym::PLUS))
+	{
+		bool token2 = toBool(asgnmt());
+		token = token && token2;
+	}
+	// TODO: Token Parser::sum()
+	return token;
 }
 
-bool Parser::term()
+Token Parser::product()
 {
-	// TODO: bool Parser::term()
+	// TODO: Token Parser::product`()
 }
 
-bool Parser::factor()
+Token Parser::factor()
 {
-	// TODO: bool Parser::factor()
+	// TODO: Token Parser::factor()
 }
