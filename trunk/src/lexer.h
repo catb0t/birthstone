@@ -75,6 +75,5 @@ class Lexer
 		
 		static std::map <std::string, Symbol> sKeywords;
 };
-std::map <std::string, Symbol> Lexer::sKeywords;
 
 #endif //ifndef BS_LEXER_H

@@ -20,27 +20,127 @@
 ******************************************************************************/
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 #include "parser.h"
 
+Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE) {}
 
-Parser::Parser(std::istream &input) : mLexer(input), mToken(NONE) {}
-
-bool Parser::error(std::string msg)
+void Parser::run()
 {
-	std::cerr << mLexer.getLine() << msg << std::endl;
+	mLexer.getNext();
+	code();
+}
+
+std::string Parser::toStr  (const Token &t)
+{
+	if (t.getType() == Sym::STR)
+		return t.getStr();
+	else 	if (t.getType() == Sym::T)
+		return "true";
+	else 	if (t.getType() == Sym::F)
+		return "false";
+	else 	if (t.getType() == NUM)
+	{
+		std::ostringstream sstream;
+		sstream << t.getNum();
+		return sstream.str();
+	}
+	// else:
+	error("toStr(): invalid type for conversion");
+	return "";
+}
+
+double Parser::toNum  (const Token &t)
+{
+	if (t.getType() == NUM)
+		return t.getNum();
+	else if (t.getType() == Sym::STR)
+		return atof(t.getStr().c_str());
+	else 	if (t.getType() == Sym::T)
+		return 1;
+	else 	if (t.getType() == Sym::F)
+		return 0;
+	// else:
+	error("toNum(): invalid type for conversion");
+	return 0.0;
+}
+bool Parser::toBool (const Token &t)
+{
+	if (t.getType() == Sym::T)
+		return true;
+	else 	if (t.getType() == Sym::F)
+		return false;
+	if (t.getType() == NUM)
+		return t.getNum() /*!= 0 */ ;
+	else if (t.getType() == Sym::STR)
+		return (t.getStr() != "");
+	// else:
+	error("toBool(): invalid type for conversion");
+	return false;
+}
+
+
+inline void Parser::add(const Token &token)
+{
+	mTokenStk.push(token);
+}
+
+inline bool Parser::accept(Symbol sym)
+{
+	if (mToken.getType() == sym)
+	{
+		add(mToken);
+		mToken.getType() == mLexer.getNext().getType();
+
+		return true;
+	}
+
+	// else:
+	return false;
+}
+
+inline bool Parser::expect(Symbol sym)
+{
+	if (accept(sym))
+		return true;
+
+	// else:
+	error ("unexpected symbol");
+	return false;
+}
+
+
+inline bool Parser::error(std::string msg)
+{
+	std::cerr << mLexer.getLine() << ": " << msg << std::endl;
 	exit(1);
 }
 
+
+
+
 Token Parser::code()
 {
-	while (token.getType() !=  Sym::END)
+	while (mToken.getType() !=  Sym::END)
 		block() || ifCond() || whileLoop() || read() || print() || stmt();
 }
 
 
 bool Parser::print()
 {
-	// TODO: bool Parser::print()
+	if (accept(Sym::PRINT))
+	{
+		std::string str = "";
+		if (stmt())
+		{
+			str = toStr(mTokenStk.top());
+			mTokenStk.pop();
+		}
+		std::cout << str << std::endl;
+		return true;
+	}
+	// else:
+	return false;
 }
 
 bool Parser::read()

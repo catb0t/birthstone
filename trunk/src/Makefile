@@ -2,19 +2,22 @@ CC=g++
 FLAGS=-fshort-enums
 
 default: birthstone
-	(cd ..; ln -s birthstone bs)
+	chmod +x ../bin/birthstone
 
-birthstone: birthstone.o parser.o
-	$(CC) $(FLAGS) birthstone.o parser.o -o ../bin/birthstone
+birthstone: birthstone.o parser.o lexer.o 
+	$(CC) $(FLAGS) lexer.o parser.o birthstone.o   -o ../bin/birthstone
 
-birthstone.o: birthstone.cpp parser.o
-	$(CC) $(FLAGS) -c parser.o birthstone.cpp -o birthstone.o
+birthstone.o: birthstone.cpp parser.h lexer.h
+	$(CC) $(FLAGS) -c birthstone.cpp -o birthstone.o
 
-parser.o: parser.h parser.cpp lexer.h symbol.h
-	$(CC) $(FLAGS) -c lexer.o parser.cpp -o parser.o
+parser.o: parser.cpp parser.h lexer.h symbol.h
+	$(CC) $(FLAGS) -c parser.cpp -o parser.o
 
 lexer.o: lexer.cpp lexer.h symbol.h
 	$(CC) $(FLAGS) -c lexer.cpp -o lexer.o
 
 lexer-test: lexer.cpp lexer.h
 	$(CC) $(FLAGS) -DBS_LEXER_DEBUG lexer.cpp -o lexer
+
+clean:
+	rm -v ./*.o birthstone bs
