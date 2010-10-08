@@ -53,24 +53,24 @@ class Parser
 		
 		Token code();
 
-		const Token &print();
-		const Token &read();
+		bool print();
+		bool read();
 		
-		const Token &ifCond();
-		const Token &elifCond();
-		const Token &elseCond();
+		bool ifCond();
+		bool elifCond();
+		bool elseCond();
 
-		const Token &whileLoop();
+		bool whileLoop();
 
-		const Token &block();
-		const Token &stmt();
-		const Token &asgnmt();
-		const Token &orOp();
-		const Token &andOp();
-		const Token &comp();
-		const Token &expr();
-		const Token &term();
-		const Token &factor();
+		bool block();
+		bool stmt();
+		bool asgnmt();
+		bool orOp();
+		bool andOp();
+		bool comp();
+		bool expr();
+		bool term();
+		bool factor();
 		
 	private:
 

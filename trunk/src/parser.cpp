@@ -33,90 +33,84 @@ bool Parser::error(std::string msg)
 
 Token Parser::code()
 {
-	Token token = Sym::NONE;
-	if (print()).getType()  != Sym::NONE )
-		;
-	else if ((token = read()).getType() != Sym::NONE)
-		;
-	// TODO: const Token &Parser::code()
-
-	return token;
+	while (token.getType !=  Sym::END)
+		block() || ifCond() || whileLoop() || read() || print () || stmt();
 }
 
 
-const Token &Parser::print()
+bool Parser::print()
 {
-	// TODO: const Token &Parser::print()
+	// TODO: bool Parser::print()
 }
 
-const Token &Parser::read()
+bool Parser::read()
 {
-	// TODO: const Token &Parser::read()
-}
-
-
-const Token &Parser::ifCond()
-{
-	// TODO: const Token &Parser::ifCond()
-}
-
-const Token &Parser::elifCond()
-{
-	// TODO: const Token &Parser::elifCond()
-}
-
-const Token &Parser::elseCond()
-{
-	// TODO: const Token &Parser::elseCond()
+	// TODO: bool Parser::read()
 }
 
 
-const Token &Parser::whileLoop()
+bool Parser::ifCond()
 {
-	// TODO: const Token &Parser::whileLoop()
+	// TODO: bool Parser::ifCond()
+}
+
+bool Parser::elifCond()
+{
+	// TODO: bool Parser::elifCond()
+}
+
+bool Parser::elseCond()
+{
+	// TODO: bool Parser::elseCond()
 }
 
 
-const Token &Parser::block()
+bool Parser::whileLoop()
 {
-	// TODO: const Token &Parser::block()
+	// TODO: bool Parser::whileLoop()
+}
+
+
+bool Parser::block()
+{
+	// TODO: bool Parser::block()
 };
-const Token &Parser::stmt()
+bool Parser::stmt()
 {
-	// TODO: const Token &Parser::stmt()
+	// TODO: bool Parser::stmt()
 }
 
-const Token &Parser::asgnmt()
+bool Parser::asgnmt()
 {
-	// TODO: const Token &Parser::asgnmt()
+	// TODO: bool Parser::asgnmt()
 }
 
-const Token &Parser::orOp()
+bool Parser::orOp()
 {
-	// TODO: const Token &Parser::orOp()
+	// TODO: bool Parser::orOp()
 }
 
-const Token &Parser::andOp()
+bool Parser::andOp()
 {
-	// TODO: const Token &Parser::andOp()
+	// TODO: bool Parser::andOp()
 }
 
-const Token &Parser::comp()
+bool Parser::comp()
 {
-	// TODO: const Token &Parser::comp()
+	// TODO: bool Parser::comp()
 }
 
-const Token &Parser::expr()
+bool Parser::expr()
 {
-	// TODO: const Token &Parser::expr()
+	// TODO: bool Parser::expr()
 }
 
-const Token &Parser::term()
+bool Parser::term()
 {
-	// TODO: const Token &Parser::term()
+	// TODO: bool Parser::term()
 }
 
-const Token &Parser::factor()
+bool Parser::factor()
 {
-	// TODO: const Token &Parser::factor()
+	// TODO: bool Parser::factor()
 }
