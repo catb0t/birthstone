@@ -46,7 +46,6 @@ class Parser
 		double      toNum  (const Token &t);
 		bool        toBool (const Token &t);
 
-		void add(const Token &token);
 		bool accept(Symbol sym);
 		bool expect(Symbol sym);
 		bool error(std::string msg);	
