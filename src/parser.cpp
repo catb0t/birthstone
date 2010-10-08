@@ -35,10 +35,8 @@ std::string Parser::toStr  (const Token &t)
 {
 	if (t.getType() == Sym::STR)
 		return t.getStr();
-	else 	if (t.getType() == Sym::T)
-		return "true";
-	else 	if (t.getType() == Sym::F)
-		return "false";
+	else 	if (t.getType() == Sym::BOOL)
+		return (t.getBool() ? "true" : "false");
 	else 	if (t.getType() == NUM)
 	{
 		std::ostringstream sstream;
@@ -56,20 +54,16 @@ double Parser::toNum  (const Token &t)
 		return t.getNum();
 	else if (t.getType() == Sym::STR)
 		return atof(t.getStr().c_str());
-	else 	if (t.getType() == Sym::T)
-		return 1;
-	else 	if (t.getType() == Sym::F)
-		return 0;
+	else 	if (t.getType() == Sym::BOOL)
+		return static_cast<double>(t.getBool());
 	// else:
 	error("toNum(): invalid type for conversion");
 	return 0.0;
 }
 bool Parser::toBool (const Token &t)
 {
-	if (t.getType() == Sym::T)
-		return true;
-	else 	if (t.getType() == Sym::F)
-		return false;
+	if (t.getType() == Sym::BOOL)
+		return t.getBool();
 	if (t.getType() == NUM)
 		return t.getNum() /*!= 0 */ ;
 	else if (t.getType() == Sym::STR)
@@ -259,30 +253,30 @@ Token Parser::asgnmt()
 
 Token Parser::orOp()
 {
-	Bool lVal = toBool(andOp());
+	bool lVal = toBool(andOp());
 	if (accept(Sym::OR))
 	{
 		bool rVal = toBool(asgnmt());
 		lVal = lVal || rVal;
 	}
 	if (lVal)
-		return Token(Sym::T);
+		return Token(Sym::BOOL, true);
 	//else:
-	return Token(Sym::F);
+	return Token(Sym::BOOL, false);
 }
 
 Token Parser::andOp()
 {
-	Bool lVal = toBool(comp());
+	bool lVal = toBool(comp());
 	if (accept(Sym::AND))
 	{
 		bool rVal = toBool(asgnmt());
 		lVal = lVal && rVal;
 	}
 	if (lVal)
-		return Token(Sym::T);
+		return Token(Sym::BOOL, true);
 	//else:
-	return Token(Sym::F);
+	return Token(Sym::BOOL, false);;
 }
 
 Token Parser::comp()
