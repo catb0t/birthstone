@@ -39,18 +39,25 @@ class Token
       Token(Symbol type = Sym::NONE);
 		Token(Symbol type, const std::string &str);
 		Token(Symbol type, const double &num);
+		Token(Symbol type, bool boolean);
 		Token(const Token &token);
 		~Token();
 
 		Symbol      getType() const;
 		std::string getStr()  const;
 		double      getNum()  const;
+		bool        getBool() const;
 		
 		Token &operator =(const Token &token);
 
 	private:
 		Symbol mType;
-		void *mVal;
+		union
+		{
+			double d;
+			bool b;
+			string *s;
+		} mVal;
 };
 
 /******************************************************************************
@@ -73,7 +80,7 @@ class Lexer
 		unsigned int  mLineNum;
 		Token         mToken;
 		
-		static std::map <std::string, Symbol> sKeywords;
+		static std::map <std::string, Token> sKeywords;
 };
 
 #endif //ifndef BS_LEXER_H

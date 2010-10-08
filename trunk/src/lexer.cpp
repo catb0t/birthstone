@@ -27,55 +27,67 @@
 
 std::map <std::string, Symbol> Lexer::sKeywords;
 
-Token::Token(Symbol type) : mType(type), mVal(NULL) {}
+Token::Token(Symbol type) : mType(type)
+{
+	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
+		mVal.s = new std::string("");
+}
 
-Token::Token(Symbol type, const std::string &str) : mType(type), mVal(NULL)
+Token::Token(Symbol type, const std::string &str) : mType(type)
 {
    if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
-		mVal = reinterpret_cast<void *>(new std::string(str));
+		mVal.s = new std::string(str);
 	else
 	{
       mType = Sym::FAIL;
 		std::string error = "ERROR: only FAIL, STR, and ID types can have string values";
-		mVal = reinterpret_cast<void *>(new std::string(error));
+		mVal.s = new std::string(error);
 	}
 }
 
-Token::Token(Symbol type, const double &num) : mType(type), mVal(NULL)
+Token::Token(Symbol type, const double &num) : mType(type)
 {
    if (mType == Sym::NUM)
-		mVal = reinterpret_cast<void *>(new double(num));
+		mVal.d =num;
 	else
 	{
       mType = Sym::FAIL;
-		std::string FAILor = "FAILOR: only NUM type tokens can have numerical values";
-		mVal = reinterpret_cast<void *>(new std::string(FAILor));
+		std::string error = "ERROR: only NUM type tokens can have numerical values";
+		mVal.s new std::string(error);
 	}
 }
 
-Token::Token(const Token &token) : mType(token.mType), mVal(NULL)
+Token::Token(Symbol type, bool boolean)
 {
-	if (token.mVal)
+	if (mType == Sym::BOOL)
+		mVal.b = boolean;
+	else
 	{
+		mType = Sym::FAIL;
+		std::string error = "ERROR: only BOOL type tokens can have boolean values";
+		mVal.s new std::string(error);
+	}
+}
+
+Token::Token(const Token &token) : mType(token.mType)
+{
       if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
-			mVal = reinterpret_cast<void *>(new std::string(
-						*reinterpret_cast<std::string *>(token.mVal)));
+			mVal.s new string(*token.mVal);
       else if (token.mType == Sym::NUM)
-			mVal = reinterpret_cast<void *>(new double(
-						*reinterpret_cast<double *>(token.mVal)));
+			mVal.d = token.mVal.d;
+		else if (token.mType == Sym::BOOL)
+			mVal.b = token.mVal.b;
 	}
 
 }
 
 Token::~Token()
 {
-	if (mVal)
+	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 	{
-      if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
-			delete  reinterpret_cast<std::string *>(mVal);
-      else if (mType == Sym::NUM)
-			delete  reinterpret_cast<double *>(mVal);
-		mVal = NULL;
+		if (mVal.s)
+		delete  mVal.s;
+	mVal.s = NULL;
 	}
 }
 
@@ -85,46 +97,50 @@ Symbol Token::getType() const { return mType; }
 std::string Token::getStr() const
 {
    if (mVal && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
-		return *reinterpret_cast<std::string *>(mVal);
+		return *mVal.s;
 	else
 		return "";
 }
 
 double Token::getNum() const
 {
-   if (mVal && mType == Sym::NUM)
-		return *reinterpret_cast<double *>(mVal);
+   if (mType == Sym::NUM)
+		return mVal.d;
 	else
 		return 0.0;
 }
 
+bool getBool() const
+{
+	if (mType == Sym::BOOL)
+		return mVal.b;
+	else
+		return false;
+}
+
 Token &Token::operator =(const Token &token)
 {
-	if (mVal)
+	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 	{
-      if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
-			delete  reinterpret_cast<std::string *>(mVal);
-      else if (mType == Sym::NUM)
-			delete  reinterpret_cast<double *>(mVal);
-		mVal = NULL;
+		if (mVal.s)
+			delete  mVal.s;
+		mVal.s = NULL;
 	}
 
 	mType = token.mType;
 	
-	if (token.mVal)
-	{
       if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
-			mVal = reinterpret_cast<void *>(new std::string(
-						*reinterpret_cast<std::string *>(token.mVal)));
+			mVal.s = new string(token.mVal.s);
       else if (token.mType == Sym::NUM)
-			mVal = reinterpret_cast<void *>(new double(
-						*reinterpret_cast<double *>(token.mVal)));
-	}
+			mVal.d = token.mVal.d;
+		else if (token.mType == Sym::BOOL)
+			mVal.b = token.mVal.b;
 }
 
 
 std::ostream &operator <<(std::ostream &stream, const Token &token)
 {
+#warning "TODO: make the typeName array match the Symbol enum
 	// TODO: make sure this matches enum Symbol exactly
    static std::string typeName[] = {"NONE", "FAIL", "END", "ID", "NUM", "STR", "T", "F",
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
@@ -142,6 +158,8 @@ std::ostream &operator <<(std::ostream &stream, const Token &token)
 		stream << ", " << token.getStr();
 	else if (token.getType() == Sym::NUM)
 		stream << ", " << token.getNum();
+	else if (token.getType() == Sym::NUM)
+		stream << ", " << std::boolalpha << token.getBool() << std::noboolalpha;
 	stream << '>';
 	return stream;
 }
@@ -177,8 +195,8 @@ void Lexer::setupKeywords()
 		sKeywords["or"]		 =	Sym::OR;
 		sKeywords["not"]		 =	Sym::NOT;
       
-      sKeywords["true"]     = Sym::T;
-      sKeywords["false"]    = Sym::F;
+		sKeywords["true"]     = Token(Sym::BOOL, true);
+		sKeywords["false"]    = Token(Sym::BOOL, false);
 
 		//TODO: make quit work
 // 		sKeywords["exit"]     = Sym::S_QUIT;
@@ -273,7 +291,7 @@ const Token &Lexer::getNext()
 		
 		std::map <std::string, Sym::Symbol>::iterator it = sKeywords.find(mTokenStr);
 		if (it != sKeywords.end()) // keyword
-			mToken = Token(it->second);
+			mToken = it->second;
 		else //identifier
 			mToken = Token(Sym::ID, mTokenStr);
 	}
@@ -320,7 +338,6 @@ const Token &Lexer::getNext()
 	}
 	else if ((ch == '-') || (ch == '.') || isdigit(ch))
 	{
-		// TODO: make "4-2" return <NUM, 4> <MINUS> <NUM, 2> NOT <NUM, 4> <NUM, -2>
 		bool minus    = false;
 		std::string mTokenStr;
 		mTokenStr.reserve(10);
