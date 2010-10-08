@@ -25,7 +25,7 @@
 #include <cstdlib>
 #include <iostream>
 
-std::map <std::string, Symbol> Lexer::sKeywords;
+std::map <std::string, Token> Lexer::sKeywords;
 
 Token::Token(Symbol type) : mType(type)
 {
@@ -53,32 +53,30 @@ Token::Token(Symbol type, const double &num) : mType(type)
 	{
       mType = Sym::FAIL;
 		std::string error = "ERROR: only NUM type tokens can have numerical values";
-		mVal.s new std::string(error);
+		mVal.s = new std::string(error);
 	}
 }
 
 Token::Token(Symbol type, bool boolean)
 {
-	if (mType == Sym::BOOL)
+	if (mType == Sym::BOOLEAN)
 		mVal.b = boolean;
 	else
 	{
 		mType = Sym::FAIL;
 		std::string error = "ERROR: only BOOL type tokens can have boolean values";
-		mVal.s new std::string(error);
+		mVal.s = new std::string(error);
 	}
 }
 
 Token::Token(const Token &token) : mType(token.mType)
 {
       if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
-			mVal.s new string(*token.mVal);
+			mVal.s = new std::string(*token.mVal.s);
       else if (token.mType == Sym::NUM)
 			mVal.d = token.mVal.d;
-		else if (token.mType == Sym::BOOL)
+		else if (token.mType == Sym::BOOLEAN)
 			mVal.b = token.mVal.b;
-	}
-
 }
 
 Token::~Token()
@@ -86,8 +84,8 @@ Token::~Token()
 	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 	{
 		if (mVal.s)
-		delete  mVal.s;
-	mVal.s = NULL;
+			delete  mVal.s;
+		mVal.s = NULL;
 	}
 }
 
@@ -96,7 +94,7 @@ Symbol Token::getType() const { return mType; }
 
 std::string Token::getStr() const
 {
-   if (mVal && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
+   if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
 		return *mVal.s;
 	else
 		return "";
@@ -110,9 +108,9 @@ double Token::getNum() const
 		return 0.0;
 }
 
-bool getBool() const
+bool Token::getBool() const
 {
-	if (mType == Sym::BOOL)
+	if (mType == Sym::BOOLEAN)
 		return mVal.b;
 	else
 		return false;
@@ -130,10 +128,10 @@ Token &Token::operator =(const Token &token)
 	mType = token.mType;
 	
       if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
-			mVal.s = new string(token.mVal.s);
+			mVal.s = new std::string(*token.mVal.s);
       else if (token.mType == Sym::NUM)
 			mVal.d = token.mVal.d;
-		else if (token.mType == Sym::BOOL)
+		else if (token.mType == Sym::BOOLEAN)
 			mVal.b = token.mVal.b;
 }
 
@@ -195,8 +193,8 @@ void Lexer::setupKeywords()
 		sKeywords["or"]		 =	Sym::OR;
 		sKeywords["not"]		 =	Sym::NOT;
       
-		sKeywords["true"]     = Token(Sym::BOOL, true);
-		sKeywords["false"]    = Token(Sym::BOOL, false);
+		sKeywords["true"]     = Token(Sym::BOOLEAN, true);
+		sKeywords["false"]    = Token(Sym::BOOLEAN, false);
 
 		//TODO: make quit work
 // 		sKeywords["exit"]     = Sym::S_QUIT;
@@ -289,7 +287,7 @@ const Token &Lexer::getNext()
 			ch = mInput->peek();
 		} while (!(mInput->eof()) && (isalnum(ch) || ch == '_'));
 		
-		std::map <std::string, Sym::Symbol>::iterator it = sKeywords.find(mTokenStr);
+		std::map <std::string, Token>::iterator it = sKeywords.find(mTokenStr);
 		if (it != sKeywords.end()) // keyword
 			mToken = it->second;
 		else //identifier
