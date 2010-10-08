@@ -35,7 +35,7 @@ std::string Parser::toStr  (const Token &t)
 {
 	if (t.getType() == Sym::STR)
 		return t.getStr();
-	else 	if (t.getType() == Sym::BOOL)
+	else 	if (t.getType() == Sym::BOOLEAN)
 		return (t.getBool() ? "true" : "false");
 	else 	if (t.getType() == NUM)
 	{
@@ -54,7 +54,7 @@ double Parser::toNum  (const Token &t)
 		return t.getNum();
 	else if (t.getType() == Sym::STR)
 		return atof(t.getStr().c_str());
-	else 	if (t.getType() == Sym::BOOL)
+	else 	if (t.getType() == Sym::BOOLEAN)
 		return static_cast<double>(t.getBool());
 	// else:
 	error("toNum(): invalid type for conversion");
@@ -62,7 +62,7 @@ double Parser::toNum  (const Token &t)
 }
 bool Parser::toBool (const Token &t)
 {
-	if (t.getType() == Sym::BOOL)
+	if (t.getType() == Sym::BOOLEAN)
 		return t.getBool();
 	if (t.getType() == NUM)
 		return t.getNum() /*!= 0 */ ;
@@ -260,9 +260,9 @@ Token Parser::orOp()
 		lVal = lVal || rVal;
 	}
 	if (lVal)
-		return Token(Sym::BOOL, true);
+		return Token(Sym::BOOLEAN, true);
 	//else:
-	return Token(Sym::BOOL, false);
+	return Token(Sym::BOOLEAN, false);
 }
 
 Token Parser::andOp()
@@ -274,9 +274,9 @@ Token Parser::andOp()
 		lVal = lVal && rVal;
 	}
 	if (lVal)
-		return Token(Sym::BOOL, true);
+		return Token(Sym::BOOLEAN, true);
 	//else:
-	return Token(Sym::BOOL, false);;
+	return Token(Sym::BOOLEAN, false);;
 }
 
 Token Parser::comp()

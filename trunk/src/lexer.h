@@ -56,7 +56,7 @@ class Token
 		{
 			double d;
 			bool b;
-			string *s;
+			std::string *s;
 		} mVal;
 };
 

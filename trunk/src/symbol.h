@@ -26,7 +26,7 @@ namespace Sym {
    enum Symbol 
    {
       // Terminals:
-      NONE = 0, FAIL, END, ID, NUM,  STR, BOOL, T, F,
+      NONE = 0, FAIL, END, ID, NUM,  STR, BOOLEAN, 
       O_PARAN, C_PARAN,O_BRACE, C_BRACE, O_BRACKET, C_BRACKET,
       PLUS_EQ, PLUS, MINUS, TIMES, DIVIDE,
       LESS, LESS_EQ, EQ, NOT_EQ, GREATER, GREATER_EQ,
@@ -34,8 +34,6 @@ namespace Sym {
       DO, WHILE, UNTIL, FOR, IN, BREAK, CONT, READ,
       ASSIGN, INIT, AND, OR, NOT, COMMA, SC, S_QUIT,
 
-
- 		LAST
       };
       
 }
