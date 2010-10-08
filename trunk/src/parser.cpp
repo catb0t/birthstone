@@ -82,7 +82,7 @@ bool Parser::toBool (const Token &t)
 
 inline void Parser::add(const Token &token)
 {
-	mTokenStk.push(token);
+	mStack.push(token);
 }
 
 inline bool Parser::accept(Symbol sym)
@@ -90,7 +90,7 @@ inline bool Parser::accept(Symbol sym)
 	if (mToken.getType() == sym)
 	{
 		add(mToken);
-		mToken.getType() == mLexer.getNext().getType();
+		mToken = mLexer.getNext();
 
 		return true;
 	}
@@ -131,11 +131,13 @@ bool Parser::print()
 	if (accept(Sym::PRINT))
 	{
 		std::string str = "";
-		if (stmt())
+		if (assign())
 		{
-			str = toStr(mTokenStk.top());
-			mTokenStk.pop();
+			str = toStr(mStack.top());
+			mStack.pop();
+
 		}
+		accept(Sym::SC);
 		std::cout << str << std::endl;
 		return true;
 	}
@@ -151,15 +153,37 @@ bool Parser::read()
 
 bool Parser::ifCond()
 {
-	// TODO: bool Parser::ifCond()
+	if (accept(Sym::IF))
+	{
+		bool condition;
+		expect(Sym::O_PARAN);
+		asgnmt();
+		expect(Sym::C_PARAN);
+		
+		condition = toBool(mStack.top());
+		mStack.pop();
+		if (condition)
+		{
+			block() || stmt();
+		}
+		else
+		{
+			ignoreBlock() || ignoreStmt();
+			//TODO: finish bool Parser::ifCond() to call elifCond() and elseCond()
+		}
+
+		return true;
+	}
+	// else: 
+	return false;
 }
 
-bool Parser::elifCond()
+bool Parser::elifCond(bool ignore)
 {
 	// TODO: bool Parser::elifCond()
 }
 
-bool Parser::elseCond()
+bool Parser::elseCond(bool ignore)
 {
 	// TODO: bool Parser::elseCond()
 }
@@ -170,29 +194,107 @@ bool Parser::whileLoop()
 	// TODO: bool Parser::whileLoop()
 }
 
+bool Parser::ignoreBlock()
+{
+	if (accept(Sym::O_BRACE))
+	{
+		while ((mToken != C_BRACE) && (mToken != END))
+			mToken == mLexer.getNext();
+		expect(Sym::C_BRACE);
+		return true;
+	} 
+	// else:
+	return false;
+
+};
+
+bool Parser::ignoreStmt()
+{
+	while ((mToken != SC) && (mToken != END))
+		mToken = mLexer.getNext();
+	expect(Sym::SC);
+	return true;
+}
 
 bool Parser::block()
 {
-	// TODO: bool Parser::block()
-};
+	if (accept(Sym::O_BRACE))
+	{
+		code();
+		expect(Sym::C_BRACE);
+		return true;
+	}
+	// else:
+	return false;
+}
+
+
+
+
+
 bool Parser::stmt()
 {
-	// TODO: bool Parser::stmt()
+	if (accept(Sym::SC)) 
+		return false; //empty statement returns false
+	else
+	{
+		asgnmt();
+		expect(Sym::SC);
+		mStack.pop();
+		return true;
+	}
 }
+
 
 bool Parser::asgnmt()
 {
+	orOp();
 	// TODO: bool Parser::asgnmt()
+// 	if (accept(Sym::ASSIGN))
+// 	{
+// 		
+// 	}
+// 	else if (accept(Sym::INIT))
+// 	{
+// 	}
+	return true;
+
 }
 
 bool Parser::orOp()
 {
-	// TODO: bool Parser::orOp()
+	andOp();
+	if (accept(Sym::OR))
+	{
+		bool lValue;
+		bool rValue;
+		asgnmt();
+
+		rValue = toBool(mStack.top());
+		mStack.pop();
+		lValue = toBool(mStack.top());
+		mStack.pop();
+		mStack.push(lValue || rValue);
+	}
+	return true;
 }
 
 bool Parser::andOp()
 {
-	// TODO: bool Parser::andOp()
+	comp();
+	if (accept(Sym::AND))
+	{
+		bool lValue;
+		bool rValue;
+		asgnmt();
+
+		rValue = toBool(mStack.top());
+		mStack.pop();
+		lValue = toBool(mStack.top());
+		mStack.pop();
+		mStack.push(lValue && rValue);
+	}
+	return true;
 }
 
 bool Parser::comp()

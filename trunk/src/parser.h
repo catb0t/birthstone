@@ -57,11 +57,14 @@ class Parser
 		bool read();
 		
 		bool ifCond();
-		bool elifCond();
-		bool elseCond();
+		bool elifCond(bool ignore = false);
+		bool elseCond(bool ignore = false);
 
 		bool whileLoop();
 
+		bool ignoreBlock();
+		bool ignoreStmt();
+		
 		bool block();
 		bool stmt();
 		bool asgnmt();
@@ -78,8 +81,8 @@ class Parser
 
 		Lexer mLexer;
 		Token mToken;
-		std::stack<Token> mTokenStk;
-		std::map<std::string,Token> mSymTable;
+		std::stack<Token> mStack;
+		std::map<std::string,Token> mSymTbl;
 };
 
 
