@@ -27,7 +27,12 @@ Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE) {}
 
 void Parser::run()
 {
-	mLexer.getNext();
+	mToken = mLexer.getNext();
+
+#ifdef BS_DEBUG
+	/* DEBUG */ std::cerr << "got " << mToken << std::endl;
+#endif // BS_DEBUG
+	
 	code();
 }
 
@@ -78,8 +83,16 @@ inline bool Parser::accept(Symbol sym)
 {
 	if (mToken.getType() == sym)
 	{
+#ifdef BS_DEBUG
+		/* DEBUG */ std::cerr << "accepted " << mToken << std::endl;
+#endif // BS_DEBUG
+		 
 		mToken = mLexer.getNext();
 
+#ifdef BS_DEBUG
+		/* DEBUG */ std::cerr << "got " << mToken << std::endl;
+#endif // BS_DEBUG
+	
 		return true;
 	}
 
@@ -121,7 +134,10 @@ bool Parser::print()
 		std::string str = "";
 		if (!accept(Sym::SC))
 		{
-			str = toStr(asgnmt());
+			str = toStr(factor());
+#warning "uncomment 'str = toStr(asgnmt())' and remove 'str = toStr(factor());'"
+			//str = toStr(asgnmt());
+			
 			expect(Sym::SC);
 		}
 
@@ -135,6 +151,7 @@ bool Parser::print()
 bool Parser::read()
 {
 	// TODO: bool Parser::read()
+	return false;
 }
 
 
@@ -166,17 +183,20 @@ bool Parser::ifCond()
 bool Parser::elifCond(bool ignore)
 {
 	// TODO: bool Parser::elifCond()
+	return false;
 }
 
 bool Parser::elseCond(bool ignore)
 {
 	// TODO: bool Parser::elseCond()
+	return false;
 }
 
 
 bool Parser::whileLoop()
 {
 	// TODO: bool Parser::whileLoop()
+	return false;
 }
 
 bool Parser::ignoreBlock()
@@ -221,12 +241,11 @@ bool Parser::stmt()
 {
 	if (accept(Sym::SC)) 
 		return false; //empty statement returns false
-	else
-	{
+	//else:
 		asgnmt();
 		expect(Sym::SC);
 		return true;
-	}
+
 }
 
 
@@ -297,23 +316,52 @@ Token Parser::sum()
 	}
 	else if (accept(Sym::MINUS))
 	{
+		Token token2 = asgnmt();
 		if (token.getType() == Sym::STR)
-			error("cannot subtract from a string")
+			error("cannot subtract from a string");
 		else if (token.getType() == Sym::NUM)
 			token = Token(Sym::NUM, token.getNum() + toNum(token2));
 		else if (token.getType() == Sym::BOOL)
 			error("cannot subtract from a bool");
 	}
-	// TODO: Token Parser::sum()
 	return token;
 }
 
 Token Parser::product()
 {
-	// TODO: Token Parser::product`()
+ Token token = factor();
+	if (accept(Sym::TIMES))
+	{
+		Token token2 = asgnmt();
+		if (token.getType() == Sym::STR)
+			error("cannot multiply a string");
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::NUM, token.getNum() * toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			error("cannot multiply a bool");
+
+	}
+	else if (accept(Sym::MINUS))
+	{
+		Token token2 = asgnmt();
+		if (token.getType() == Sym::STR)
+			error("cannot divide string");
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::NUM, token.getNum() / toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			error("cannot divide a bool");
+	}
+	return token;
 }
 
 Token Parser::factor()
 {
-	// TODO: Token Parser::factor()
+	
+	Token token = mToken;
+	if ((mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::BOOL) ||
+		 (mToken.getType() == Sym::STR) || (mToken.getType() == Sym::ID))
+		mToken = mLexer.getNext();
+	else
+		error("expected Number, Bool, String, or Identifier.");
+	return token;
 }
