@@ -4,6 +4,9 @@ FLAGS=-fshort-enums
 default: birthstone
 	chmod +x ../bin/birthstone
 
+debug: birthstone.cpp parser.h lexer.h symbol.h parser.cpp lexer.cpp
+	$(CC) -g -DBS_DEBUG lexer.cpp parser.cpp birthstone.cpp -o ../bin/bs-debug
+
 birthstone: birthstone.o parser.o lexer.o 
 	$(CC) $(FLAGS) lexer.o parser.o birthstone.o   -o ../bin/birthstone
 

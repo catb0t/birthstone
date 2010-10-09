@@ -59,6 +59,7 @@ class Token
 			std::string *s;
 		} mVal;
 };
+std::ostream &operator <<(std::ostream &stream, const Token &token);
 
 /******************************************************************************
 *
