@@ -1,38 +1,42 @@
 
+CODE        ->    COND CODE | LOOP CODE | IO_STMT CODE | BLOCK CODE | STMT CODE | e
 
-COND_IF	-> 	if ( COMP ) BLOCK COND2 | if ( COMP ) STMT COND2
-COND_ELIF->		elif( COMP ) BLOCK COND3 | elif ( COMP ) STMT COND3 | e
-COND_ELSE->		else BLOCK | else STMT | e
+COND		   -> 	if ( COMP ) BLOCK COND2 | e
+COND2			->		BLOCK COND_ELIF | STMT COND_ELIF
+COND_ELIF   ->		elif( COMP ) COND_ELIF2 | e
+COND_ELIF2  ->    BLOCK COND_ELSE | STMT COND_ELSE
+COND_ELSE   ->		else COND_ELSE2 | e
+COND_ELSE2	->		BLOCK | STMT
 
-LOOP		->		WLOOP | DLOOP | FLOOP
-WLOOP		->		while ( COMP ) BLOCK | while ( COMP ) STMT
-DLOOP		->		do BLOCK while ( COMP ) ; | do STMT while ( COMP ) ;
-FLOOP		->		for ( ASGNMT ; COMP; EXPR ) BLOCK | for ( ASGNMT ; COMP; EXPR ) STMT
+LOOP		   ->		WLOOP | DLOOP | FLOOP
+WLOOP	   	->		while ( COMP ) BLOCK | while ( COMP ) STMT
+DLOOP			->		do BLOCK while ( COMP ) ; | do STMT while ( COMP ) ;
+FLOOP			->		for ( ASGNMT ; COMP; EXPR ) BLOCK | for ( ASGNMT ; COMP; EXPR ) STMT
 
-PRSTMT	->		print STMT
-RDSTMT	->		read  STMT
+IO_STMT		->		print STMT | read STMT
 
-CODE     ->    LOOP CODE | COND CODE | BLOCK CODE | STMT CODE | e
-BLOCK    ->    { CODE }
-STMT     ->		ASGNMT ;
-ASGNMT	->		ORX ASGMT2
-ASGMT2	->		OP5 ORX | e
-ORX		->		ANDX ORX2
-ORX2		->		OP4 ASGMNT | e
-ANDX		->		COMP ANDX2
-ANDX2		->		OP3 ASGMNT | e
-COMP		->    EXPR COMP2
-COMP2		->		OP2 ASGMNT | e 
-EXPR     ->    TERM EXPR2
-EXPR2		->		OP1 ASGMNT | e		 
-TERM     ->    FACTOR TERM2
-TERM2		->		OP0 ASGMNT | e
-FACTOR   ->    str | t | f | num | id | '(' ASGMNT ')'
 
-OP0		->		* | /
-OP1		->		+ | -
-OP2		->		< | <= | == | != | >= | >
-OP3		->		&&
-OP4		->  	||
-OP5		->		= | := | +=
+
+BLOCK   		->    { CODE }
+STMT    		->		ASGNMT ;
+ASGNMT		->		ORX ASGNMT2
+ASGNMT2		->		OP5 ORX | e
+ORX			->		ANDX ORX2
+ORX2			->		OP4 ASGMNT | e
+ANDX			->		COMP ANDX2
+ANDX2			->		OP3 ASGMNT | e
+COMP			->    EXPR COMP2
+COMP2			->		OP2 ASGMNT | e 
+EXPR     	->    TERM EXPR2
+EXPR2			->		+ ASGMNT | - ASGMNT | e
+TERM     	->    FACTOR TERM2
+TERM2			->		OP0 ASGMNT | e
+FACTOR   	->    str | t | f | num | id | '(' ASGMNT ')'
+
+OP0			->		* | /
+OP1			->		+ | -
+OP2			->		< | <= | == | != | >= | >
+OP3			->		&&
+OP4			->  	||
+OP5			->		= | := | +=
 
