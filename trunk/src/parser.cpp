@@ -134,9 +134,9 @@ bool Parser::print()
 		std::string str = "";
 		if (!accept(Sym::SC))
 		{
-			str = toStr(factor());
+// 			str = toStr(factor());
 #warning "uncomment 'str = toStr(asgnmt())' and remove 'str = toStr(factor());'"
-			//str = toStr(asgnmt());
+			str = toStr(asgnmt());
 			
 			expect(Sym::SC);
 		}
@@ -266,30 +266,37 @@ Token Parser::asgnmt()
 
 Token Parser::orOp()
 {
-	bool lVal = toBool(andOp());
+	Token token = andOp();
+	bool lVal = toBool(token);
 	if (accept(Sym::OR))
 	{
 		bool rVal = toBool(asgnmt());
 		lVal = lVal || rVal;
+
+		if (lVal)
+			return Token(Sym::BOOL, true);
+		//else:
+		return Token(Sym::BOOL, false);
 	}
-	if (lVal)
-		return Token(Sym::BOOL, true);
 	//else:
-	return Token(Sym::BOOL, false);
+	return token;
 }
 
 Token Parser::andOp()
 {
-	bool lVal = toBool(comp());
+	Token token = comp();
+	bool lVal = toBool(token);
 	if (accept(Sym::AND))
 	{
 		bool rVal = toBool(asgnmt());
 		lVal = lVal && rVal;
-	}
-	if (lVal)
-		return Token(Sym::BOOL, true);
+		if (lVal)
+			return Token(Sym::BOOL, true);
+		//else:
+		return Token(Sym::BOOL, false);;
+		}
 	//else:
-	return Token(Sym::BOOL, false);;
+	return token;
 }
 
 Token Parser::comp()
@@ -358,10 +365,15 @@ Token Parser::factor()
 {
 	
 	Token token = mToken;
-	if ((mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::BOOL) ||
+	if (accept(Sym::O_PARAN))
+	{
+		token = asgnmt();
+		expect(Sym::C_PARAN);
+	}
+	else if ((mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::BOOL) ||
 		 (mToken.getType() == Sym::STR) || (mToken.getType() == Sym::ID))
 		mToken = mLexer.getNext();
 	else
-		error("expected Number, Bool, String, or Identifier.");
+		error("expected Number, Bool, String, Identifier or parenthetical expression.");
 	return token;
 }

@@ -57,7 +57,7 @@ Token::Token(Symbol type, const double &num) : mType(type)
 	}
 }
 
-Token::Token(Symbol type, bool boolean)
+Token::Token(Symbol type, bool boolean) : mType(type)
 {
 	if (mType == Sym::BOOL)
 		mVal.b = boolean;
