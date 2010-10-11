@@ -1,0 +1,43 @@
+#!../bin/bs
+{
+printl true;
+}
+
+
+if (false)
+{
+	printl false;
+}
+elif (true)
+{
+	printl true;
+}
+else
+{
+	printl false;
+}
+
+if (false)
+{
+	printl false;
+}
+else
+{
+	printl true;
+}
+
+if (true)
+{
+	printl true;
+}
+elif (false)
+{
+	printl false;
+}
+else
+{
+	printl false;
+}
+
+
+

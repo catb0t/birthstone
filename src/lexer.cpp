@@ -169,7 +169,7 @@ std::ostream &operator <<(std::ostream &stream, const Token &token)
 
 
 Lexer::Lexer(std::istream &input)
-   : mInput(&input), mLineNum(0), mToken(Sym::END) 
+   : mInput(&input), mLineNum(1), mToken(Sym::END)
 {
 	 setupKeywords(); 
 }

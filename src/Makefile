@@ -23,4 +23,4 @@ lexer-test: lexer.cpp lexer.h
 	$(CC) $(FLAGS) -DBS_LEXER_DEBUG lexer.cpp -o lexer
 
 clean:
-	rm -v ./*.o birthstone bs
+	rm -v ../bin/*.o birthstone

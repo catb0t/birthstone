@@ -50,14 +50,14 @@ class Parser
 		bool expect(Symbol sym);
 		bool error(std::string msg);	
 		
-		Token code();
+		void code();
 
 		bool print();
 		bool read();
 		
 		bool ifCond();
-		bool elifCond(bool ignore = false);
-		bool elseCond(bool ignore = false);
+		bool elifCond(bool &ignore);
+		bool elseCond(bool ignore);
 
 		bool whileLoop();
 
