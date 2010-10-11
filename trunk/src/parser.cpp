@@ -29,11 +29,12 @@ void Parser::run()
 {
 	mToken = mLexer.getNext();
 
-#ifdef BS_DEBUG
+	#ifdef BS_DEBUG
 	/* DEBUG */ std::cerr << "got " << mToken << std::endl;
-#endif // BS_DEBUG
-	
-	code();
+	#endif // BS_DEBUG
+
+	while (!accept(Sym::END) && !accept(Sym::QUIT))
+		code();
 }
 
 std::string Parser::toStr  (const Token &t)
@@ -120,10 +121,9 @@ inline bool Parser::error(std::string msg)
 
 
 
-Token Parser::code()
+void Parser::code()
 {
-	while (mToken.getType() !=  Sym::END)
-		block() || ifCond() || whileLoop() || read() || print() || stmt();
+		block() || ifCond() || whileLoop() || print() || read() ||  stmt();
 }
 
 
@@ -173,6 +173,11 @@ bool Parser::ifCond()
 		else
 		{
 			ignoreBlock() || ignoreStmt();
+			while (elifCond(condition))
+				;
+			elseCond(condition);
+			//TODO: if a true condition has been encountered, run else (true) instead
+			
 			//TODO: finish bool Parser::ifCond() to call elifCond() and elseCond()
 		}
 
@@ -182,15 +187,49 @@ bool Parser::ifCond()
 	return false;
 }
 
-bool Parser::elifCond(bool ignore)
+
+bool Parser::elifCond(bool &ignore)
 {
+	
 	// TODO: bool Parser::elifCond()
+	if (accept(Sym::ELIF))
+	{
+		bool condition = false;
+
+		expect(Sym::O_PARAN);
+
+		if (!ignore)
+			condition = toBool(asgnmt());
+		else
+			asgnmt();
+
+		expect(Sym::C_PARAN);
+
+		if (condition)
+		{
+			ignore = true;
+			block() || stmt();
+			
+		}
+		else
+			ignoreBlock() || ignoreStmt();
+		return true;
+			
+	}
+	// else: 
 	return false;
 }
 
 bool Parser::elseCond(bool ignore)
 {
-	// TODO: bool Parser::elseCond()
+	if (accept(Sym::ELSE))
+	{
+		if (ignore)
+			ignoreBlock() || ignoreStmt();
+		else
+			block() || stmt();
+		return true;
+	}
 	return false;
 }
 
@@ -227,8 +266,8 @@ bool Parser::block()
 {
 	if (accept(Sym::O_BRACE))
 	{
-		code();
-		expect(Sym::C_BRACE);
+		while (!accept(Sym::C_BRACE))
+			code();
 		return true;
 	}
 	// else:
@@ -246,10 +285,10 @@ bool Parser::stmt()
 	//else:
 		asgnmt();
 		expect(Sym::SC);
-		return true;
+
+	return true;
 
 }
-
 
 Token Parser::asgnmt()
 {
@@ -417,9 +456,22 @@ Token Parser::factor()
 	}
 	else if ((mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::BOOL) ||
 		 (mToken.getType() == Sym::STR))
+	{
+		#ifdef BS_DEBUG
+		/* DEBUG */ std::cerr << "accepted " << mToken << std::endl;
+		#endif // BS_DEBUG
+		
 		mToken = mLexer.getNext();
 
+		#ifdef BS_DEBUG
+		/* DEBUG */ std::cerr << "got " << mToken << std::endl;
+		#endif // BS_DEBUG
+	}
 	else
+	{
+		std::cerr << token;
 		error("expected Number, Bool, String, Identifier or parenthetical expression.");
+
+	}
 	return token;
 }
