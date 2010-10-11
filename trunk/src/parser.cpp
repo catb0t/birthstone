@@ -134,8 +134,6 @@ bool Parser::print()
 		std::string str = "";
 		if (!accept(Sym::SC))
 		{
-// 			str = toStr(factor());
-#warning "uncomment 'str = toStr(asgnmt())' and remove 'str = toStr(factor());'"
 			str = toStr(asgnmt());
 			
 			expect(Sym::SC);
@@ -268,9 +266,9 @@ Token Parser::orOp()
 {
 	Token token = andOp();
 	bool lVal = toBool(token);
-	if (accept(Sym::OR))
+	while (accept(Sym::OR))
 	{
-		bool rVal = toBool(asgnmt());
+		bool rVal = toBool(andOp());
 		lVal = lVal || rVal;
 
 		if (lVal)
@@ -286,9 +284,9 @@ Token Parser::andOp()
 {
 	Token token = comp();
 	bool lVal = toBool(token);
-	if (accept(Sym::AND))
+	while (accept(Sym::AND))
 	{
-		bool rVal = toBool(asgnmt());
+		bool rVal = toBool(comp());
 		lVal = lVal && rVal;
 		if (lVal)
 			return Token(Sym::BOOL, true);
@@ -310,53 +308,59 @@ Token Parser::comp()
 Token Parser::sum()
 {
 	Token token = product();
-	if (accept(Sym::PLUS))
+	while ((mToken.getType() == Sym::PLUS) || (mToken.getType() == Sym::MINUS))
 	{
-		Token token2 = asgnmt();
-		if (token.getType() == Sym::STR)
-			token = Token(Sym::STR, token.getStr() + toStr(token2));
-		else if (token.getType() == Sym::NUM)
-			token = Token(Sym::NUM, token.getNum() + toNum(token2));
-		else if (token.getType() == Sym::BOOL)
-			error("cannot add to a bool");
-		
-	}
-	else if (accept(Sym::MINUS))
-	{
-		Token token2 = asgnmt();
-		if (token.getType() == Sym::STR)
-			error("cannot subtract from a string");
-		else if (token.getType() == Sym::NUM)
-			token = Token(Sym::NUM, token.getNum() + toNum(token2));
-		else if (token.getType() == Sym::BOOL)
-			error("cannot subtract from a bool");
+		if (accept(Sym::PLUS))
+		{
+			Token token2 = product();
+			if (token.getType() == Sym::STR)
+				token = Token(Sym::STR, token.getStr() + toStr(token2));
+			else if (token.getType() == Sym::NUM)
+				token = Token(Sym::NUM, token.getNum() + toNum(token2));
+			else if (token.getType() == Sym::BOOL)
+				error("cannot add to a bool");
+			
+		}
+		else if (accept(Sym::MINUS))
+		{
+			Token token2 = product();
+			if (token.getType() == Sym::STR)
+				error("cannot subtract from a string");
+			else if (token.getType() == Sym::NUM)
+				token = Token(Sym::NUM, token.getNum() + toNum(token2));
+			else if (token.getType() == Sym::BOOL)
+				error("cannot subtract from a bool");
+		}
 	}
 	return token;
 }
 
 Token Parser::product()
 {
- Token token = factor();
-	if (accept(Sym::TIMES))
+	Token token = factor();
+	while ((mToken.getType() == Sym::TIMES) || (mToken.getType() == Sym::DIVIDE))
 	{
-		Token token2 = asgnmt();
-		if (token.getType() == Sym::STR)
-			error("cannot multiply a string");
-		else if (token.getType() == Sym::NUM)
-			token = Token(Sym::NUM, token.getNum() * toNum(token2));
-		else if (token.getType() == Sym::BOOL)
-			error("cannot multiply a bool");
-
-	}
-	else if (accept(Sym::MINUS))
-	{
-		Token token2 = asgnmt();
-		if (token.getType() == Sym::STR)
-			error("cannot divide string");
-		else if (token.getType() == Sym::NUM)
-			token = Token(Sym::NUM, token.getNum() / toNum(token2));
-		else if (token.getType() == Sym::BOOL)
-			error("cannot divide a bool");
+		if (accept(Sym::TIMES))
+		{
+			Token token2 = factor();
+			if (token.getType() == Sym::STR)
+				error("cannot multiply a string");
+			else if (token.getType() == Sym::NUM)
+				token = Token(Sym::NUM, token.getNum() * toNum(token2));
+			else if (token.getType() == Sym::BOOL)
+				error("cannot multiply a bool");
+	
+		}
+		else if (accept(Sym::DIVIDE))
+		{
+			Token token2 = factor();
+			if (token.getType() == Sym::STR)
+				error("cannot divide string");
+			else if (token.getType() == Sym::NUM)
+				token = Token(Sym::NUM, token.getNum() / toNum(token2));
+			else if (token.getType() == Sym::BOOL)
+				error("cannot divide a bool");
+		}
 	}
 	return token;
 }
