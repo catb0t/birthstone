@@ -1,0 +1,28 @@
+#!../bin/bs
+printl "order of operation test";
+print	 "2 * 3 + 4 = ";
+printl  2 * 3 + 4;
+print	 "4 + 2 * 3 = ";
+printl  4 + 2 * 3;
+printl;
+
+printl "adding strings and numbers";
+print  '"race" + "car" = ';
+printl  "race" + "car";
+print  '"2" + 4 = ';
+printl  "2" + 4;
+print  '2 + "4" = ';
+printl  2 + "4";
+printl;
+
+printl "logical operators test";
+print  "true && true = ";
+printl  true && true;
+print  "true && false = ";
+printl  true && false;
+print  "true || true = ";
+printl  true || true;
+print  "true || false = ";
+printl  true || false;
+print  "false || false && true = ";
+printl  false || false && true;

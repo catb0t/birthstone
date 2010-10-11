@@ -49,6 +49,7 @@ class Token
 		bool        getBool() const;
 		
 		Token &operator =(const Token &token);
+		operator Symbol() const;
 
 	private:
 		Symbol mType;
