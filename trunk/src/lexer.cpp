@@ -89,7 +89,7 @@ Token::~Token()
 	}
 }
 
-Symbol Token::getType() const { return mType; }
+inline Symbol Token::getType() const { return mType; }
 
 
 std::string Token::getStr() const
@@ -135,6 +135,10 @@ Token &Token::operator =(const Token &token)
 			mVal.b = token.mVal.b;
 }
 
+Token::operator Symbol() const
+{
+	return getType();
+}
 
 std::ostream &operator <<(std::ostream &stream, const Token &token)
 {
@@ -145,7 +149,7 @@ std::ostream &operator <<(std::ostream &stream, const Token &token)
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
 		"PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
 		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
-		"IF", "ELIF", "ELSE", "PRINT", "DEF", "CLASS",
+		"IF", "ELIF", "ELSE", "PRINT", "PRINTL", "DEF", "CLASS",
 		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
 		"ASSIGN", "INIT", "AND", "OR", "NOT", "COMMA", "SC", "QUIT"};
 		
@@ -187,6 +191,7 @@ void Lexer::setupKeywords()
 		sKeywords["continue"] =	Sym::CONT;
 		sKeywords["read"] 	 =	Sym::READ;
 		sKeywords["print"] 	 =	Sym::PRINT;
+		sKeywords["printl"] 	 =	Sym::PRINTL;
 		sKeywords["def"] 		 =	Sym::DEF;
 		sKeywords["class"] 	 = Sym::CLASS;
 		

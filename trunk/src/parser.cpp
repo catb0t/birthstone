@@ -129,7 +129,9 @@ Token Parser::code()
 
 bool Parser::print()
 {
-	if (accept(Sym::PRINT))
+	bool newLine = (mToken.getType() == Sym::PRINTL);
+
+	if (accept(Sym::PRINT) || accept(Sym::PRINTL))
 	{
 		std::string str = "";
 		if (!accept(Sym::SC))
@@ -139,7 +141,9 @@ bool Parser::print()
 			expect(Sym::SC);
 		}
 
-		std::cout << str << std::endl;
+		std::cout << str;
+		if (newLine)
+			std::cout << std::endl;
 		return true;
 	}
 	// else:
@@ -249,15 +253,44 @@ bool Parser::stmt()
 
 Token Parser::asgnmt()
 {
+	Token id = mToken;
 	Token token = orOp();
-	// TODO: Token Parser::asgnmt()
-// 	if (accept(Sym::ASSIGN))
-// 	{
-// 		
-// 	}
-// 	else if (accept(Sym::INIT))
-// 	{
-// 	}
+	
+
+		if (accept(Sym::ASSIGN))
+		{
+			if (id.getType() != Sym::ID)
+				error("invalid lvalue in assignment");
+			else
+			{
+				token = orOp();
+				std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
+				if (loc == mSymTbl.end())
+					error("variable not initialized");
+				else
+				{
+					// TODO: Token Parser::asgnmt() ASSIGN
+				}
+			}
+	
+		}
+		else if (accept(Sym::INIT))
+		{
+			if (id.getType() != Sym::ID)
+				error("invalid lvalue in assignment");
+			else
+			{
+				token = orOp();
+				mSymTbl[id.getStr()] = token;
+			}
+		}
+		else if (accept(Sym::PLUS_EQ))
+		{
+			if (id.getType() != Sym::ID)
+				error("invalid lvalue in assignment");
+			// TODO: Token Parser::asgnmt() PLUS_EQ
+		}
+
 	return token;
 
 }
@@ -369,14 +402,23 @@ Token Parser::factor()
 {
 	
 	Token token = mToken;
-	if (accept(Sym::O_PARAN))
+	if (accept(Sym::ID))
+	{
+		std::map<std::string, Token>::iterator loc = mSymTbl.find(token.getStr());
+		if (loc == mSymTbl.end())
+			error(std::string("undefined variable: ") + token.getStr());
+		else
+			token = loc->second;
+	}
+	else if (accept(Sym::O_PARAN))
 	{
 		token = asgnmt();
 		expect(Sym::C_PARAN);
 	}
 	else if ((mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::BOOL) ||
-		 (mToken.getType() == Sym::STR) || (mToken.getType() == Sym::ID))
+		 (mToken.getType() == Sym::STR))
 		mToken = mLexer.getNext();
+
 	else
 		error("expected Number, Bool, String, Identifier or parenthetical expression.");
 	return token;
