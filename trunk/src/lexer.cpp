@@ -24,6 +24,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 std::map <std::string, Token> Lexer::sKeywords;
 
@@ -116,6 +117,33 @@ bool Token::getBool() const
 		return false;
 }
 
+std::string Token::repr() 	const
+{
+	std::stringstream s;
+		// TODO: make sure this matches enum Symbol exactly
+	static std::string typeName[] = {
+		"NONE", "FAIL", "END", "ID", "NUM", "STR", "BOOL",
+		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
+		"PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
+		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
+		"IF", "ELIF", "ELSE", "PRINT", "PRINTL", "DEF", "CLASS",
+		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
+		"ASSIGN", "INIT", "AND", "OR", "NOT", "COMMA", "SC", "QUIT"};
+		
+		s << '<' << typeName[getType()];
+
+		if ((getType() == Sym::STR) || (getType() == Sym::FAIL))
+			s << ", \"" << getStr() <<'"';
+		else if (getType() == Sym::ID)
+			s << ", " << getStr();
+		else if (getType() == Sym::NUM)
+			s << ", " << getNum();
+		else if (getType() == Sym::NUM)
+			s << ", " << std::boolalpha << getBool() << std::noboolalpha;
+		s << '>';
+		return s.str();
+}
+
 Token &Token::operator =(const Token &token)
 {
 	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
@@ -143,27 +171,7 @@ Token::operator Symbol() const
 std::ostream &operator <<(std::ostream &stream, const Token &token)
 {
 
-	// TODO: make sure this matches enum Symbol exactly
-   static std::string typeName[] = {
-		"NONE", "FAIL", "END", "ID", "NUM", "STR", "BOOL",
-		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
-		"PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
-		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
-		"IF", "ELIF", "ELSE", "PRINT", "PRINTL", "DEF", "CLASS",
-		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
-		"ASSIGN", "INIT", "AND", "OR", "NOT", "COMMA", "SC", "QUIT"};
-		
-	stream << '<' << typeName[token.getType()];
-
-	if ((token.getType() == Sym::STR) || (token.getType() == Sym::FAIL))
-		stream << ", \"" << token.getStr() <<'"';
-	else if (token.getType() == Sym::ID) 
-		stream << ", " << token.getStr();
-	else if (token.getType() == Sym::NUM)
-		stream << ", " << token.getNum();
-	else if (token.getType() == Sym::NUM)
-		stream << ", " << std::boolalpha << token.getBool() << std::noboolalpha;
-	stream << '>';
+	stream << token.repr();
 	return stream;
 }
 
