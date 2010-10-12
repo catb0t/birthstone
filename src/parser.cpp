@@ -167,19 +167,13 @@ bool Parser::ifCond()
 		expect(Sym::C_PARAN);
 		
 		if (condition)
-		{
 			block() || stmt();
-		}
 		else
-		{
 			ignoreBlock() || ignoreStmt();
-			while (elifCond(condition))
-				;
-			elseCond(condition);
-			//TODO: if a true condition has been encountered, run else (true) instead
-			
-			//TODO: finish bool Parser::ifCond() to call elifCond() and elseCond()
-		}
+		while (elifCond(condition))
+			;
+		elseCond(condition);
+
 
 		return true;
 	}
