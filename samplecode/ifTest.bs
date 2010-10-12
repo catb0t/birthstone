@@ -1,9 +1,4 @@
 #!../bin/bs
-{
-printl true;
-}
-
-
 if (false)
 {
 	printl false;
