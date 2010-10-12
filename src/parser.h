@@ -42,14 +42,15 @@ class Parser
 		void run();
 		
 	protected:
-		std::string toStr  (const Token &t);
-		double      toNum  (const Token &t);
-		bool        toBool (const Token &t);
+		std::string toStr  (Token t);
+		double      toNum  (Token t);
+		bool        toBool (Token t);
+		const Token &lookup(const Token &id);
 
 		bool accept(Symbol sym);
 		bool expect(Symbol sym);
-		bool error(std::string msg);	
-		
+		bool error(std::string msg);
+			
 		void code();
 
 		bool print();

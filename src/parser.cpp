@@ -37,8 +37,9 @@ void Parser::run()
 		code();
 }
 
-std::string Parser::toStr  (const Token &t)
+std::string Parser::toStr(Token t)
 {
+	t = lookup(t);
 	if (t.getType() == Sym::STR)
 		return t.getStr();
 	else 	if (t.getType() == Sym::BOOL)
@@ -54,8 +55,9 @@ std::string Parser::toStr  (const Token &t)
 	return "";
 }
 
-double Parser::toNum  (const Token &t)
+double Parser::toNum(Token t)
 {
+	t = lookup(t);
 	if (t.getType() == NUM)
 		return t.getNum();
 	else if (t.getType() == Sym::STR)
@@ -66,8 +68,10 @@ double Parser::toNum  (const Token &t)
 	error("toNum(): invalid type for conversion");
 	return 0.0;
 }
-bool Parser::toBool (const Token &t)
+
+bool Parser::toBool (Token t)
 {
+	t = lookup(t);
 	if (t.getType() == Sym::BOOL)
 		return t.getBool();
 	if (t.getType() == NUM)
@@ -77,6 +81,26 @@ bool Parser::toBool (const Token &t)
 	// else:
 	error("toBool(): invalid type for conversion");
 	return false;
+}
+
+/******************************************************************************
+*	If the token is not an identifier, return the token.
+*	If it is an identifier return the value of the variable.
+******************************************************************************/
+const Token &Parser::lookup(const Token &id)
+{
+	if (id.getType() != Sym::ID)
+		return id;
+	//else: (token is an ID)
+	Token token;
+	std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
+	if (loc == mSymTbl.end())
+	{
+		error(std::string("undefined variable: ") + id.getStr());
+		return id;
+	}
+	else
+		return loc->second;
 }
 
 
@@ -286,43 +310,54 @@ bool Parser::stmt()
 
 Token Parser::asgnmt()
 {
-	Token id = mToken;
 	Token token = orOp();
 	
 
-		if (accept(Sym::ASSIGN))
+// 	if (accept(Sym::ASSIGN))
+// 	{
+// 		if (token.getType() != Sym::ID)
+// 			error("invalid lvalue in assignment");
+// 		else
+// 		{
+// 			std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
+// 			if (loc == mSymTbl.end())
+// 				error("variable not initialized");
+// 			else
+// 			{
+// 				// TODO: Token Parser::asgnmt() ASSIGN
+// 			}
+// 		}
+// 
+// 	}
+// 	else if (accept(Sym::INIT))
+	if (accept(Sym::INIT) || accept(Sym::ASSIGN))
+	{
+		Token token2 = lookup(orOp());
+		if (token.getType() != Sym::ID)
+			error("invalid lvalue in assignment");
+		else
 		{
-			if (id.getType() != Sym::ID)
-				error("invalid lvalue in assignment");
-			else
-			{
-				token = orOp();
-				std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
-				if (loc == mSymTbl.end())
-					error("variable not initialized");
-				else
-				{
-					// TODO: Token Parser::asgnmt() ASSIGN
-				}
-			}
-	
+			mSymTbl[token.getStr()] = token2;
 		}
-		else if (accept(Sym::INIT))
+	}
+	else if (accept(Sym::PLUS_EQ))
+	{
+		if (token.getType() != Sym::ID)
+			error("invalid lvalue in assignment");
+		else
 		{
-			if (id.getType() != Sym::ID)
-				error("invalid lvalue in assignment");
-			else
-			{
-				token = orOp();
-				mSymTbl[id.getStr()] = token;
-			}
+			std::string id = token.getStr();
+			token = lookup(token);
+			Token token2 = lookup(orOp());
+			if (token.getType() == Sym::STR)
+				token = Token(Sym::STR, token.getStr() + toStr(token2));
+			else if (token.getType() == Sym::NUM)
+				token = Token(Sym::NUM, token.getNum() + toNum(token2));
+			else if (token.getType() == Sym::BOOL)
+				error("cannot add to a bool");
+			mSymTbl[id] = token;
 		}
-		else if (accept(Sym::PLUS_EQ))
-		{
-			if (id.getType() != Sym::ID)
-				error("invalid lvalue in assignment");
-			// TODO: Token Parser::asgnmt() PLUS_EQ
-		}
+	}
 
 	return token;
 
@@ -331,9 +366,9 @@ Token Parser::asgnmt()
 Token Parser::orOp()
 {
 	Token token = andOp();
-	bool lVal = toBool(token);
 	while (accept(Sym::OR))
 	{
+		bool lVal = toBool(token);
 		bool rVal = toBool(andOp());
 		lVal = lVal || rVal;
 
@@ -349,9 +384,9 @@ Token Parser::orOp()
 Token Parser::andOp()
 {
 	Token token = comp();
-	bool lVal = toBool(token);
 	while (accept(Sym::AND))
 	{
+		bool lVal = toBool(token);
 		bool rVal = toBool(comp());
 		lVal = lVal && rVal;
 		if (lVal)
@@ -376,6 +411,7 @@ Token Parser::sum()
 	Token token = product();
 	while ((mToken.getType() == Sym::PLUS) || (mToken.getType() == Sym::MINUS))
 	{
+		token = lookup(token);
 		if (accept(Sym::PLUS))
 		{
 			Token token2 = product();
@@ -406,6 +442,7 @@ Token Parser::product()
 	Token token = factor();
 	while ((mToken.getType() == Sym::TIMES) || (mToken.getType() == Sym::DIVIDE))
 	{
+		token = lookup(token);
 		if (accept(Sym::TIMES))
 		{
 			Token token2 = factor();
@@ -435,37 +472,21 @@ Token Parser::factor()
 {
 	
 	Token token = mToken;
-	if (accept(Sym::ID))
-	{
-		std::map<std::string, Token>::iterator loc = mSymTbl.find(token.getStr());
-		if (loc == mSymTbl.end())
-			error(std::string("undefined variable: ") + token.getStr());
-		else
-			token = loc->second;
-	}
-	else if (accept(Sym::O_PARAN))
+	if (accept(Sym::O_PARAN))
 	{
 		token = asgnmt();
 		expect(Sym::C_PARAN);
 	}
-	else if ((mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::BOOL) ||
-		 (mToken.getType() == Sym::STR))
-	{
-		#ifdef BS_DEBUG
-		/* DEBUG */ std::cerr << "accepted " << mToken << std::endl;
-		#endif // BS_DEBUG
-		
-		mToken = mLexer.getNext();
-
-		#ifdef BS_DEBUG
-		/* DEBUG */ std::cerr << "got " << mToken << std::endl;
-		#endif // BS_DEBUG
-	}
+	else if (accept(Sym::NUM) || accept(Sym::BOOL) || accept(Sym::STR) || accept(Sym::ID))
+		; //just accept them, we already saved the accepted token as token
 	else
 	{
-		std::cerr << token;
-		error("expected Number, Bool, String, Identifier or parenthetical expression.");
-
+		#ifdef BS_DEBUG
+		/* DEBUG */ std::cerr << token << std::endl;
+		#endif // BS_DEBUG
+		
+		error(std::string("got: ") + token.repr()
+		      + " expected: Number, Bool, String, Identifier or parenthetical expression.");
 	}
 	return token;
 }

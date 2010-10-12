@@ -47,6 +47,7 @@ class Token
 		std::string getStr()  const;
 		double      getNum()  const;
 		bool        getBool() const;
+		std::string repr() 	 const; // string representation of the token: "<TYPE, value>"
 		
 		Token &operator =(const Token &token);
 		operator Symbol() const;
