@@ -45,7 +45,7 @@ class Parser
 		std::string toStr  (Token t);
 		double      toNum  (Token t);
 		bool        toBool (Token t);
-		const Token &lookup(const Token &id);
+		Token lookup(Token id);
 
 		bool accept(Symbol sym);
 		bool expect(Symbol sym);

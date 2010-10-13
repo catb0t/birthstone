@@ -1,4 +1,4 @@
-#!../bin/bs
+#!../bin/birthstone
 print "order of operation test";
 write	 "2 * 3 + 4 = ";
 print  2 * 3 + 4;

@@ -39,6 +39,7 @@ void Parser::run()
 
 std::string Parser::toStr(Token t)
 {
+	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 	t = lookup(t);
 	if (t.getType() == Sym::STR)
 		return t.getStr();
@@ -87,8 +88,9 @@ bool Parser::toBool (Token t)
 *	If the token is not an identifier, return the token.
 *	If it is an identifier return the value of the variable.
 ******************************************************************************/
-const Token &Parser::lookup(const Token &id)
+Token Parser::lookup(Token id)
 {
+	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 	if (id.getType() != Sym::ID)
 		return id;
 	//else: (token is an ID)
@@ -153,6 +155,7 @@ void Parser::code()
 
 bool Parser::print()
 {
+		std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 	bool newLine = (mToken.getType() == Sym::PRINT);
 
 	if (accept(Sym::WRITE) || accept(Sym::PRINT))
@@ -161,7 +164,7 @@ bool Parser::print()
 		if (!accept(Sym::SC))
 		{
 			str = toStr(asgnmt());
-			
+			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 			expect(Sym::SC);
 		}
 
@@ -467,6 +470,8 @@ Token Parser::product()
 	}
 	return token;
 }
+
+// TODO: Implement unary not
 
 Token Parser::factor()
 {
