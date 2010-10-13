@@ -117,6 +117,37 @@ bool Token::getBool() const
 		return false;
 }
 
+				
+void Token::setStr(std::string s)
+{
+	if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
+	{
+		delete [] mVal.s;
+		mVal.s = new std::string(s);
+	}
+	else
+	{
+		mType = Sym::STR;
+		mVal.s = new std::string(s);
+	}
+}
+
+void Token::setNum(double n) 
+{
+	if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
+		delete [] mVal.s;
+	mType = Sym::NUM;
+	mVal.d = n;
+}
+
+void Token::setBool(bool b)
+{
+	if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
+		delete [] mVal.s;
+	mType = Sym::BOOL;
+	mVal.b = b;
+}
+
 std::string Token::repr() 	const
 {
 	std::stringstream s;

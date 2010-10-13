@@ -1,4 +1,25 @@
 #!../bin/birthstone
+###############################################################################
+#   Copyright (C) 2010 by Robert Tolliver                                     #
+#   Robb.Tolli@gmail.com                                                      #
+#                                                                             #
+#   This file is part of Birthstone.                                          #
+#                                                                             #
+#   Birthstone is free software: you can redistribute it and/or modify        #
+#   it under the terms of the GNU General Public License as published by      #
+#   the Free Software Foundation, either version 3 of the License, or         #
+#  (at your option) any later version.                                        #
+#                                                                             #
+#   Birthstone is distributed in the hope that it will be useful,             #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of            #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             #
+#   GNU General Public License for more details.                              #
+#                                                                             #
+#   You should have received a copy of the GNU General Public License         #
+#   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       #
+###############################################################################
+
+
 if (false)
 {
 	print "if (false), else test FAILED";
@@ -10,29 +31,29 @@ else
 
 if (true)
 {
-	print "if (true), else test SUCCEEDED";
+	print "if (true),  else test SUCCEEDED";
 }
 else
 {
-	print "if (true), else test FAILED";
+	print "if (true),  else test FAILED";
 }
 
 if (false)
 {
-	print "if (false), elif(true) test FAILED";
+	print "if (false), elif(true)  test FAILED";
 }
 elif (true)
 {
-	print "if (false), elif(true) test SUCCEEDED";
+	print "if (false), elif(true)  test SUCCEEDED";
 }
 
 if (true)
 {
-	print "if (true), elif(false) test SUCCEEDED";
+	print "if (true),  elif(false) test SUCCEEDED";
 }
 elif (false)
 {
-	print "if (true), elif(false) test FAILED";
+	print "if (true),  elif(false) test FAILED";
 }
 
 if (false)
@@ -41,24 +62,24 @@ if (false)
 }
 elif (false)
 {
-	print "if (true), elif(false), elif(true) test FAILED";
+	print "if (false), elif(false), elif(true) test FAILED";
 }
 elif (true)
 {
-	print "if (true), elif(false), elif(true) test SUCCEEDED";
+	print "if (false), elif(false), elif(true) test SUCCEEDED";
 }
 
 if (false)
 {
-	print "if (false), elif(true), else test FAILED";
+	print "if (false), elif(true),  else test FAILED";
 }
 elif (true)
 {
-	print "if (false), elif(true), else test SUCCEEDED";
+	print "if (false), elif(true),  else test SUCCEEDED";
 }
 else
 {
-	print "if (false), elif(true), else test FAILED";
+	print "if (false), elif(true),  else test FAILED";
 }
 
 if (false)
