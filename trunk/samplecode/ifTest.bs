@@ -1,37 +1,37 @@
 #!../bin/bs
 if (false)
 {
-	printl false;
+	print false;
 }
 elif (true)
 {
-	printl true;
+	print true;
 }
 else
 {
-	printl false;
+	print false;
 }
 
 if (false)
 {
-	printl false;
+	print false;
 }
 else
 {
-	printl true;
+	print true;
 }
 
 if (true)
 {
-	printl true;
+	print true;
 }
 elif (false)
 {
-	printl false;
+	print false;
 }
 else
 {
-	printl false;
+	print false;
 }
 
 

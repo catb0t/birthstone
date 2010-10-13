@@ -126,7 +126,7 @@ std::string Token::repr() 	const
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
 		"PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
 		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
-		"IF", "ELIF", "ELSE", "PRINT", "PRINTL", "DEF", "CLASS",
+		"IF", "ELIF", "ELSE", "WRITE", "PRINT", "DEF", "CLASS",
 		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
 		"ASSIGN", "INIT", "AND", "OR", "NOT", "COMMA", "SC", "QUIT"};
 		
@@ -198,8 +198,8 @@ void Lexer::setupKeywords()
 		sKeywords["break"]    =	Sym::BREAK;
 		sKeywords["continue"] =	Sym::CONT;
 		sKeywords["read"] 	 =	Sym::READ;
+		sKeywords["write"] 	 =	Sym::WRITE;
 		sKeywords["print"] 	 =	Sym::PRINT;
-		sKeywords["printl"] 	 =	Sym::PRINTL;
 		sKeywords["def"] 		 =	Sym::DEF;
 		sKeywords["class"] 	 = Sym::CLASS;
 		
@@ -210,9 +210,8 @@ void Lexer::setupKeywords()
 		sKeywords["true"]     = Token(Sym::BOOL, true);
 		sKeywords["false"]    = Token(Sym::BOOL, false);
 
-		//TODO: make quit work
-// 		sKeywords["exit"]     = Sym::S_QUIT;
-// 		sKeywords["quit"]     = Sym::S_QUIT;
+		sKeywords["exit"]     = Sym::QUIT;
+		sKeywords["quit"]     = Sym::QUIT;
 	}
 }
 
