@@ -1,3 +1,4 @@
+#!../bin/bs
 
 # Requirements 1 and 2
 hi  := "hello";

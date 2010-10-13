@@ -153,9 +153,9 @@ void Parser::code()
 
 bool Parser::print()
 {
-	bool newLine = (mToken.getType() == Sym::PRINTL);
+	bool newLine = (mToken.getType() == Sym::PRINT);
 
-	if (accept(Sym::PRINT) || accept(Sym::PRINTL))
+	if (accept(Sym::WRITE) || accept(Sym::PRINT))
 	{
 		std::string str = "";
 		if (!accept(Sym::SC))
