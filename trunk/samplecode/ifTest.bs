@@ -1,4 +1,4 @@
-#!../bin/bs
+#!../bin/birthstone
 if (false)
 {
 	print false;
