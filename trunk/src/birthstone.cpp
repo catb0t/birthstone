@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 	else // interactive mode
 	{
 		string str;
-		stringstream input;
+		istringstream input;
 		Parser parser(input);
 		cout << "birthstone interactive shell" << endl;
 		do
@@ -54,6 +54,7 @@ int main(int argc, char **argv)
 			cout << "bs> ";
 			getline(cin, str);
 			input.str(str);
+			input.seekg(0);
 			parser.run();
 		} while (true/* TODO:  stop when quit or exit is entered*/);
 	}
