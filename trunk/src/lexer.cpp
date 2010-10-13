@@ -122,7 +122,7 @@ void Token::setStr(std::string s)
 {
 	if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
 	{
-		delete [] mVal.s;
+		delete mVal.s;
 		mVal.s = new std::string(s);
 	}
 	else
@@ -253,11 +253,8 @@ const Token &Lexer::getNext()
 	
 	char ch = mInput->peek();
 	
-// TODO: reenable read file failure?
-// 	if (mInput->fail())
-// 		mToken = Token(FAIL, "reading file failed");
-	/*else*/ if (mInput->eof())
-					mToken = Token(Sym::END);
+	if (mInput->eof())
+		mToken = Token(Sym::END);
 	else if (ch == '#')
 	{
 		do
@@ -265,6 +262,7 @@ const Token &Lexer::getNext()
 			mInput->get();
 			ch = mInput->peek();
 		} while (!(mInput->eof()) && (ch != '\n'));
+		++mLineNum;
 		mInput->get();
 		return getNext();
 	}
@@ -405,7 +403,8 @@ const Token &Lexer::getNext()
 			mInput->get();
 			ch = mInput->peek();
 			if ((!isdigit(ch) && (ch != '.')) 
-				|| (mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::ID)) 
+				|| (mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::ID)
+				|| (mToken.getType() == Sym::STR))
 				minus = true;
 			else
 				mTokenStr += '-';

@@ -74,6 +74,7 @@ class Parser
 		Token comp();
 		Token sum();
 		Token product();
+		Token unary();
 		Token factor();
 
 
