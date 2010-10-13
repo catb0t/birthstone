@@ -20,9 +20,8 @@
 ###############################################################################
 
 # Requirements 1 and 2
-print "Requirement 1:";
-print "  Birthstone shall allow string, number, and boolean variables to be created.";
-print "and Requirement 2:";
+print "Requirement 1: variables and literals";
+print "and Requirement 2: output (print command)";
 
 
 str := "hello";
@@ -33,7 +32,7 @@ print "variable: " + num +  "   literal: " + 1.23;
 print "variable: " + b   +  "   literal: " + true;
 
 # Requirement 3
-print "Requirement 3:";
+print "Requirement 3: input (read command)";
 
 write "enter a string: ";
 read str;
@@ -43,7 +42,7 @@ read num;
 print "you entered: " + num;
 
 # Requirement 4
-print "Requirement 4:";
+print "Requirement 4: if/else if/else";
 if (true)
 {
   print 1;
@@ -57,15 +56,15 @@ if (false)
 {
   print 3;
 }
-else if (true)
+elif (true)
 {
   print 4;
 }
 
 # Requirement 5
-print "Requirement 5:";
+print "Requirement 5: loop(s)";
 i := 0;
-print "(skipping requirement 5 for now)"
+print "\tFAILED(not yet implemented)";
 # while (i < 10)
 # {
 # 	i = i + 1;
@@ -73,7 +72,7 @@ print "(skipping requirement 5 for now)"
 # }
 
 # Requirement 6
-print "Requirement 6:";
+print "Requirement 6: arithmatic operators";
 x := 0;
 y := 0;
 write "enter x: ";
@@ -88,35 +87,89 @@ print "x / y = " + (x / y);
 
 # Requirement 7
 print "Requirement 7:";
-write "1 + 2 * 3 =";
+write "1 + 2 * 3 = ";
 print 1 + 2 * 3;
 write "1 - 3 / 2 = ";
 print 1 - 3 / 2;
-write " 2 * 3 - 4 = ";
+write "2 * 3 - 4 = ";
 print 2 * 3 - 4;
 
 # Requirement 8
-print "Requirement 8:";
+print "Requirement 8: order of operations";
 
-write "1 * (2 + 3) = ";
-print 1 * (2 + 3);
-write "1 - (2 * (3 - 4)) = ";
-print 1 - (2 * (3 - 4));
+print "1 * (2 + 3) = " + (1 * (2 + 3));
+print "1 - (2 * (3 - 4)) = " + (1 - (2 * (3 - 4)));
 
 # Requirement 9
-print "Requirement 9:";
+print "Requirement 9: string appending and concatenation";
 A := "aa";
 B := "bb";
-print ' A = "aa", B = "bb"';
+print 'A = "aa", B = "bb"';
 
-write "A = ";
-print A;
-write "A + B = ";
-print A + B;
-write "A = ";
-print A;
+print "A = " + A;
+print "A + B = " + (A + B);
+print "A = " + A;
 A += B;
-write "after A += B, A = ";
-print A;
+print "after A += B, A = " + A;
 
+
+# Requirement 10
+print "Requirement 10: and (&&), or(||), and not(!) operators";
+if (true && false)  print 'true  && false TEST FAILED';
+if (true || false)  print 'true  || false TEST PASSED';
+if (true && true)   print 'true  && true  TEST PASSED';
+if (true || true)   print 'true  || true  TEST PASSED';
+if (false && false) print 'false && false TEST FAILED';
+if (false || false) print 'false || false TEST FAILED';
+if (!true)          print '!true          TEST FAILED';
+if (!false)         print '!false         TEST PASSED';
+
+
+# Requirement 11
+print "Requirement 11: Comparison operators (numbers and strings)";
+
+if ("aa" <  "ab") print '"aa" <  "ab"';
+if ("aa" <= "ab") print '"aa" <= "ab"';
+if ("aa" == "ab") print '"aa" == "ab"';
+if ("aa" >  "ab") print '"aa" >  "ab"';
+if ("aa" >= "ab") print '"aa" >= "ab"';
+if ("aa" != "ab") print '"aa" != "ab"';
+print;
+
+if ("aa" <  "aa") print '"aa" <  "aa"';
+if ("aa" <= "aa") print '"aa" <= "aa"';
+if ("aa" == "aa") print '"aa" == "aa"';
+if ("aa" >  "aa") print '"aa" >  "aa"';
+if ("aa" >= "aa") print '"aa" >= "aa"';
+if ("aa" != "aa") print '"aa" != "aa"';
+print;
+
+if (1.5 <  -2) print '1.5 <  -2';
+if (1.5 <= -2) print '1.5 <= -2';
+if (1.5 == -2) print '1.5 == -2';
+if (1.5 >  -2) print '1.5 >  -2';
+if (1.5 >= -2) print '1.5 >= -2';
+if (1.5 != -2) print '1.5 != -2';
+print;
+
+if (1.5 <  1.5) print '1.5 <  1.5';
+if (1.5 <= 1.5) print '1.5 <= 1.5';
+if (1.5 == 1.5) print '1.5 == 1.5';
+if (1.5 >  1.5) print '1.5 >  1.5';
+if (1.5 >= 1.5) print '1.5 >= 1.5';
+if (1.5 != 1.5) print '1.5 != 1.5';
+print;
+
+# Requirement 12
+print "Requirement 12: Comparison operators (booleans)";
+if (true == false) print 'true  == false TEST FAILED';
+if (true != false) print 'true  != false TEST PASSED';
+print;
+
+if (true == true) print 'true  == true  TEST PASSED';
+if (true != true) print 'true  != true  TEST FAILED';
+print;
+
+if (false == false) print 'false == false TEST PASSED';
+if (false != false) print 'false != false TEST FAILED';
 

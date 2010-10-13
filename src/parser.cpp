@@ -55,7 +55,7 @@ std::string Parser::toStr(Token t)
 		return sstream.str();
 	}
 	// else:
-	error("toStr(): invalid type for conversion");
+	error(std::string("toStr(): ") + t.repr() + " invalid type for conversion");
 	return "";
 }
 
@@ -214,9 +214,10 @@ bool Parser::read()
 			{
 				std::string str;
 				std::getline(std::cin, str);
-				loc->second.setStr(str);
+				(loc->second).setStr(str);
 			}
 		}
+		expect(Sym::SC);
 		return true;
 	}
 		
@@ -343,8 +344,11 @@ bool Parser::block()
 
 bool Parser::stmt()
 {
-	if (accept(Sym::SC)) 
+	if (accept(Sym::SC))
 		return false; //empty statement returns false
+
+	if (print() || read())
+		return true;	
 	//else:
 		asgnmt();
 		expect(Sym::SC);
@@ -449,8 +453,72 @@ Token Parser::andOp()
 Token Parser::comp()
 {
 	Token token = sum();
-
-	// TODO: Token Parser::comp()
+	if (accept(Sym::EQ))
+	{
+		token = lookup(token);
+		Token token2 = sum();
+		if (token.getType() == Sym::STR)
+			token = Token(Sym::BOOL, token.getStr()  == toStr(token2));
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::BOOL, token.getNum()  == toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			token = Token(Sym::BOOL, token.getBool() == toBool(token2));
+	}
+	if (accept(Sym::NOT_EQ))
+	{
+		token = lookup(token);
+		Token token2 = sum();
+		if (token.getType() == Sym::STR)
+			token = Token(Sym::BOOL, token.getStr()  != toStr(token2));
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::BOOL, token.getNum()  != toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			token = Token(Sym::BOOL, token.getBool() != toBool(token2));
+	}
+	if (accept(Sym::LESS))
+	{
+		token = lookup(token);
+		Token token2 = sum();
+		if (token.getType() == Sym::STR)
+			token = Token(Sym::BOOL, token.getStr()  <  toStr(token2));
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::BOOL, token.getNum()  <  toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			token = Token(Sym::BOOL, token.getBool() <  toBool(token2));
+	}
+	if (accept(Sym::LESS_EQ))
+	{
+		token = lookup(token);
+		Token token2 = sum();
+		if (token.getType() == Sym::STR)
+			token = Token(Sym::BOOL, token.getStr()  <= toStr(token2));
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::BOOL, token.getNum()  <= toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			token = Token(Sym::BOOL, token.getBool() <= toBool(token2));
+	}
+	if (accept(Sym::GREATER))
+	{
+		token = lookup(token);
+		Token token2 = sum();
+		if (token.getType() == Sym::STR)
+			token = Token(Sym::BOOL, token.getStr()  >  toStr(token2));
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::BOOL, token.getNum()  >  toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			token = Token(Sym::BOOL, token.getBool() >  toBool(token2));
+	}
+	if (accept(Sym::GREATER_EQ))
+	{
+		token = lookup(token);
+		Token token2 = sum();
+		if (token.getType() == Sym::STR)
+			token = Token(Sym::BOOL, token.getStr()  >= toStr(token2));
+		else if (token.getType() == Sym::NUM)
+			token = Token(Sym::BOOL, token.getNum()  >= toNum(token2));
+		else if (token.getType() == Sym::BOOL)
+			token = Token(Sym::BOOL, token.getBool() >= toBool(token2));
+	}
 	return token;
 }
 
@@ -489,13 +557,13 @@ Token Parser::sum()
 Token Parser::product()
 {
 // 	std::cerr << __FILE__ << ':' << __LINE__ << ": product()" << std::endl;
-	Token token = factor();
+	Token token = unary();
 	while ((mToken.getType() == Sym::TIMES) || (mToken.getType() == Sym::DIVIDE))
 	{
 		token = lookup(token);
 		if (accept(Sym::TIMES))
 		{
-			Token token2 = factor();
+			Token token2 = unary();
 			if (token.getType() == Sym::STR)
 				error("cannot multiply a string");
 			else if (token.getType() == Sym::NUM)
@@ -506,7 +574,7 @@ Token Parser::product()
 		}
 		else if (accept(Sym::DIVIDE))
 		{
-			Token token2 = factor();
+			Token token2 = unary();
 			if (token.getType() == Sym::STR)
 				error("cannot divide string");
 			else if (token.getType() == Sym::NUM)
@@ -519,6 +587,16 @@ Token Parser::product()
 }
 
 // TODO: Implement unary not
+Token Parser::unary()
+{
+	
+	if (accept(Sym::NOT))
+		return Token(Sym::BOOL, !toBool(unary()));
+	if (accept(Sym::MINUS))
+		return Token(Sym::NUM, -toNum(unary()));
+	//else:
+	return factor();
+}
 
 Token Parser::factor()
 {

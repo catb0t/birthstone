@@ -58,19 +58,6 @@ elif (false)
 
 if (false)
 {
-	print "if (false), elif(false), elif(true) test FAILED";
-}
-elif (false)
-{
-	print "if (false), elif(false), elif(true) test FAILED";
-}
-elif (true)
-{
-	print "if (false), elif(false), elif(true) test SUCCEEDED";
-}
-
-if (false)
-{
 	print "if (false), elif(true),  else test FAILED";
 }
 elif (true)
@@ -95,4 +82,15 @@ else
 	print "if (false), elif(false), else test SUCCEEDED";
 }
 
-
+if (false)
+{
+	print "if (false), elif(false), elif(true) test FAILED";
+}
+elif (false)
+{
+	print "if (false), elif(false), elif(true) test FAILED";
+}
+elif (true)
+{
+	print "if (false), elif(false), elif(true) test SUCCEEDED";
+}
