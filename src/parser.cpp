@@ -39,10 +39,13 @@ void Parser::run()
 
 std::string Parser::toStr(Token t)
 {
-	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": toStr()" << std::endl;
 	t = lookup(t);
 	if (t.getType() == Sym::STR)
+	{
+// 		std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 		return t.getStr();
+	}
 	else 	if (t.getType() == Sym::BOOL)
 		return (t.getBool() ? "true" : "false");
 	else 	if (t.getType() == NUM)
@@ -90,7 +93,7 @@ bool Parser::toBool (Token t)
 ******************************************************************************/
 Token Parser::lookup(Token id)
 {
-	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
+// 	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 	if (id.getType() != Sym::ID)
 		return id;
 	//else: (token is an ID)
@@ -155,7 +158,7 @@ void Parser::code()
 
 bool Parser::print()
 {
-		std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": print()" << std::endl;
 	bool newLine = (mToken.getType() == Sym::PRINT);
 
 	if (accept(Sym::WRITE) || accept(Sym::PRINT))
@@ -163,8 +166,9 @@ bool Parser::print()
 		std::string str = "";
 		if (!accept(Sym::SC))
 		{
+// 			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 			str = toStr(asgnmt());
-			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
+// 			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 			expect(Sym::SC);
 		}
 
@@ -313,6 +317,7 @@ bool Parser::stmt()
 
 Token Parser::asgnmt()
 {
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": asgnmt()" << std::endl;
 	Token token = orOp();
 	
 
@@ -368,6 +373,7 @@ Token Parser::asgnmt()
 
 Token Parser::orOp()
 {
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": orOp()" << std::endl;
 	Token token = andOp();
 	while (accept(Sym::OR))
 	{
@@ -386,6 +392,7 @@ Token Parser::orOp()
 
 Token Parser::andOp()
 {
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": andOp()" << std::endl;
 	Token token = comp();
 	while (accept(Sym::AND))
 	{
@@ -411,6 +418,7 @@ Token Parser::comp()
 
 Token Parser::sum()
 {
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": sum()" << std::endl;
 	Token token = product();
 	while ((mToken.getType() == Sym::PLUS) || (mToken.getType() == Sym::MINUS))
 	{
@@ -442,6 +450,7 @@ Token Parser::sum()
 
 Token Parser::product()
 {
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": product()" << std::endl;
 	Token token = factor();
 	while ((mToken.getType() == Sym::TIMES) || (mToken.getType() == Sym::DIVIDE))
 	{
@@ -475,7 +484,7 @@ Token Parser::product()
 
 Token Parser::factor()
 {
-	
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": factor()" << std::endl;
 	Token token = mToken;
 	if (accept(Sym::O_PARAN))
 	{

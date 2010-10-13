@@ -317,6 +317,22 @@ const Token &Lexer::getNext()
 
       while (!(mInput->eof()) && (ch != quote))
 		{
+			if (ch == '\\')
+			{
+				mInput->get();
+				ch = mInput->peek();
+				switch (ch)
+				{
+					case 't':
+						ch = '\t';
+						break;
+					case 'n':
+						ch = '\n';
+						break;
+					// \\, \', \" will work because we just want to add the
+					//     character after the \ to the string
+				}
+			}
 			mTokenStr += ch;
 			mInput->get();
 			ch = mInput->peek();

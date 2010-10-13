@@ -1,38 +1,77 @@
 #!../bin/birthstone
 if (false)
 {
-	print false;
-}
-elif (true)
-{
-	print true;
+	print "if (false), else test FAILED";
 }
 else
 {
-	print false;
-}
-
-if (false)
-{
-	print false;
-}
-else
-{
-	print true;
+	print "if (false), else test SUCCEEDED";
 }
 
 if (true)
 {
-	print true;
-}
-elif (false)
-{
-	print false;
+	print "if (true), else test SUCCEEDED";
 }
 else
 {
-	print false;
+	print "if (true), else test FAILED";
 }
 
+if (false)
+{
+	print "if (false), elif(true) test FAILED";
+}
+elif (true)
+{
+	print "if (false), elif(true) test SUCCEEDED";
+}
+
+if (true)
+{
+	print "if (true), elif(false) test SUCCEEDED";
+}
+elif (false)
+{
+	print "if (true), elif(false) test FAILED";
+}
+
+if (false)
+{
+	print "if (false), elif(false), elif(true) test FAILED";
+}
+elif (false)
+{
+	print "if (true), elif(false), elif(true) test FAILED";
+}
+elif (true)
+{
+	print "if (true), elif(false), elif(true) test SUCCEEDED";
+}
+
+if (false)
+{
+	print "if (false), elif(true), else test FAILED";
+}
+elif (true)
+{
+	print "if (false), elif(true), else test SUCCEEDED";
+}
+else
+{
+	print "if (false), elif(true), else test FAILED";
+}
+
+if (false)
+{
+	print "if (false), elif(false), else test FAILED";
+}
+elif (false)
+{
+	print "if (false), elif(false), else test FAILED";
+}
+else
+{
+	print "if (false), elif(false), else test SUCCEEDED";
+}
 
 
