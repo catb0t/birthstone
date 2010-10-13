@@ -183,6 +183,44 @@ bool Parser::print()
 
 bool Parser::read()
 {
+	if (accept(Sym::READ))
+	{
+		Token id = mToken;
+		expect(Sym::ID);
+
+		std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
+		if (loc == mSymTbl.end())
+		{
+			std::string str;
+			std::getline(std::cin, str);
+			mSymTbl[id.getStr()] = Token(Sym::STR, str);
+		}
+		else
+		{
+			Symbol type = loc->second.getType();
+			if (type == Sym::BOOL)
+			{
+				double n;
+				std::cin >> n;
+				loc->second.setBool(n != 0);
+			}
+			if (type == NUM)
+			{
+				double n;
+				std::cin >> n;
+				loc->second.setNum(n);
+			}
+			else if (type == Sym::STR)
+			{
+				std::string str;
+				std::getline(std::cin, str);
+				loc->second.setStr(str);
+			}
+		}
+		return true;
+	}
+		
+	
 	// TODO: bool Parser::read()
 	return false;
 }
