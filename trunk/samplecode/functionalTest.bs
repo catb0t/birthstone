@@ -45,20 +45,20 @@ print "you entered: " + num;
 print "Requirement 4: if/else if/else";
 if (true)
 {
-  print 1;
+  print "1 inside  if  of if(true),  else       TEST PASSED";
 }
 else
 {
-  print 2;
+  print "2 inside else of if(true),  else       TEST FAILED";
 }
 
 if (false)
 {
-  print 3;
+  print "3 inside  if  of if(false), elif(true) TEST FAILED";
 }
 elif (true)
 {
-  print 4;
+  print "4 inside else of if(false), elif(true) TEST PASSED";
 }
 
 # Requirement 5
@@ -87,12 +87,9 @@ print "x / y = " + (x / y);
 
 # Requirement 7
 print "Requirement 7: order of operations";
-write "1 + 2 * 3 = ";
-print 1 + 2 * 3;
-write "1 - 3 / 2 = ";
-print 1 - 3 / 2;
-write "2 * 3 - 4 = ";
-print 2 * 3 - 4;
+print "1 + 2 * 3 = " + (1 + 2 * 3);
+print "1 - 3 / 2 = " + (1 - 3 / 2);
+print "2 * 3 - 4 = " + (2 * 3 - 4);
 
 # Requirement 8
 print "Requirement 8: parenthesis";
@@ -115,12 +112,12 @@ print "after A += B, A = " + A;
 
 # Requirement 10
 print "Requirement 10: and (&&), or(||), and not(!) operators";
-if (true && false)  print 'true  && false TEST FAILED';
-if (true || false)  print 'true  || false TEST PASSED';
 if (true && true)   print 'true  && true  TEST PASSED';
 if (true || true)   print 'true  || true  TEST PASSED';
 if (false && false) print 'false && false TEST FAILED';
 if (false || false) print 'false || false TEST FAILED';
+if (true && false)  print 'true  && false TEST FAILED';
+if (true || false)  print 'true  || false TEST PASSED';
 if (!true)          print '!true          TEST FAILED';
 if (!false)         print '!false         TEST PASSED';
 
@@ -128,48 +125,44 @@ if (!false)         print '!false         TEST PASSED';
 # Requirement 11
 print "Requirement 11: Comparison operators (numbers and strings)";
 
-if ("aa" <  "ab") print '"aa" <  "ab"';
-if ("aa" <= "ab") print '"aa" <= "ab"';
-if ("aa" == "ab") print '"aa" == "ab"';
-if ("aa" >  "ab") print '"aa" >  "ab"';
-if ("aa" >= "ab") print '"aa" >= "ab"';
-if ("aa" != "ab") print '"aa" != "ab"';
+if ("aa" <  "ab") print '"aa" <  "ab" TEST PASSED';
+if ("aa" <= "ab") print '"aa" <= "ab" TEST PASSED';
+if ("aa" == "ab") print '"aa" == "ab" TEST FAILED';
+if ("aa" >= "ab") print '"aa" >= "ab" TEST FAILED';
+if ("aa" >  "ab") print '"aa" >  "ab" TEST FAILED';
+if ("aa" != "ab") print '"aa" != "ab" TEST PASSED';
 print;
 
-if ("aa" <  "aa") print '"aa" <  "aa"';
-if ("aa" <= "aa") print '"aa" <= "aa"';
-if ("aa" == "aa") print '"aa" == "aa"';
-if ("aa" >  "aa") print '"aa" >  "aa"';
-if ("aa" >= "aa") print '"aa" >= "aa"';
-if ("aa" != "aa") print '"aa" != "aa"';
+if ("aa" <  "aa") print '"aa" <  "aa" TEST FAILED';
+if ("aa" <= "aa") print '"aa" <= "aa" TEST PASSED';
+if ("aa" == "aa") print '"aa" == "aa" TEST PASSED';
+if ("aa" >= "aa") print '"aa" >= "aa" TEST PASSED';
+if ("aa" >  "aa") print '"aa" >  "aa" TEST FAILED';
+if ("aa" != "aa") print '"aa" != "aa" TEST FAILED';
 print;
 
-if (1.5 <  -2) print '1.5 <  -2';
-if (1.5 <= -2) print '1.5 <= -2';
-if (1.5 == -2) print '1.5 == -2';
-if (1.5 >  -2) print '1.5 >  -2';
-if (1.5 >= -2) print '1.5 >= -2';
-if (1.5 != -2) print '1.5 != -2';
+if (1.5 <  -2) print '1.5 <  -2 TEST FAILED';
+if (1.5 <= -2) print '1.5 <= -2 TEST FAILED';
+if (1.5 == -2) print '1.5 == -2 TEST FAILED';
+if (1.5 >= -2) print '1.5 >= -2 TEST PASSED';
+if (1.5 >  -2) print '1.5 >  -2 TEST PASSED';
+if (1.5 != -2) print '1.5 != -2 TEST PASSED';
 print;
 
-if (1.5 <  1.5) print '1.5 <  1.5';
-if (1.5 <= 1.5) print '1.5 <= 1.5';
-if (1.5 == 1.5) print '1.5 == 1.5';
-if (1.5 >  1.5) print '1.5 >  1.5';
-if (1.5 >= 1.5) print '1.5 >= 1.5';
-if (1.5 != 1.5) print '1.5 != 1.5';
+if (1.5 <  1.5) print '1.5 <  1.5 TEST FAILED';
+if (1.5 <= 1.5) print '1.5 <= 1.5 TEST PASSED';
+if (1.5 == 1.5) print '1.5 == 1.5 TEST PASSED';
+if (1.5 >= 1.5) print '1.5 >= 1.5 TEST PASSED';
+if (1.5 >  1.5) print '1.5 >  1.5 TEST FAILED';
+if (1.5 != 1.5) print '1.5 != 1.5 TEST FAILED';
 print;
 
 # Requirement 12
 print "Requirement 12: Comparison operators (booleans)";
-if (true == false) print 'true  == false TEST FAILED';
-if (true != false) print 'true  != false TEST PASSED';
-print;
-
-if (true == true) print 'true  == true  TEST PASSED';
-if (true != true) print 'true  != true  TEST FAILED';
-print;
-
+if (true  == true)  print 'true  == true  TEST PASSED';
+if (true  != true)  print 'true  != true  TEST FAILED';
 if (false == false) print 'false == false TEST PASSED';
 if (false != false) print 'false != false TEST FAILED';
-
+if (true  == false) print 'true  == false TEST FAILED';
+if (true  != false) print 'true  != false TEST PASSED';
+print;
