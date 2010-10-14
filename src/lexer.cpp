@@ -213,6 +213,10 @@ Lexer::Lexer(std::istream &input)
 	 setupKeywords(); 
 }
 
+Lexer::Lexer(const Lexer &lexer)
+	: mInput(lexer.mInput), mLineNum(1), mToken(Sym::END)
+{}
+
 Lexer::~Lexer() {}
 
 void Lexer::setupKeywords()
@@ -245,8 +249,6 @@ void Lexer::setupKeywords()
 		sKeywords["quit"]     = Sym::QUIT;
 	}
 }
-
-unsigned int Lexer::getLine() const { return mLineNum; }
 
 const Token &Lexer::getNext()
 {
@@ -518,6 +520,12 @@ const Token &Lexer::getNext()
 	return mToken;
 }
 
+unsigned int Lexer::getLine() const { return mLineNum; }
+
+Lexer &Lexer::operator=(const Lexer &lexer)
+{
+		mInput = lexer.mInput;
+}
 
 #ifdef BS_LEXER_DEBUG
 

@@ -39,8 +39,7 @@ void Parser::run()
 
 void Parser::newInput(std::istream &input)
 {
- #warning TODO: add copy constructor to Lexer
-	//mLexer = Lexer(input);
+ 	mLexer = Lexer(input);
 }
 
 
