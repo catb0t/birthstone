@@ -492,7 +492,7 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Sym::EQ);
+			mToken = Token(Sym::NOT_EQ);
 		}
 		else
 			mToken = Token(Sym::NOT);
