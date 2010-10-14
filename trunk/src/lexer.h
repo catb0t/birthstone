@@ -75,12 +75,13 @@ class Lexer
 {
 	public:
 		Lexer(std::istream &input);
+		Lexer(const Lexer &lexer);
 		~Lexer();
 
 		const Token &getNext();
 		unsigned int getLine() const;
 
-		operator bool();
+		Lexer & operator=(const Lexer &lexer);
 	private:
 		void setupKeywords();
 

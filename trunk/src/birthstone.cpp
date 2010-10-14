@@ -41,11 +41,12 @@ int main(int argc, char **argv)
 		{
 			cerr << "error: could not read input file. " << endl;
 		}
+		input.close();
 	}
 	else // interactive mode
 	{
 		string str;
-		istringstream input;
+		stringstream input;
 		Parser parser(input);
 		cout << "birthstone interactive shell" << endl;
 		do
@@ -55,6 +56,7 @@ int main(int argc, char **argv)
 			getline(cin, str);
 			input.str(str);
 			input.seekg(0);
+			parser.newInput(input);
 			parser.run();
 		} while (true/* TODO:  stop when quit or exit is entered*/);
 	}
