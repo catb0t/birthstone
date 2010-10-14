@@ -546,7 +546,7 @@ Token Parser::sum()
 			if (token.getType() == Sym::STR)
 				error("cannot subtract from a string");
 			else if (token.getType() == Sym::NUM)
-				token = Token(Sym::NUM, token.getNum() + toNum(token2));
+				token = Token(Sym::NUM, token.getNum() - toNum(token2));
 			else if (token.getType() == Sym::BOOL)
 				error("cannot subtract from a bool");
 		}
