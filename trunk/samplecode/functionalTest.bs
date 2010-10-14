@@ -86,7 +86,7 @@ print "x * y = " + (x * y);
 print "x / y = " + (x / y);
 
 # Requirement 7
-print "Requirement 7:";
+print "Requirement 7: order of operations";
 write "1 + 2 * 3 = ";
 print 1 + 2 * 3;
 write "1 - 3 / 2 = ";
@@ -95,7 +95,7 @@ write "2 * 3 - 4 = ";
 print 2 * 3 - 4;
 
 # Requirement 8
-print "Requirement 8: order of operations";
+print "Requirement 8: parenthesis";
 
 print "1 * (2 + 3) = " + (1 * (2 + 3));
 print "1 - (2 * (3 - 4)) = " + (1 - (2 * (3 - 4)));
