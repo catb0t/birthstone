@@ -37,6 +37,13 @@ void Parser::run()
 		code();
 }
 
+void Parser::newInput(std::istream &input)
+{
+ #warning TODO: add copy constructor to Lexer
+	//mLexer = Lexer(input);
+}
+
+
 std::string Parser::toStr(Token t)
 {
 // 	std::cerr << __FILE__ << ':' << __LINE__ << ": toStr()" << std::endl;

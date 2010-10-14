@@ -40,6 +40,7 @@ class Parser
 	public:
 		Parser(std::istream &input);
 		void run();
+		void newInput(std::istream &input);
 		
 	protected:
 		std::string toStr  (Token t);
