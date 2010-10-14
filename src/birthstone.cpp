@@ -54,8 +54,9 @@ int main(int argc, char **argv)
 
 			cout << "bs> ";
 			getline(cin, str);
+			input.seekg(0, ios_base::beg);
 			input.str(str);
-			input.seekg(0);
+
 			parser.newInput(input);
 			parser.run();
 		} while (true/* TODO:  stop when quit or exit is entered*/);
