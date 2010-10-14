@@ -51,9 +51,9 @@ int main(int argc, char **argv)
 		cout << "birthstone interactive shell" << endl;
 		do
 		{
-
 			cout << "bs> ";
 			getline(cin, str);
+			input.clear();
 			input.seekg(0, ios_base::beg);
 			input.str(str);
 
