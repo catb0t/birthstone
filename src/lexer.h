@@ -23,50 +23,12 @@
 
 #include "symbol.h"
 using Sym::Symbol;
+#include "token.h"
 
 #include <map>
 #include <string>
 #include <istream>
 
-/******************************************************************************
-*
-******************************************************************************/
-class Token
-{
-	public:
-		
-		
-      Token(Symbol type = Sym::NONE);
-		Token(Symbol type, const std::string &str);
-		Token(Symbol type, const double &num);
-		Token(Symbol type, bool boolean);
-		Token(const Token &token);
-		~Token();
-
-		Symbol      getType() const;
-		std::string getStr()  const;
-		double      getNum()  const;
-		bool        getBool() const;
-
-		void setStr(std::string s);
-		void setNum(double n) ;
-		void setBool(bool b);
-		
-		std::string repr() 	 const; // string representation of the token: "<TYPE, value>"
-		
-		Token &operator =(const Token &token);
-		operator Symbol() const;
-
-	private:
-		Symbol mType;
-		union
-		{
-			double d;
-			bool b;
-			std::string *s;
-		} mVal;
-};
-std::ostream &operator <<(std::ostream &stream, const Token &token);
 
 /******************************************************************************
 *

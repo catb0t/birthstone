@@ -25,16 +25,18 @@
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE) {}
 
-void Parser::run()
+bool Parser::run()
 {
 	mToken = mLexer.getNext();
+	bool cont = true; // continue (true) or quit (false)?
 
 	#ifdef BS_DEBUG
 	/* DEBUG */ std::cerr << "got " << mToken << std::endl;
 	#endif // BS_DEBUG
 
-	while (!accept(Sym::END) && !accept(Sym::QUIT))
-		code();
+	while (!accept(Sym::END) && (cont = code()))
+		;
+	return cont;
 }
 
 void Parser::newInput(std::istream &input)
@@ -155,10 +157,15 @@ inline bool Parser::error(std::string msg)
 
 
 
-
-void Parser::code()
+/******************************************************************************
+* returns false if quit is entered, and true otherwise
+******************************************************************************/
+bool Parser::code()
 {
-		block() || ifCond() || whileLoop() || print() || read() ||  stmt();
+	if (accept(Sym::QUIT))
+		return false;
+	block() || ifCond() || whileLoop() || print() || read() ||  stmt();
+	return true;
 }
 
 
