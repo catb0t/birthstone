@@ -55,8 +55,6 @@ int main(int argc, char **argv)
 			getline(cin, str);
 			input.clear(); // clear flags including ios::eof
 			input.str(str);
-
-
 		} while (parser.run());
 	}
 
