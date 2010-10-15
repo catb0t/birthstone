@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 		string str;
 		stringstream input;
 		Parser parser(input);
-		cout << "birthstone interactive shell" << endl;
+		cout << "birthstone interactive interpreter" << endl;
 		do
 		{
 			cout << "bs> ";
