@@ -58,7 +58,7 @@ if (false)
 }
 elif (true)
 {
-  print "4 inside else of if(false), elif(true) TEST PASSED";
+  print "4 inside elif of if(false), elif(true) TEST PASSED";
 }
 
 # Requirement 5
