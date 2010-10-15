@@ -39,7 +39,7 @@ class Parser
 {
 	public:
 		Parser(std::istream &input);
-		void run();
+		bool run();
 		void newInput(std::istream &input);
 		
 	protected:
@@ -52,7 +52,7 @@ class Parser
 		bool expect(Symbol sym);
 		bool error(std::string msg);
 			
-		void code();
+		bool code();
 
 		bool print();
 		bool read();

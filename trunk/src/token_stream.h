@@ -1,15 +1,13 @@
 /******************************************************************************
-*	  Birthstone is a programming language and interpreter language written    *
-*   by Robb Tolliver for his Senior Project at BYU-Idaho during the Fall      *
-*   Semester of 2010.                                                         *
-*                                                                             *
 *   Copyright (C) 2010 by Robert Tolliver                                     *
 *   Robb.Tolli@gmail.com                                                      *
+*                                                                             *
+*   This file is part of Birthstone.                                          *
 *                                                                             *
 *   Birthstone is free software: you can redistribute it and/or modify        *
 *   it under the terms of the GNU General Public License as published by      *
 *   the Free Software Foundation, either version 3 of the License, or         *
-*   (at your option) any later version.                                       *
+*  (at your option) any later version.                                        *
 *                                                                             *
 *   Birthstone is distributed in the hope that it will be useful,             *
 *   but WITHOUT ANY WARRANTY; without even the implied warranty of            *
@@ -20,46 +18,20 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include "parser.h"
-using namespace std;
+#ifndef BS_TOKEN_STREAM_H
+#define BS_TOKEN_STREAM_H
+#include "token.h"
 
 
-int main(int argc, char **argv)
+class TokenStream
 {
-	string filename;
-	bool interactive = true;
-	if (argc > 1)
-	{
-		ifstream input(argv[1]);
-		if (input.good())
-			Parser(input).run();
-		else
-		{
-			cerr << "error: could not read input file. " << endl;
-		}
-		input.close();
-	}
-	else // interactive mode
-	{
-		string str;
-		stringstream input;
-		Parser parser(input);
-		cout << "birthstone interactive interpreter" << endl;
-		do
-		{
-			cout << "bs> ";
-			getline(cin, str);
-			input.clear(); // clear flags including ios::eof
-			input.str(str);
+	public:
+		virtual Token getNext() = 0;
+	protected:
+		
+	private:
+};
 
+// class SavedTokenStream : public TokenStream {};
 
-		} while (parser.run());
-	}
-
-	
-	return 0;
-}
+#endif
