@@ -24,6 +24,7 @@
 #include "symbol.h"
 using Sym::Symbol;
 #include "token.h"
+#include "token_stream.h"
 
 #include <map>
 #include <string>
@@ -33,7 +34,7 @@ using Sym::Symbol;
 /******************************************************************************
 *
 ******************************************************************************/
-class Lexer
+class Lexer : public TokenStream
 {
 	public:
 		Lexer(std::istream &input);

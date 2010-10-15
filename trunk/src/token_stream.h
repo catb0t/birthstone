@@ -26,12 +26,16 @@
 class TokenStream
 {
 	public:
-		virtual Token getNext() = 0;
+		virtual const Token &getNext() = 0;
 	protected:
 		
 	private:
 };
 
-// class SavedTokenStream : public TokenStream {};
+class SavedTokenStream : public TokenStream
+{
+	public:
+		const Token &getNext();
+};
 
 #endif
