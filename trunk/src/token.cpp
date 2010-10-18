@@ -156,32 +156,21 @@ std::string Token::repr() 	const
 
 Token &Token::operator =(const Token &token)
 {
-	std::cerr << __FILE__ <<':'<<__LINE__<<token <<std::endl;
+
 	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
 	{
-		std::cerr << __FILE__ <<':'<<__LINE__<<std::endl;
 		if (mVal.s)
 			delete  mVal.s;
 		mVal.s = NULL;
 	}
-	std::cerr << __FILE__ <<':'<<__LINE__<<token<<std::endl;
 	mType = token.mType;
 	
 	if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
-	{
-		std::cerr << __FILE__ <<':'<<__LINE__<<std::endl;
 		mVal.s = new std::string(*token.mVal.s);
-	}
 	else if (token.mType == Sym::NUM)
-	{
-		std::cerr << __FILE__ <<':'<<__LINE__<<std::endl;
 		mVal.d = token.mVal.d;
-	}
 	else if (token.mType == Sym::BOOL)
-	{
-		std::cerr << __FILE__ <<':'<<__LINE__<<std::endl;
 		mVal.b = token.mVal.b;
-	}
 	
 	return *this;
 }
