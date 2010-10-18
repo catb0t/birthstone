@@ -176,6 +176,14 @@ const Token &Lexer::getNext()
 				ch = mInput->peek();
 				switch (ch)
 				{
+					case '\n':
+						ch = mInput->peek();
+						break;
+					case '\r':
+						ch = mInput->peek();
+						if (ch == '\n')
+							ch = mInput->peek();
+						break;
 					case 't':
 						ch = '\t';
 						break;
