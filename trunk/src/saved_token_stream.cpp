@@ -24,10 +24,11 @@ SavedTokenStream::SavedTokenStream() : mStream(), mPos(mStream.begin()) {}
 
 const Token &SavedTokenStream::getNext()
 {
+	static Token end(Sym::END);
 	if (mPos == mStream.end())
-		return Token(Sym::END);
+		return end;
 	// else:
-	return *(iter++); //increment, but return the old value
+	return *(mPos++); //increment, but return the old value
 }
 
 

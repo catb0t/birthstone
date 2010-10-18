@@ -164,12 +164,14 @@ Token &Token::operator =(const Token &token)
 
 	mType = token.mType;
 	
-      if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
-			mVal.s = new std::string(*token.mVal.s);
-      else if (token.mType == Sym::NUM)
-			mVal.d = token.mVal.d;
-		else if (token.mType == Sym::BOOL)
-			mVal.b = token.mVal.b;
+	if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
+		mVal.s = new std::string(*token.mVal.s);
+	else if (token.mType == Sym::NUM)
+		mVal.d = token.mVal.d;
+	else if (token.mType == Sym::BOOL)
+		mVal.b = token.mVal.b;
+	
+	return *this;
 }
 
 Token::operator Symbol() const
