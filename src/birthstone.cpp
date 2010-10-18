@@ -1,7 +1,6 @@
 /******************************************************************************
-*	  Birthstone is a programming language and interpreter language written    *
-*   by Robb Tolliver for his Senior Project at BYU-Idaho during the Fall      *
-*   Semester of 2010.                                                         *
+*	 Birthstone is a programming language and interpreter written by           *
+*   Robb Tolliver for his Senior Project at BYU-Idaho (Fall 2010).            *
 *                                                                             *
 *   Copyright (C) 2010 by Robert Tolliver                                     *
 *   Robb.Tolli@gmail.com                                                      *
