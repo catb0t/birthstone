@@ -25,6 +25,7 @@
 #include <stack>
 #include <string>
 #include <memory>
+#include <queue>
 #include "symbol.h"
 #include "lexer.h"
 // #include "object.h"
@@ -43,6 +44,7 @@ class Parser
 		void newInput(std::istream &input);
 		
 	protected:
+		const Token &getNext();
 		std::string toStr  (Token t);
 		double      toNum  (Token t);
 		bool        toBool (Token t);
@@ -85,6 +87,9 @@ class Parser
 		Lexer mLexer;
 		Token mToken;
 		std::map<std::string,Token> mSymTbl;
+		std::queue<SavedTokenStream> mTknStreams;
+		bool mExec; // execute (true) or ignore (false) commands?
+		bool mSave; // save tokens?
 };
 
 
