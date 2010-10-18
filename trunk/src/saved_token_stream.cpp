@@ -18,32 +18,25 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
-#ifndef BS_TOKEN_STREAM_H
-#define BS_TOKEN_STREAM_H
-#include "token.h"
-#include <vector>
+#include "token_stream.h"
 
+SavedTokenStream::SavedTokenStream() : mStream(), mPos(mStream.begin()) {}
 
-class TokenStream
+const Token &SavedTokenStream::getNext()
 {
-	public:
-		virtual const Token &getNext() = 0;
-	protected:
-		
-	private:
-};
+	if (mPos == mStream.end())
+		return Token(Sym::END);
+	// else:
+	return *(iter++); //increment, but return the old value
+}
 
-class SavedTokenStream : public TokenStream
+
+void SavedTokenStream::addToken(Token token)
 {
-	public:
-		SavedTokenStream();
-		const Token &getNext();
-		void addToken(Token token);
-		void rewind();
-	private:
-		std::vector<Token> mStream;
-		std::vector<Token>::iterator mPos;
-		
-};
+	mStream.push_back(token);
+}
 
-#endif
+void SavedTokenStream::rewind()
+{
+	mPos = mStream.begin();
+}
