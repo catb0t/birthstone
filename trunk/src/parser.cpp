@@ -29,21 +29,29 @@ Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE),
 const Token &Parser::getNext()
 {
 	if (mTknStreams.empty())
-		return (mToken = mLexer.getNext());
-	// else:
-	if (mSave)
-		mTknStreams.front().addToken(mToken);
-	return (mToken = mTknStreams.front().getNext());
+	{
+		mToken = mLexer.getNext();
+		#ifdef BS_DEBUG
+			std::cerr << "got " << mToken << std::endl;
+		#endif // BS_DEBUG
+	}
+	else
+	{
+		if (mSave)
+			mTknStreams.front().addToken(mToken);
+	
+		mToken = mTknStreams.front().getNext();
+		#ifdef BS_DEBUG
+			std::cerr << "got " << mToken << std::endl;
+		#endif // BS_DEBUG
+	}
+	return (mToken);
 }
 
 bool Parser::run()
 {
 	getNext();
 	bool cont = true; // continue (true) or quit (false)?
-
-	#ifdef BS_DEBUG
-	/* DEBUG */ std::cerr << "got " << mToken << std::endl;
-	#endif // BS_DEBUG
 
 	while (!accept(Sym::END) && (cont = code()))
 		;
@@ -133,14 +141,12 @@ inline bool Parser::accept(Symbol sym)
 	if (mToken.getType() == sym)
 	{
 #ifdef BS_DEBUG
-		/* DEBUG */ std::cerr << "accepted " << mToken << std::endl;
+		/* DEBUG */ std::cerr << (mExec ? "accepted " : "ignored ") << mToken << std::endl;
 #endif // BS_DEBUG
 		 
 		getNext();
 
-#ifdef BS_DEBUG
-		/* DEBUG */ std::cerr << "got " << mToken << std::endl;
-#endif // BS_DEBUG
+
 	
 		return true;
 	}
