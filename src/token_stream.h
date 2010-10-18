@@ -43,6 +43,7 @@ class SavedTokenStream : public TokenStream
 	private:
 		std::vector<Token> mStream;
 		std::vector<Token>::iterator mPos;
+		Token mToken;
 		
 };
 

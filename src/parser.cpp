@@ -38,9 +38,12 @@ const Token &Parser::getNext()
 	else
 	{
 		if (mSave)
+		{
 			mTknStreams.front().addToken(mToken);
-	
-		mToken = mTknStreams.front().getNext();
+			mToken = mLexer.getNext();
+		}
+		else
+			mToken = mTknStreams.front().getNext();
 		#ifdef BS_DEBUG
 			std::cerr << "got " << mToken << std::endl;
 		#endif // BS_DEBUG
@@ -161,7 +164,7 @@ inline bool Parser::expect(Symbol sym)
 		return true;
 
 	// else:
-	error ("unexpected symbol");
+	error (mToken.repr() + " unexpected symbol. expected: " + Token(sym).repr());
 	return false;
 }
 
@@ -188,7 +191,6 @@ bool Parser::code()
 
 bool Parser::print()
 {
-// 	std::cerr << __FILE__ << ':' << __LINE__ << ": print()" << std::endl;
 	bool newLine = (mToken.getType() == Sym::PRINT);
 
 	if (accept(Sym::WRITE) || accept(Sym::PRINT))
@@ -196,9 +198,7 @@ bool Parser::print()
 		std::string str = "";
 		if (!accept(Sym::SC))
 		{
-// 			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 			str = toStr(asgnmt());
-// 			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 			expect(Sym::SC);
 		}
 
@@ -427,7 +427,6 @@ bool Parser::stmt()
 
 Token Parser::asgnmt()
 {
-// 	std::cerr << __FILE__ << ':' << __LINE__ << ": asgnmt()" << std::endl;
 	Token token = orOp();
 	
 
@@ -711,8 +710,8 @@ Token Parser::factor()
 		token = asgnmt();
 		expect(Sym::C_PARAN);
 	}
-	else if (accept(Sym::NUM) || accept(Sym::BOOL) || accept(Sym::STR) || accept(Sym::ID))
-		; //just accept them, we already saved the accepted token as token
+	else if ((mToken == Sym::NUM) || (mToken == Sym::BOOL) || (mToken == Sym::STR) || (mToken == Sym::ID))
+		getNext(); //just accept them, we already saved the accepted token as token
 	else
 	{
 		#ifdef BS_DEBUG

@@ -20,21 +20,23 @@
 ******************************************************************************/
 #include "token_stream.h"
 
-SavedTokenStream::SavedTokenStream() : mStream(), mPos(mStream.begin()) {}
+SavedTokenStream::SavedTokenStream() : mStream(), mPos(), mToken(Sym::END) {}
 
 const Token &SavedTokenStream::getNext()
 {
-	static Token end(Sym::END);
 	if (mPos == mStream.end())
-		return end;
+		mToken = Token(Sym::END);
 	// else:
-	return *(mPos++); //increment, but return the old value
+	mToken = *mPos;
+	++mPos;
+	return mToken;
 }
 
 
 void SavedTokenStream::addToken(Token token)
 {
 	mStream.push_back(token);
+	rewind();
 }
 
 void SavedTokenStream::rewind()
