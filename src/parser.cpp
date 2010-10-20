@@ -24,31 +24,23 @@
 #include "parser.h"
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE),
-                                      mExec(true), mSave(false) {}
+                                      mExec(true), mSave(NULL) {}
 
 const Token &Parser::getNext()
 {
+	if (mSave)
+			mSave->addToken(mToken);
+
 	if (mTknStreams.empty())
-	{
 		mToken = mLexer.getNext();
-		#ifdef BS_DEBUG
-			std::cerr << "got " << mToken << std::endl;
-		#endif // BS_DEBUG
-	}
 	else
-	{
-		if (mSave)
-		{
-			mTknStreams.front().addToken(mToken);
-			mToken = mLexer.getNext();
-		}
-		else
-			mToken = mTknStreams.front().getNext();
-		#ifdef BS_DEBUG
-			std::cerr << "got " << mToken << std::endl;
-		#endif // BS_DEBUG
-	}
-	return (mToken);
+		mToken = mTknStreams.front().getNext();
+	
+#ifdef BS_DEBUG
+		std::cerr << "got " << mToken << std::endl;
+	#endif // BS_DEBUG
+	
+	return mToken;
 }
 
 bool Parser::run()
@@ -73,7 +65,6 @@ std::string Parser::toStr(Token t)
 	t = lookup(t);
 	if (t.getType() == Sym::STR)
 	{
-// 		std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 		return t.getStr();
 	}
 	else 	if (t.getType() == Sym::BOOL)
@@ -164,7 +155,7 @@ inline bool Parser::expect(Symbol sym)
 		return true;
 
 	// else:
-	error (mToken.repr() + " unexpected symbol. expected: " + Token(sym).repr());
+	error (std::string("error: expected ") + Token(sym).repr() + " got: " + mToken.repr());
 	return false;
 }
 
@@ -193,12 +184,16 @@ bool Parser::print()
 {
 	bool newLine = (mToken.getType() == Sym::PRINT);
 
+// 	std::cerr << __FILE__ << ':' << __LINE__ << ": print()" << std::endl;
+
 	if (accept(Sym::WRITE) || accept(Sym::PRINT))
 	{
+// 		std::cerr << __FILE__ << ':' << __LINE__ << ": print(): got <PRINT> or <WRITE>" << std::endl;
 		std::string str = "";
 		if (!accept(Sym::SC))
 		{
 			str = toStr(asgnmt());
+// 			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 			expect(Sym::SC);
 		}
 
@@ -343,30 +338,29 @@ bool Parser::whileLoop()
 	{
 		SavedTokenStream cond; // condition
 		SavedTokenStream cmds; // commands
+
 		
 		mExec = false;
 		expect(Sym::O_PARAN);
-		mTknStreams.push(cond);
-		mSave = true;
+
+		mSave = &cond;
 		asgnmt();
-		mSave = false;
+		mSave = NULL;
 		expect(Sym::C_PARAN);
 
-		mTknStreams.push(cmds);
-		mSave = true;
+		mSave = &cmds;
 		block() || stmt();
-		mSave = false;
-		mTknStreams.pop(); //pop cmds
+		mSave = NULL;
 
-		
-		mExec = true;
-		while(asgnmt())
-		{
-			mTknStreams.push(cmds);
-			block() || stmt();
-			mTknStreams.pop(); //pop cmds
-		}
-		mTknStreams.pop(); //pop cond
+// 		mTknStreams.push(cond);
+// 		mExec = true;
+// 		while(asgnmt())
+// 		{
+// 			mTknStreams.push(cmds);
+// 			block() || stmt();
+// 			mTknStreams.pop(); //pop cmds
+// 		}
+// 		mTknStreams.pop(); //pop cond
 		return true;
 	}
 	return false;
@@ -418,8 +412,10 @@ bool Parser::stmt()
 	if (print() || read())
 		return true;	
 	//else:
-		asgnmt();
-		expect(Sym::SC);
+// 	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
+	asgnmt();
+// 	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
+	expect(Sym::SC);
 
 	return true;
 
@@ -427,6 +423,7 @@ bool Parser::stmt()
 
 Token Parser::asgnmt()
 {
+// 	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 	Token token = orOp();
 	
 
@@ -717,7 +714,7 @@ Token Parser::factor()
 		#ifdef BS_DEBUG
 		/* DEBUG */ std::cerr << token << std::endl;
 		#endif // BS_DEBUG
-		
+// 		std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 		error(std::string("got: ") + token.repr()
 		      + " expected: Number, Bool, String, Identifier or parenthetical expression.");
 	}
