@@ -89,7 +89,7 @@ class Parser
 		std::map<std::string,Token> mSymTbl;
 		std::queue<SavedTokenStream> mTknStreams;
 		bool mExec; // execute (true) or ignore (false) commands?
-		bool mSave; // save tokens?
+		SavedTokenStream *mSave; // save tokens?
 };
 
 
