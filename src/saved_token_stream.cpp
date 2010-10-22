@@ -25,10 +25,15 @@ SavedTokenStream::SavedTokenStream() : mStream(), mPos(), mToken(Sym::END) {}
 const Token &SavedTokenStream::getNext()
 {
 	if (mPos == mStream.end())
+	{
 		mToken = Token(Sym::END);
-	// else:
-	mToken = *mPos;
-	++mPos;
+		rewind();
+	}
+	else
+	{
+		mToken = *mPos;
+		++mPos;
+	}
 	return mToken;
 }
 
