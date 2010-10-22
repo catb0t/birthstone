@@ -361,20 +361,6 @@ bool Parser::whileLoop()
 		mSave = NULL;
 
 
-		Token t;
-		while (t.getType() != Sym::END)
-		{
-			t = cond.getNext();
-			std::cerr << t << std::endl;
-		}
-		t = Token();
-		while (t.getType() != Sym::END)
-		{
-			t = cond.getNext();
-			std::cerr << t << std::endl;
-		}
-		cond.rewind();
-
 		mTknStreams.push(cond);
 		Token oldTkn = mToken;
 		getNext();
