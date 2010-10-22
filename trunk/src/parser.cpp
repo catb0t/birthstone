@@ -32,13 +32,21 @@ const Token &Parser::getNext()
 			mSave->addToken(mToken);
 
 	if (mTknStreams.empty())
+	{
 		mToken = mLexer.getNext();
+		#ifdef BS_DEBUG
+			std::cerr << "got " << mToken << "from Lexer"<< std::endl;
+		#endif // BS_DEBUG
+	}
 	else
+	{
 		mToken = mTknStreams.front().getNext();
-	
 #ifdef BS_DEBUG
-		std::cerr << "got " << mToken << std::endl;
-	#endif // BS_DEBUG
+			std::cerr << "got " << mToken << "from Saved" << std::endl;
+#endif // BS_DEBUG
+	}
+	
+
 	
 	return mToken;
 }
@@ -352,15 +360,35 @@ bool Parser::whileLoop()
 		block() || stmt();
 		mSave = NULL;
 
-// 		mTknStreams.push(cond);
-// 		mExec = true;
-// 		while(asgnmt())
-// 		{
+
+		Token t;
+		while (t.getType() != Sym::END)
+		{
+			t = cond.getNext();
+			std::cerr << t << std::endl;
+		}
+		t = Token();
+		while (t.getType() != Sym::END)
+		{
+			t = cond.getNext();
+			std::cerr << t << std::endl;
+		}
+		cond.rewind();
+
+		mTknStreams.push(cond);
+		Token oldTkn = mToken;
+		getNext();
+		mExec = true;
+		while(toBool(asgnmt()))
+		{
+			cond.rewind();
 // 			mTknStreams.push(cmds);
 // 			block() || stmt();
 // 			mTknStreams.pop(); //pop cmds
-// 		}
-// 		mTknStreams.pop(); //pop cond
+// 			cmds.rewind();
+		}
+		mTknStreams.pop(); //pop cond
+		mToken = oldTkn;
 		return true;
 	}
 	return false;
@@ -707,8 +735,8 @@ Token Parser::factor()
 		token = asgnmt();
 		expect(Sym::C_PARAN);
 	}
-	else if ((mToken == Sym::NUM) || (mToken == Sym::BOOL) || (mToken == Sym::STR) || (mToken == Sym::ID))
-		getNext(); //just accept them, we already saved the accepted token as token
+	else if (accept(Sym::NUM) || accept(Sym::BOOL) || accept(Sym::STR) || accept(Sym::ID))
+		; //just accept them, we already saved the accepted token as token
 	else
 	{
 		#ifdef BS_DEBUG
