@@ -140,7 +140,11 @@ std::string Token::repr() 	const
 		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
 		"ASSIGN", "INIT", "AND", "OR", "NOT", "COMMA", "SC", "QUIT"};
 		
-		s << '<' << typeName[getType()];
+		s << '<';
+		if ((getType() >= Sym::NONE) && (getType() <= Sym::QUIT))
+		 s << typeName[getType()];
+		else
+			s << getType();
 
 		if ((getType() == Sym::STR) || (getType() == Sym::FAIL))
 			s << ", \"" << getStr() <<'"';
