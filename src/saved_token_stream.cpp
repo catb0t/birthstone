@@ -20,14 +20,20 @@
 ******************************************************************************/
 #include "token_stream.h"
 
-SavedTokenStream::SavedTokenStream() : mStream(), mPos(), mToken(Sym::END) {}
+#ifdef BS_DEBUG
+#include <iostream>
+#endif // BS_DEBUG
+
+SavedTokenStream::SavedTokenStream() : mStream(), mPos(mStream.begin()), mToken(Sym::END)
+{
+	mStream.reserve(20);
+}
 
 const Token &SavedTokenStream::getNext()
 {
-	if (mPos == mStream.end())
+	if (mStream.empty() || (mPos == mStream.end()))
 	{
 		mToken = Token(Sym::END);
-		rewind();
 	}
 	else
 	{
@@ -42,6 +48,14 @@ void SavedTokenStream::addToken(Token token)
 {
 	mStream.push_back(token);
 	rewind();
+
+	#ifdef BS_DEBUG
+	std::cerr << "token stream: ";
+	for ( std::vector<Token>::iterator i = mStream.begin(); i != mStream.end(); ++i)
+		std::cerr << *i << " ";
+	std::cerr << std::endl;
+
+	#endif // BS_DEBUG		
 }
 
 void SavedTokenStream::rewind()
