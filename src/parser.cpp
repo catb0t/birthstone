@@ -188,7 +188,7 @@ bool Parser::code()
 {
 	if (accept(Sym::QUIT))
 		return false;
-	block() || ifCond() || whileLoop() || print() || read() ||  stmt();
+	block() || ifCond() || loop() || print() || read() ||  stmt();
 	return true;
 }
 
@@ -266,7 +266,6 @@ bool Parser::read()
 	}
 		
 	
-	// TODO: bool Parser::read()
 	return false;
 }
 
@@ -301,7 +300,6 @@ bool Parser::ifCond()
 bool Parser::elifCond(bool &ignore)
 {
 	
-	// TODO: bool Parser::elifCond()
 	if (accept(Sym::ELIF))
 	{
 		bool condition = false; 
@@ -344,28 +342,61 @@ bool Parser::elseCond(bool ignore)
 }
 
 
-bool Parser::whileLoop()
+bool Parser::loop()
 {
-	// TODO: bool Parser::whileLoop()
-	if (accept(Sym::WHILE))
+	bool isWhile, isDoWhile, isFor;	
+	if ((isWhile = accept(Sym::WHILE)) || (isDoWhile = accept(Sym::DO)) \
+		|| (isFor = accept(Sym::FOR)))
 	{
 		SavedTokenStream cond; // condition
 		SavedTokenStream cmds; // commands
-		bool oldExec = mExec;
+		SavedTokenStream incr; // increment   (for loops only)
 		
-		mExec = false;
-		expect(Sym::O_PARAN);
+		bool oldExec = mExec;
 
-		mSave = &cond;
-		asgnmt();
-		mSave = NULL;
-		expect(Sym::C_PARAN);
-		cond.add(Sym::END);
+		// while (...) or for(...;...;...)
+		if (!isDoWhile)
+		{
+			expect(Sym::O_PARAN);
+			if (isFor)
+			{
+				asgnmt();
+				expect(Sym::SC);
+			}
+		
+			mExec = false;
+			mSave = &cond;
+			asgnmt();
+			mSave = NULL;
+			cond.add(Sym::END);
 
+			if (isFor)
+			{
+				expect(Sym::SC);
+				mSave = &incr;
+				asgnmt();
+				mSave = NULL;
+				incr.add(Sym::END);
+			}
+			expect(Sym::C_PARAN);
+		}
+
+		mExec = isDoWhile && oldExec; // do-while executes once before checking condition
 		mSave = &cmds;
 		block() || stmt();
 		mSave = NULL;
 		cmds.add(Sym::END);
+		mExec = false;
+
+		if (isDoWhile)
+		{
+			expect(Sym::O_PARAN);
+			mSave = &cond;
+			asgnmt();
+			mSave = NULL;
+			cond.add(Sym::END);
+			expect(Sym::C_PARAN);
+		}
 
 		mTknStreams.push(cond);
 		Token oldTkn = mToken;
@@ -380,8 +411,15 @@ bool Parser::whileLoop()
 			getNext();
 			block() || stmt();
 			mTknStreams.pop(); //pop cmds
-			mToken =condTkn;
+			mToken = condTkn;
 			accept(Sym::END);
+			if (isFor)
+			{
+				mTknStreams.push(incr);
+				getNext();
+				asgnmt();
+				mTknStreams.pop(); //pop incr
+			}
 
 		}
 		mTknStreams.pop(); //pop cond
@@ -714,11 +752,39 @@ Token Parser::product()
 // TODO: Implement unary not
 Token Parser::unary()
 {
-	
-	if (accept(Sym::NOT) && mExec)
-		return Token(Sym::BOOL, !toBool(unary()));
-	if (accept(Sym::MINUS) && mExec)
-		return Token(Sym::NUM, -toNum(unary()));
+	if (mExec)
+	{
+		if (accept(Sym::NOT))
+			return Token(Sym::BOOL, !toBool(unary()));
+		if (accept(Sym::MINUS))
+			return Token(Sym::NUM, -toNum(unary()));
+		if (accept(Sym::INCR))
+		{
+			Token id = mToken;
+			expect(Sym::ID);
+			Token &val = mSymTbl[id.getStr()];
+			if (val.getType() == Sym::NUM)
+			{
+				val.setNum(val.getNum() + 1);
+				return val;
+			}
+			else
+				error("only numeric variables can be incremented");
+		}
+		if (accept(Sym::DECR))
+		{
+			Token id = mToken;
+			expect(Sym::ID);
+			Token &val = mSymTbl[id.getStr()];
+			if (val.getType() == Sym::NUM)
+			{
+				val.setNum(val.getNum() - 1);
+				return val;
+			}
+			else
+				error("only numeric variables can be decremented");
+		}
+	}
 	//else:
 	return factor();
 }
