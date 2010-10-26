@@ -138,11 +138,11 @@ std::string Token::repr() 	const
 		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
 		"IF", "ELIF", "ELSE", "WRITE", "PRINT", "DEF", "CLASS",
 		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
-		"ASSIGN", "INIT", "AND", "OR", "NOT", "COMMA", "SC", "QUIT"};
+		"ASSIGN", "INIT", "AND", "OR", "NOT", "INCR", "DECR", "COMMA", "SC", "QUIT"};
 		
 		s << '<';
 		if ((getType() >= Sym::NONE) && (getType() <= Sym::QUIT))
-		 s << typeName[getType()];
+			 s << typeName[getType()];
 		else
 			s << getType();
 

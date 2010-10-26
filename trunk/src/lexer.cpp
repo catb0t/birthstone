@@ -203,6 +203,11 @@ const Token &Lexer::getNext()
 			mInput->get();
 			mToken = Sym::PLUS_EQ;
 		}
+		else if (ch == '+')
+		{
+			mInput->get();
+			mToken = Sym::INCR;
+		}
 		else
 			mToken = Sym::PLUS;
 	}
@@ -218,35 +223,36 @@ const Token &Lexer::getNext()
 	}
 	else if ((ch == '-') || (ch == '.') || isdigit(ch))
 	{
-		bool minus    = false;
 		std::string mTokenStr;
 		mTokenStr.reserve(10);
+		Token t;
 				
 		if (ch == '-')
 		{
 			mInput->get();
 			ch = mInput->peek();
-			if ((!isdigit(ch) && (ch != '.')) 
+			if (ch == '-')
+			{
+				t = Token(Sym::DECR);
+			}
+			else if ((!isdigit(ch) && (ch != '.')) 
 				|| (mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::ID)
 				|| (mToken.getType() == Sym::STR))
-				minus = true;
+				t = Token(Sym::MINUS);
 			else
 				mTokenStr += '-';
 		}
-		if (minus)
-			mToken = Token(Sym::MINUS);
-		else
+		bool foundPoint = false;
+		do
 		{
-			bool foundPoint = false;
-			do
-			{
-				foundPoint = (ch == '.') || foundPoint;
-				mTokenStr += ch;
-				mInput->get();
-				ch = mInput->peek();
-			} while(!(mInput->eof()) && (isdigit(ch) || (!foundPoint && (ch == '.'))));
-			mToken = Token(Sym::NUM, atof(mTokenStr.c_str()));
-		}
+			foundPoint = (ch == '.') || foundPoint;
+			mTokenStr += ch;
+			mInput->get();
+			ch = mInput->peek();
+		} while(!(mInput->eof()) && (isdigit(ch) || (!foundPoint && (ch == '.'))));
+		mToken = Token(Sym::NUM, atof(mTokenStr.c_str()));
+		if (t.getType() != Sym::NONE)
+			mToken = t; 
 	}
 	else if (ch == '<')
 	{

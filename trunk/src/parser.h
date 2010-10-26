@@ -63,7 +63,7 @@ class Parser
 		bool elifCond(bool &ignore);
 		bool elseCond(bool ignore);
 
-		bool whileLoop();
+		bool loop();
 
 		bool ignoreBlock();
 		bool ignoreStmt();
