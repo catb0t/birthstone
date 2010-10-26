@@ -29,20 +29,25 @@ Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE),
 const Token &Parser::getNext()
 {
 	if (mSave)
-			mSave->add(mToken);
+	{
+		mSave->add(mToken);
+		#ifdef BS_DEBUG
+			std::cerr << "saved  " << mToken << std::endl;
+		#endif // BS_DEBUG
+	}
 
 	if (mTknStreams.empty())
 	{
 		mToken = mLexer.getNext();
 		#ifdef BS_DEBUG
-			std::cerr << "got " << mToken << "from Lexer"<< std::endl;
+			std::cerr << "got " << mToken << " from Lexer"<< std::endl;
 		#endif // BS_DEBUG
 	}
 	else
 	{
-		mToken = mTknStreams.front().getNext();
+		mToken = mTknStreams.top().getNext();
 #ifdef BS_DEBUG
-			std::cerr << "got " << mToken << "from Saved" << std::endl;
+			std::cerr << "got " << mToken << " from Saved " << mTknStreams.size()<< std::endl;
 #endif // BS_DEBUG
 	}
 	
@@ -346,7 +351,7 @@ bool Parser::whileLoop()
 	{
 		SavedTokenStream cond; // condition
 		SavedTokenStream cmds; // commands
-
+		bool oldExec = mExec;
 		
 		mExec = false;
 		expect(Sym::O_PARAN);
@@ -365,17 +370,19 @@ bool Parser::whileLoop()
 		mTknStreams.push(cond);
 		Token oldTkn = mToken;
 		getNext();
-		mExec = true;
+		mExec = oldExec;
+
 		while(toBool(asgnmt()))
 		{
-// 			cond.rewind();
+
 			Token condTkn=mToken;
 			mTknStreams.push(cmds);
+			getNext();
 			block() || stmt();
 			mTknStreams.pop(); //pop cmds
 			mToken =condTkn;
 			accept(Sym::END);
-// 			cmds.rewind();
+
 		}
 		mTknStreams.pop(); //pop cond
 		mToken = oldTkn;

@@ -36,8 +36,8 @@ const Token &SavedTokenStream::getNext()
 	else
 	{
 		mToken = mStream.front();
-		mStream.pop();
 		mStream.push(mToken);
+		mStream.pop();
 	}
 		 
 
