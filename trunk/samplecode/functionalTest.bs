@@ -70,6 +70,9 @@ while (i < 10)
 	i = i + 1;
  	print i;
 }
+print "for loop: numbers 1-10 should be printed";
+for(i = 1; i <= 10; i = i + 1)
+	print i;
 
 # Requirement 6
 print "Requirement 6: arithmatic operators";

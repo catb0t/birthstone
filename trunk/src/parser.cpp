@@ -415,10 +415,12 @@ bool Parser::loop()
 			accept(Sym::END);
 			if (isFor)
 			{
+				Token cmdsTkn=mToken;
 				mTknStreams.push(incr);
 				getNext();
 				asgnmt();
 				mTknStreams.pop(); //pop incr
+				mToken = cmdsTkn;
 			}
 
 		}
