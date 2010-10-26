@@ -344,7 +344,7 @@ bool Parser::elseCond(bool ignore)
 
 bool Parser::loop()
 {
-	bool isWhile, isDoWhile, isFor;	
+	bool isWhile = false, isDoWhile = false, isFor = false;
 	if ((isWhile = accept(Sym::WHILE)) || (isDoWhile = accept(Sym::DO)) \
 		|| (isFor = accept(Sym::FOR)))
 	{
@@ -390,12 +390,14 @@ bool Parser::loop()
 
 		if (isDoWhile)
 		{
+			expect(Sym::WHILE);
 			expect(Sym::O_PARAN);
 			mSave = &cond;
 			asgnmt();
 			mSave = NULL;
 			cond.add(Sym::END);
 			expect(Sym::C_PARAN);
+			expect(Sym::SC);
 		}
 
 		mTknStreams.push(cond);

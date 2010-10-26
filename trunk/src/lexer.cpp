@@ -48,6 +48,7 @@ void Lexer::setupKeywords()
 		sKeywords["if"]       =	Sym::IF;
 		sKeywords["elif"]     = Sym::ELIF;
 		sKeywords["else"]     =	Sym::ELSE;
+		sKeywords["do"]    	 =	Sym::DO;
 		sKeywords["while"]    =	Sym::WHILE;
 		sKeywords["until"]    =	Sym::UNTIL;
 		sKeywords["for"]      =	Sym::FOR;
