@@ -42,7 +42,7 @@ read num;
 print "you entered: " + num;
 
 # Requirement 4
-print "Requirement 4: if/else if/else";
+print "Requirement 4: if/elif/else";
 if (true)
 {
   print "1 inside  if  of if(true),  else       TEST PASSED";
@@ -63,13 +63,13 @@ elif (true)
 
 # Requirement 5
 print "Requirement 5: loop(s)";
+print "while loop: numbers 1-10 should be printed";
 i := 0;
-print "\tFAILED(not yet implemented)";
-# while (i < 10)
-# {
-# 	i = i + 1;
-# 	print i;
-# }
+while (i < 10)
+{
+	i = i + 1;
+ 	print i;
+}
 
 # Requirement 6
 print "Requirement 6: arithmatic operators";

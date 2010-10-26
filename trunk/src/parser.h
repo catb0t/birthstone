@@ -25,7 +25,7 @@
 #include <stack>
 #include <string>
 #include <memory>
-#include <queue>
+#include <stack>
 #include "symbol.h"
 #include "lexer.h"
 // #include "object.h"
@@ -87,7 +87,7 @@ class Parser
 		Lexer mLexer;
 		Token mToken;
 		std::map<std::string,Token> mSymTbl;
-		std::queue<SavedTokenStream> mTknStreams;
+		std::stack<SavedTokenStream> mTknStreams;
 		bool mExec; // execute (true) or ignore (false) commands?
 		SavedTokenStream *mSave; // save tokens?
 };
