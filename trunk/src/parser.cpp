@@ -29,7 +29,7 @@ Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE),
 const Token &Parser::getNext()
 {
 	if (mSave)
-			mSave->addToken(mToken);
+			mSave->add(mToken);
 
 	if (mTknStreams.empty())
 	{
@@ -355,11 +355,12 @@ bool Parser::whileLoop()
 		asgnmt();
 		mSave = NULL;
 		expect(Sym::C_PARAN);
+		cond.add(Sym::END);
 
 		mSave = &cmds;
 		block() || stmt();
 		mSave = NULL;
-
+		cmds.add(Sym::END);
 
 		mTknStreams.push(cond);
 		Token oldTkn = mToken;
@@ -367,10 +368,13 @@ bool Parser::whileLoop()
 		mExec = true;
 		while(toBool(asgnmt()))
 		{
-			cond.rewind();
-// 			mTknStreams.push(cmds);
-// 			block() || stmt();
-// 			mTknStreams.pop(); //pop cmds
+// 			cond.rewind();
+			Token condTkn=mToken;
+			mTknStreams.push(cmds);
+			block() || stmt();
+			mTknStreams.pop(); //pop cmds
+			mToken =condTkn;
+			accept(Sym::END);
 // 			cmds.rewind();
 		}
 		mTknStreams.pop(); //pop cond
@@ -551,7 +555,7 @@ Token Parser::comp()
 				token = Token(Sym::BOOL, token.getBool() == toBool(token2));
 		}
 	}
-	if (accept(Sym::NOT_EQ))
+	else if (accept(Sym::NOT_EQ))
 	{
 		token = lookup(token);
 		Token token2 = sum();
@@ -565,7 +569,7 @@ Token Parser::comp()
 				token = Token(Sym::BOOL, token.getBool() != toBool(token2));
 		}
 	}
-	if (accept(Sym::LESS))
+	else if (accept(Sym::LESS))
 	{
 		token = lookup(token);
 		Token token2 = sum();
@@ -579,7 +583,7 @@ Token Parser::comp()
 				token = Token(Sym::BOOL, token.getBool() <  toBool(token2));
 		}
 	}
-	if (accept(Sym::LESS_EQ))
+	else if (accept(Sym::LESS_EQ))
 	{
 		token = lookup(token);
 		Token token2 = sum();
@@ -593,7 +597,7 @@ Token Parser::comp()
 				token = Token(Sym::BOOL, token.getBool() <= toBool(token2));
 		}
 	}
-	if (accept(Sym::GREATER))
+	else if (accept(Sym::GREATER))
 	{
 		token = lookup(token);
 		Token token2 = sum();
@@ -607,7 +611,7 @@ Token Parser::comp()
 				token = Token(Sym::BOOL, token.getBool() >  toBool(token2));
 		}
 	}
-	if (accept(Sym::GREATER_EQ))
+	else if (accept(Sym::GREATER_EQ))
 	{
 		token = lookup(token);
 		Token token2 = sum();

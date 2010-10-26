@@ -21,7 +21,7 @@
 #ifndef BS_TOKEN_STREAM_H
 #define BS_TOKEN_STREAM_H
 #include "token.h"
-#include <vector>
+#include <queue>
 
 
 class TokenStream
@@ -38,13 +38,13 @@ class SavedTokenStream : public TokenStream
 	public:
 		SavedTokenStream();
 		const Token &getNext();
-		void addToken(Token token);
+		void add(const Token &token);
 		void rewind();
 	private:
-		std::vector<Token> mStream;
-		std::vector<Token>::iterator mPos;
 		Token mToken;
-		
+		std::queue<Token> mStream;
+// 		std::vector<Token>::iterator mPos;
+
 };
 
 #endif
