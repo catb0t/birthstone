@@ -24,41 +24,52 @@
 #include <iostream>
 #endif // BS_DEBUG
 
-SavedTokenStream::SavedTokenStream() : mStream(), mPos(mStream.begin()), mToken(Sym::END)
+SavedTokenStream::SavedTokenStream() : mStream(), mToken(Sym::END) //, mPos(mStream.begin())
 {
-	mStream.reserve(20);
+// 	mStream.reserve(20);
 }
 
 const Token &SavedTokenStream::getNext()
 {
-	if (mStream.empty() || (mPos == mStream.end()))
-	{
+	if (mStream.empty())
 		mToken = Token(Sym::END);
-	}
 	else
 	{
-		mToken = *mPos;
-		++mPos;
+		mToken = mStream.front();
+		mStream.pop();
+		mStream.push(mToken);
 	}
+		 
+
+// 	if (mStream.empty() || (mPos == mStream.end()))
+// 	{
+// 		mToken = Token(Sym::END);
+// 	}
+// 	else
+// 	{
+// 		mToken = *mPos;
+// 		++mPos;
+// 	}
 	return mToken;
 }
 
 
-void SavedTokenStream::addToken(Token token)
+void SavedTokenStream::add(const Token &token)
 {
-	mStream.push_back(token);
-	rewind();
-
-	#ifdef BS_DEBUG
-	std::cerr << "token stream: ";
-	for ( std::vector<Token>::iterator i = mStream.begin(); i != mStream.end(); ++i)
-		std::cerr << *i << " ";
-	std::cerr << std::endl;
-
-	#endif // BS_DEBUG		
+	mStream.push(token);
+// 	mStream.push_back(token);
+// 	rewind();
+// 
+// 	#ifdef BS_DEBUG
+// 	std::cerr << "token stream: ";
+// 	for ( std::vector<Token>::iterator i = mStream.begin(); i != mStream.end(); ++i)
+// 		std::cerr << *i << " ";
+// 	std::cerr << std::endl;
+// 
+// 	#endif // BS_DEBUG		
 }
 
 void SavedTokenStream::rewind()
 {
-	mPos = mStream.begin();
+// 	mPos = mStream.begin();
 }
