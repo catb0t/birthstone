@@ -279,12 +279,13 @@ bool Parser::ifCond()
 		condition = toBool(asgnmt());
 		condition = condition && mExec;
 		expect(Sym::C_PARAN);
+
+		bool oldExec = mExec;
 		
+		mExec = oldExec && condition;
+		block() || stmt();
+		mExec = oldExec;
 		
-		if (condition)
-			block() || stmt();
-		else
-			ignoreBlock() || ignoreStmt();
 		while (elifCond(condition))
 			;
 		elseCond(condition);
@@ -302,7 +303,8 @@ bool Parser::elifCond(bool &ignore)
 	
 	if (accept(Sym::ELIF))
 	{
-		bool condition = false; 
+		bool condition = false;
+		bool oldExec = mExec;
 
 		expect(Sym::O_PARAN);
 
@@ -313,16 +315,13 @@ bool Parser::elifCond(bool &ignore)
 
 		expect(Sym::C_PARAN);
 
-		if (condition)
-		{
-			ignore = true;
-			block() || stmt();
+		ignore = condition || ignore;
+		mExec = oldExec && condition;
 			
-		}
-		else
-			ignoreBlock() || ignoreStmt();
+		block() || stmt();
+		mExec = oldExec;
+
 		return true;
-			
 	}
 	// else: 
 	return false;
@@ -332,10 +331,10 @@ bool Parser::elseCond(bool ignore)
 {
 	if (accept(Sym::ELSE))
 	{
-		if (!mExec || ignore)
-			ignoreBlock() || ignoreStmt();
-		else
-			block() || stmt();
+		bool oldExec = mExec;
+		mExec = oldExec && !ignore;
+		block() || stmt();
+		mExec = oldExec;
 		return true;
 	}
 	return false;
@@ -431,28 +430,6 @@ bool Parser::loop()
 		return true;
 	}
 	return false;
-}
-
-bool Parser::ignoreBlock()
-{
-	if (accept(Sym::O_BRACE))
-	{
-		while ((mToken.getType() != C_BRACE) && (mToken.getType() != END))
-			getNext();
-		expect(Sym::C_BRACE);
-		return true;
-	} 
-	// else:
-	return false;
-
-};
-
-bool Parser::ignoreStmt()
-{
-	while ((mToken.getType() != SC) && (mToken.getType() != END))
-		getNext();
-	expect(Sym::SC);
-	return true;
 }
 
 bool Parser::block()
