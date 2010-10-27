@@ -65,9 +65,6 @@ class Parser
 
 		bool loop();
 
-		bool ignoreBlock();
-		bool ignoreStmt();
-		
 		bool block();
 		bool stmt();
 		
