@@ -479,9 +479,7 @@ bool Parser::stmt()
 	if (print() || read())
 		return true;	
 	//else:
-// 	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 	asgnmt();
-// 	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 	expect(Sym::SC);
 
 	return true;
@@ -496,16 +494,22 @@ Token Parser::asgnmt()
 
 // 	if (accept(Sym::ASSIGN))
 // 	{
+// 		Token token2 = lookup(orOp());
 // 		if (token.getType() != Sym::ID)
 // 			error("invalid lvalue in assignment");
-// 		else
+// 		else if (mExec)
 // 		{
-// 			std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
+// 			std::map<std::string, Token>::iterator loc = mSymTbl.find(token.getStr());
 // 			if (loc == mSymTbl.end())
 // 				error("variable not initialized");
 // 			else
 // 			{
-// 				// TODO: Token Parser::asgnmt() ASSIGN
+// 				if (token.getType() == Sym::STR)
+// 					mSymTbl[token.getStr()].setStr(toStr(token2));
+// 				else if (token.getType() == Sym::NUM)
+// 					mSymTbl[token.getStr()].setNum(toNum(token2));
+// 				else if (token.getType() == Sym::BOOL)
+// 					mSymTbl[token.getStr()].setBool(toBool(token2));
 // 			}
 // 		}
 // 
@@ -516,11 +520,8 @@ Token Parser::asgnmt()
 		Token token2 = lookup(orOp());
 		if (token.getType() != Sym::ID)
 			error("invalid lvalue in assignment");
-		else
-		{
-			if(mExec)
-				mSymTbl[token.getStr()] = token2;
-		}
+		else if(mExec)
+			mSymTbl[token.getStr()] = token2;
 	}
 	else if (accept(Sym::PLUS_EQ))
 	{
