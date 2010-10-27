@@ -235,6 +235,7 @@ const Token &Lexer::getNext()
 			if (ch == '-')
 			{
 				t = Token(Sym::DECR);
+				mInput->get();
 			}
 			else if ((!isdigit(ch) && (ch != '.')) 
 				|| (mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::ID)
@@ -243,17 +244,21 @@ const Token &Lexer::getNext()
 			else
 				mTokenStr += '-';
 		}
-		bool foundPoint = false;
-		do
-		{
-			foundPoint = (ch == '.') || foundPoint;
-			mTokenStr += ch;
-			mInput->get();
-			ch = mInput->peek();
-		} while(!(mInput->eof()) && (isdigit(ch) || (!foundPoint && (ch == '.'))));
-		mToken = Token(Sym::NUM, atof(mTokenStr.c_str()));
 		if (t.getType() != Sym::NONE)
-			mToken = t; 
+			mToken = t;
+		else
+		{ 
+			bool foundPoint = false;
+			do
+			{
+				foundPoint = foundPoint || (ch == '.');
+				mTokenStr += ch;
+				mInput->get();
+				ch = mInput->peek();
+			} while(!(mInput->eof()) && (isdigit(ch) || (!foundPoint && (ch == '.'))));
+			mToken = Token(Sym::NUM, atof(mTokenStr.c_str()));
+		}
+
 	}
 	else if (ch == '<')
 	{
