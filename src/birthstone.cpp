@@ -47,7 +47,12 @@ int main(int argc, char **argv)
 		string str;
 		stringstream input;
 		Parser parser(input);
-		cout << "birthstone interactive interpreter" << endl;
+		cout << "Birthstone interactive interpreter" << endl;
+		cout << "(build " << __DATE__ << ' ' << __TIME__ ;
+		#ifdef BS_DEBUG
+			cout << " DEBUG";
+		#endif // BS_DEBUG
+		cout << ")"<< endl;
 		do
 		{
 			cout << "bs> ";
