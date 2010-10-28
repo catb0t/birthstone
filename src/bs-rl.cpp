@@ -25,6 +25,7 @@
 #include <sstream>
 #include "parser.h"
 #include "readline/readline.h"
+#include "readline/history.h"
 using namespace std;
 
 
@@ -73,21 +74,20 @@ int main(int argc, char **argv)
 	{
 		string str;
 		stringstream input;
-		Parser parser(input);
+		Parser parser(input,true);
 		cout << "Birthstone interactive interpreter" << endl;
-		cout << "(build " << __DATE__ << ' ' << __TIME__ ;
+		cout << "(build " << __DATE__ << ' ' << __TIME__;
 		#ifdef BS_DEBUG
 			cout << " DEBUG";
 		#endif // BS_DEBUG
-		cout << ")"<< endl;
+		cout << " with readline" << ")"<< endl;
+
+		char *line = NULL;
 		do
 		{
-			// cout << "bs> ";
-			// getline(cin, str);
-			//input.clear(); // clear flags including ios::eof
-			//input.str(str);
-			char * line = rl_gets("bs> ");
-			input.str(string(line));
+			line = rl_gets("bs> ");
+			input.clear(); // clear flags including ios::eof
+			input.str(line);
 			
 		} while (parser.run());
 	}

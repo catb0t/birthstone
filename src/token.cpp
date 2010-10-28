@@ -141,10 +141,10 @@ std::string Token::repr() 	const
 		"ASSIGN", "INIT", "AND", "OR", "NOT", "INCR", "DECR", "COMMA", "SC", "QUIT"};
 		
 		s << '<';
-		if ((getType() >= Sym::NONE) && (getType() <= Sym::QUIT))
+// 		if ((getType() >= Sym::NONE) && (getType() <= Sym::QUIT))
 			 s << typeName[getType()];
-		else
-			s << getType();
+// 		else
+// 			s << getType();
 
 		if ((getType() == Sym::STR) || (getType() == Sym::FAIL))
 			s << ", \"" << getStr() <<'"';
