@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 	{
 		string str;
 		stringstream input;
-		Parser parser(input,true);
+		Parser parser(input);
 		cout << "Birthstone interactive interpreter" << endl;
 		cout << "(build " << __DATE__ << ' ' << __TIME__;
 		#ifdef BS_DEBUG
