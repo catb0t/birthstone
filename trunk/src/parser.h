@@ -22,10 +22,10 @@
 #define BS_PARSER_H
 #include <map>
 #include <istream>
-#include <stack>
 #include <string>
 #include <memory>
 #include <stack>
+#include <list>
 #include "symbol.h"
 #include "lexer.h"
 // #include "object.h"
@@ -56,6 +56,7 @@ class Parser
 			
 		bool code();
 
+		bool function();
 		bool print();
 		bool read();
 		
@@ -83,6 +84,7 @@ class Parser
 
 		Lexer mLexer;
 		Token mToken;
+// 		std::list<std::map<std::string,Token>> mSymTbls;
 		std::map<std::string,Token> mSymTbl;
 		std::stack<SavedTokenStream> mTknStreams;
 		bool mExec; // execute (true) or ignore (false) commands?
