@@ -53,6 +53,7 @@ class Token
 		
 		Token &operator =(const Token &token);
 		operator Symbol() const;
+		operator bool() const;
 
 	private:
 		Symbol mType;
@@ -65,5 +66,9 @@ class Token
 };
 std::ostream &operator <<(std::ostream &stream, const Token &token);
 
+extern Token endTkn;
+extern Token noTkn;
+extern Token trueTkn;
+extern Token	falseTkn;
 
 #endif //ndef BS_TOKEN_H
