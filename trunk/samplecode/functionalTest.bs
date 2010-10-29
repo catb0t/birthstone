@@ -24,11 +24,11 @@ print "Requirement 1: variables and literals";
 print "and Requirement 2: output (print command)";
 
 
-str := "hello";
-num := 1.23;
-b   := true;
-print "variable: " + str  + "   literal: hello";
-print "variable: " + num +  "   literal: " + 1.23;
+s := "hello";
+n := 1.23;
+b := true;
+print "variable: " + s + "   literal: hello";
+print "variable: " + n +  "   literal: " + 1.23;
 print "variable: " + b   +  "   literal: " + true;
 
 # Requirement 3
@@ -37,6 +37,8 @@ print "Requirement 3: input (read command)";
 write "enter a string: ";
 read str;
 print "you entered: " + str;
+
+num := 0;
 write "enter a number: ";
 read num;
 print "you entered: " + num;
@@ -116,11 +118,12 @@ A := "aa";
 B := "bb";
 print 'A = "aa", B = "bb"';
 
-print "A = " + A;
-print "A + B = " + (A + B);
-print "A = " + A;
+print "A == " + A;
+print "A + B == " + (A + B);
+print "A == " + A;
 A += B;
-print "after A += B, A = " + A;
+print "A += B";
+print "A == " + A;
 
 
 # Requirement 10
