@@ -135,8 +135,7 @@ Token Parser::lookup(Token id)
 	std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
 	if (loc == mSymTbl.end())
 	{
-		error(std::string("undefined variable: ") + id.getStr());
-		return id;
+		return Token(Sym::NONE);
 	}
 	else
 		return loc->second;
@@ -188,10 +187,30 @@ bool Parser::code()
 {
 	if (accept(Sym::QUIT))
 		return false;
-	block() || ifCond() || loop() || print() || read() ||  stmt();
+	block() || ifCond() || loop() || function() ||  stmt();
 	return true;
 }
 
+bool Parser::function()
+{
+	if (!accept(Sym::DEF))
+		return false;
+
+	std::string funcName = mToken.getStr();
+	expect(Sym::ID);
+	bool oldExec = mExec;
+	std::vector<Token> parameters;
+	mExec = false;
+	expect(Sym::O_PARAN);
+	//....
+	expect(Sym::C_PARAN);
+
+	block();
+	
+	//TODO: bool Parser::function()
+	mExec = oldExec;
+	return true;
+}
 
 bool Parser::print()
 {
