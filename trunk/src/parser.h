@@ -48,7 +48,7 @@ class Parser
 		std::string toStr  (Token t);
 		double      toNum  (Token t);
 		bool        toBool (Token t);
-		Token lookup(Token id);
+		Token &lookup(Token id);
 
 		bool accept(Symbol sym);
 		bool expect(Symbol sym);
@@ -66,7 +66,7 @@ class Parser
 
 		bool loop();
 
-		bool block();
+		bool block(bool createScope = true);
 		bool stmt();
 		
 		Token asgnmt();
@@ -84,8 +84,8 @@ class Parser
 
 		Lexer mLexer;
 		Token mToken;
-// 		std::list<std::map<std::string,Token>> mSymTbls;
-		std::map<std::string,Token> mSymTbl;
+		std::list<std::map<std::string,Token> > mSymTbls;
+// 		std::map<std::string,Token> mSymTbl; //TODO: remove mSymTbl and replace with mSymTbls
 		std::stack<SavedTokenStream> mTknStreams;
 		bool mExec; // execute (true) or ignore (false) commands?
 		SavedTokenStream *mSave; // save tokens?

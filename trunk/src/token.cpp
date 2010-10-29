@@ -3,10 +3,10 @@
 #include <sstream>
 #include <iostream>
 #include "token.h"
-
-
-
-
+Token endTkn(Sym::END);
+Token noTkn(Sym::NONE);
+Token trueTkn(Sym::BOOL, true);
+Token	falseTkn(Sym::BOOL, false);
 Token::Token(Symbol type) : mType(type)
 {
 	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
@@ -182,6 +182,11 @@ Token &Token::operator =(const Token &token)
 Token::operator Symbol() const
 {
 	return getType();
+}
+
+Token::operator bool() const
+{
+	return (getType() != Sym::NONE);
 }
 
 std::ostream &operator <<(std::ostream &stream, const Token &token)

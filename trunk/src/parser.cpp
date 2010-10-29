@@ -24,7 +24,10 @@
 #include "parser.h"
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(Sym::NONE),
-                                      mExec(true), mSave(NULL) {}
+                                      mExec(true), mSave(NULL)
+{
+	mSymTbls.push_back(std::map<std::string,Token>());
+}
 
 const Token &Parser::getNext()
 {
@@ -75,7 +78,14 @@ void Parser::newInput(std::istream &input)
 std::string Parser::toStr(Token t)
 {
 // 	std::cerr << __FILE__ << ':' << __LINE__ << ": toStr()" << std::endl;
-	t = lookup(t);
+	if (t.getType() == Sym::ID)
+	{
+		std::string name = t.getStr();
+		t = lookup(t);
+		if (!t)
+			error(std::string("undefined variable: ") + name);
+	}
+	
 	if (t.getType() == Sym::STR)
 	{
 		return t.getStr();
@@ -95,8 +105,15 @@ std::string Parser::toStr(Token t)
 
 double Parser::toNum(Token t)
 {
-	t = lookup(t);
-	if (t.getType() == NUM)
+	if (t.getType() == Sym::ID)
+	{
+		std::string name = t.getStr();
+		t = lookup(t);
+		if (!t)
+			error(std::string("undefined variable: ") + name);
+	}
+	
+	if (t.getType() == Sym::NUM)
 		return t.getNum();
 	else if (t.getType() == Sym::STR)
 		return atof(t.getStr().c_str());
@@ -109,7 +126,14 @@ double Parser::toNum(Token t)
 
 bool Parser::toBool (Token t)
 {
-	t = lookup(t);
+	if (t.getType() == Sym::ID)
+	{
+		std::string name = t.getStr();
+		t = lookup(t);
+		if (!t)
+			error(std::string("undefined variable: ") + name);
+	}
+
 	if (t.getType() == Sym::BOOL)
 		return t.getBool();
 	if (t.getType() == NUM)
@@ -125,20 +149,24 @@ bool Parser::toBool (Token t)
 *	If the token is not an identifier, return the token.
 *	If it is an identifier return the value of the variable.
 ******************************************************************************/
-Token Parser::lookup(Token id)
+Token &Parser::lookup(Token id)
 {
 // 	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
-	if (id.getType() != Sym::ID)
-		return id;
-	//else: (token is an ID)
-	Token token;
-	std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
-	if (loc == mSymTbl.end())
+	if (id.getType() != Sym::ID) // (token is not an ID)
 	{
-		return Token(Sym::NONE);
+		error(std::string("expected identifier, got: ") + id.repr());
+		return noTkn;  
 	}
-	else
-		return loc->second;
+	//else: (token is an ID)
+	std::string name = id.getStr();
+	for (std::list<std::map<std::string,Token> >::reverse_iterator symTbl = mSymTbls.rbegin();
+			 symTbl != mSymTbls.rend(); ++symTbl)
+	{
+		std::map<std::string, Token>::iterator loc = symTbl->find(name);
+		if (loc != symTbl->end())
+			return loc->second;
+	}
+	return noTkn;
 }
 
 
@@ -151,9 +179,6 @@ inline bool Parser::accept(Symbol sym)
 #endif // BS_DEBUG
 		 
 		getNext();
-
-
-	
 		return true;
 	}
 
@@ -214,11 +239,11 @@ bool Parser::function()
 
 bool Parser::print()
 {
-	bool newLine = (mToken.getType() == Sym::PRINT);
+	bool newLine;
 
 // 	std::cerr << __FILE__ << ':' << __LINE__ << ": print()" << std::endl;
 
-	if (accept(Sym::WRITE) || accept(Sym::PRINT))
+	if (accept(Sym::WRITE) || (newLine = accept(Sym::PRINT)))
 	{
 // 		std::cerr << __FILE__ << ':' << __LINE__ << ": print(): got <PRINT> or <WRITE>" << std::endl;
 		std::string str = "";
@@ -245,38 +270,39 @@ bool Parser::read()
 {
 	if (accept(Sym::READ))
 	{
-		Token id = mToken;
+		Token t = mToken;
+		std::string name = t.getStr();
 		expect(Sym::ID);
+		Token &id = lookup(t);
 
-		std::map<std::string, Token>::iterator loc = mSymTbl.find(id.getStr());
-		if (loc == mSymTbl.end())
+		if (!id)
 		{
 			std::string str;
 			std::getline(std::cin, str);
-			mSymTbl[id.getStr()] = Token(Sym::STR, str);
+			mSymTbls.back()[name] = Token(Sym::STR, str);
 		}
 		else
 		{
-			Symbol type = loc->second.getType();
+			Symbol type = id.getType();
 			if (mExec)
 			{
 				if (type == Sym::BOOL)
 				{
 					double n;
 					std::cin >> n;
-					loc->second.setBool(n != 0);
+					id.setBool(n != 0);
 				}
-				else if (type == NUM)
+				else if (type == Sym::NUM)
 				{
 					double n;
 					std::cin >> n;
-					loc->second.setNum(n);
+					id.setNum(n);
 				}
 				else if (type == Sym::STR)
 				{
 					std::string str;
 					std::getline(std::cin, str);
-					(loc->second).setStr(str);
+					id.setStr(str);
 				}
 			}
 		}
@@ -371,6 +397,9 @@ bool Parser::loop()
 		SavedTokenStream incr; // increment   (for loops only)
 		
 		bool oldExec = mExec;
+		
+		// put a new symbol table on the stack
+		mSymTbls.push_back(std::map<std::string,Token>());
 
 		// while (...) or for(...;...;...)
 		if (!isDoWhile)
@@ -378,6 +407,7 @@ bool Parser::loop()
 			expect(Sym::O_PARAN);
 			if (isFor)
 			{
+
 				asgnmt();
 				expect(Sym::SC);
 			}
@@ -429,7 +459,7 @@ bool Parser::loop()
 			Token condTkn=mToken;
 			mTknStreams.push(cmds);
 			getNext();
-			block() || stmt();
+			block(false) || stmt();
 			mTknStreams.pop(); //pop cmds
 			mToken = condTkn;
 			accept(Sym::END);
@@ -446,26 +476,30 @@ bool Parser::loop()
 		}
 		mTknStreams.pop(); //pop cond
 		mToken = oldTkn;
+		mSymTbls.pop_back();
 		return true;
 	}
 	return false;
 }
 
-bool Parser::block()
+bool Parser::block(bool createScope)
 {
 	if (accept(Sym::O_BRACE))
 	{
+		if (createScope)
+			mSymTbls.push_back(std::map<std::string,Token>());
+		
 		while (!accept(Sym::C_BRACE))
 			code();
+		
+		if (createScope)
+			mSymTbls.pop_back();
+
 		return true;
 	}
 	// else:
 	return false;
 }
-
-
-
-
 
 bool Parser::stmt()
 {
@@ -488,36 +522,40 @@ Token Parser::asgnmt()
 	Token token = orOp();
 	
 
-// 	if (accept(Sym::ASSIGN))
-// 	{
-// 		Token token2 = lookup(orOp());
-// 		if (token.getType() != Sym::ID)
-// 			error("invalid lvalue in assignment");
-// 		else if (mExec)
-// 		{
-// 			std::map<std::string, Token>::iterator loc = mSymTbl.find(token.getStr());
-// 			if (loc == mSymTbl.end())
-// 				error("variable not initialized");
-// 			else
-// 			{
-// 				if (token.getType() == Sym::STR)
-// 					mSymTbl[token.getStr()].setStr(toStr(token2));
-// 				else if (token.getType() == Sym::NUM)
-// 					mSymTbl[token.getStr()].setNum(toNum(token2));
-// 				else if (token.getType() == Sym::BOOL)
-// 					mSymTbl[token.getStr()].setBool(toBool(token2));
-// 			}
-// 		}
-// 
-// 	}
-// 	else if (accept(Sym::INIT))
-	if (accept(Sym::INIT) || accept(Sym::ASSIGN))
+	if (accept(Sym::ASSIGN))
 	{
-		Token token2 = lookup(orOp());
+		Token token2 = orOp();
+		if (token2.getType() == Sym::ID)
+			token2 = lookup(token2);
+		if (token.getType() != Sym::ID)
+			error("invalid lvalue in assignment");
+		else if (mExec)
+		{
+			Token &var = lookup(token);
+			if (!var)
+				error(std::string("variable ") + token.getStr() + " must be initialized before being assigned");
+			else
+			{
+				if (var.getType() == Sym::STR)
+					var.setStr(toStr(token2));
+				else if (var.getType() == Sym::NUM)
+					var.setNum(toNum(token2));
+				else if (var.getType() == Sym::BOOL)
+					var.setBool(toBool(token2));
+			}
+		}
+
+	}
+	else if (accept(Sym::INIT))
+// 	if (accept(Sym::INIT) || accept(Sym::ASSIGN))
+	{
+		Token token2 = orOp();
+		if (token2.getType() == Sym::ID)
+			token2 = lookup(token2);
 		if (token.getType() != Sym::ID)
 			error("invalid lvalue in assignment");
 		else if(mExec)
-			mSymTbl[token.getStr()] = token2;
+			mSymTbls.back()[token.getStr()] = token2;
 	}
 	else if (accept(Sym::PLUS_EQ))
 	{
@@ -527,7 +565,9 @@ Token Parser::asgnmt()
 		{
 			std::string id = token.getStr();
 			token = lookup(token);
-			Token token2 = lookup(orOp());
+			Token token2 = orOp();
+			if (token2.getType() == Sym::ID)
+				token2 = lookup(token2);
 			if (mExec)
 			{
 				if (token.getType() == Sym::STR)
@@ -536,7 +576,7 @@ Token Parser::asgnmt()
 					token = Token(Sym::NUM, token.getNum() + toNum(token2));
 				else if (token.getType() == Sym::BOOL)
 					error("cannot add to a bool");
-				mSymTbl[id] = token;
+				mSymTbls.back()[id] = token;
 			}
 		}
 	}
@@ -589,7 +629,8 @@ Token Parser::comp()
 	Token token = sum();
 	if (accept(Sym::EQ))
 	{
-		token = lookup(token);
+		if (token.getType() == Sym::ID)
+			token = lookup(token);
 		Token token2 = sum();
 		if (mExec)
 		{
@@ -603,10 +644,13 @@ Token Parser::comp()
 	}
 	else if (accept(Sym::NOT_EQ))
 	{
-		token = lookup(token);
+		if (token.getType() == Sym::ID)
+			token = lookup(token);
 		Token token2 = sum();
 		if (mExec)
 		{
+			if (token2.getType() == Sym::ID)
+				token2 = lookup(token);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  != toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -617,10 +661,13 @@ Token Parser::comp()
 	}
 	else if (accept(Sym::LESS))
 	{
-		token = lookup(token);
+		if (token.getType() == Sym::ID)
+			token = lookup(token);
 		Token token2 = sum();
 		if (mExec)
 		{
+			if (token2.getType() == Sym::ID)
+				token2 = lookup(token);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  <  toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -631,10 +678,13 @@ Token Parser::comp()
 	}
 	else if (accept(Sym::LESS_EQ))
 	{
-		token = lookup(token);
+		if (token.getType() == Sym::ID)
+			token = lookup(token);
 		Token token2 = sum();
 		if (mExec)
 		{
+			if (token2.getType() == Sym::ID)
+				token2 = lookup(token);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  <= toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -645,10 +695,13 @@ Token Parser::comp()
 	}
 	else if (accept(Sym::GREATER))
 	{
-		token = lookup(token);
+		if (token.getType() == Sym::ID)
+			token = lookup(token);
 		Token token2 = sum();
 		if (mExec)
 		{
+			if (token2.getType() == Sym::ID)
+				token2 = lookup(token);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  >  toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -659,10 +712,13 @@ Token Parser::comp()
 	}
 	else if (accept(Sym::GREATER_EQ))
 	{
-		token = lookup(token);
+		if (token.getType() == Sym::ID)
+			token = lookup(token);
 		Token token2 = sum();
 		if (mExec)
 		{
+			if (token2.getType() == Sym::ID)
+				token2 = lookup(token);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  >= toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -680,7 +736,8 @@ Token Parser::sum()
 	Token token = product();
 	while ((mToken.getType() == Sym::PLUS) || (mToken.getType() == Sym::MINUS))
 	{
-		token = lookup(token);
+		if (token.getType() == Sym::ID)
+			token = lookup(token);
 		if (accept(Sym::PLUS))
 		{
 			Token token2 = product();
@@ -718,7 +775,8 @@ Token Parser::product()
 	Token token = unary();
 	while ((mToken.getType() == Sym::TIMES) || (mToken.getType() == Sym::DIVIDE))
 	{
-		token = lookup(token);
+		if (token.getType() == Sym::ID)
+			token = lookup(token);
 		if (accept(Sym::TIMES))
 		{
 			Token token2 = unary();
@@ -761,26 +819,24 @@ Token Parser::unary()
 			return Token(Sym::NUM, -toNum(unary()));
 		if (accept(Sym::INCR))
 		{
-			Token id = mToken;
+			Token &var = lookup(mToken);
 			expect(Sym::ID);
-			Token &val = mSymTbl[id.getStr()];
-			if (val.getType() == Sym::NUM)
+			if (var.getType() == Sym::NUM)
 			{
-				val.setNum(val.getNum() + 1);
-				return val;
+				var.setNum(var.getNum() + 1);
+				return var;
 			}
 			else
 				error("only numeric variables can be incremented");
 		}
 		if (accept(Sym::DECR))
 		{
-			Token id = mToken;
+			Token &var = lookup(mToken);
 			expect(Sym::ID);
-			Token &val = mSymTbl[id.getStr()];
-			if (val.getType() == Sym::NUM)
+			if (var.getType() == Sym::NUM)
 			{
-				val.setNum(val.getNum() - 1);
-				return val;
+				var.setNum(var.getNum() - 1);
+				return var;
 			}
 			else
 				error("only numeric variables can be decremented");
