@@ -815,9 +815,9 @@ Token Parser::unary()
 	{
 		if (accept(Sym::NOT))
 			return Token(Sym::BOOL, !toBool(unary()));
-		if (accept(Sym::MINUS))
+		else if (accept(Sym::MINUS))
 			return Token(Sym::NUM, -toNum(unary()));
-		if (accept(Sym::INCR))
+		else if (accept(Sym::INCR))
 		{
 			Token &var = lookup(mToken);
 			expect(Sym::ID);
@@ -829,7 +829,7 @@ Token Parser::unary()
 			else
 				error("only numeric variables can be incremented");
 		}
-		if (accept(Sym::DECR))
+		else if (accept(Sym::DECR))
 		{
 			Token &var = lookup(mToken);
 			expect(Sym::ID);
@@ -841,8 +841,32 @@ Token Parser::unary()
 			else
 				error("only numeric variables can be decremented");
 		}
+		else if (accept(Sym::TYPE))
+		{
+			Token t = mToken;
+			expect(Sym::ID);
+			bool paran = accept(Sym::O_PARAN);
+			std::string typeName;
+			switch (lookup(t).getType())
+			{
+				case Sym::NUM:
+					typeName = "Number";
+					break;
+				case Sym::STR:
+					typeName = "String";
+					break;
+				case Sym::BOOL:
+					typeName = "Boolean";
+					break;
+				default:
+					typeName = "None";
+					break;
+			}
+			if (paran)
+				expect(Sym::C_PARAN);
+			return Token(Sym::STR,typeName);
+		}
 	}
-	//else:
 	return factor();
 }
 

@@ -48,6 +48,7 @@ void Lexer::setupKeywords()
 		sKeywords["if"]       =	Sym::IF;
 		sKeywords["elif"]     = Sym::ELIF;
 		sKeywords["else"]     =	Sym::ELSE;
+
 		sKeywords["do"]    	 =	Sym::DO;
 		sKeywords["while"]    =	Sym::WHILE;
 		sKeywords["until"]    =	Sym::UNTIL;
@@ -55,15 +56,19 @@ void Lexer::setupKeywords()
 		sKeywords["in"]       =	Sym::IN;
 		sKeywords["break"]    =	Sym::BREAK;
 		sKeywords["continue"] =	Sym::CONT;
+
 		sKeywords["read"] 	 =	Sym::READ;
 		sKeywords["write"] 	 =	Sym::WRITE;
 		sKeywords["print"] 	 =	Sym::PRINT;
+
 		sKeywords["def"] 		 =	Sym::DEF;
 		sKeywords["class"] 	 = Sym::CLASS;
 		
       sKeywords["and"]		 = Sym::AND;
 		sKeywords["or"]		 =	Sym::OR;
 		sKeywords["not"]		 =	Sym::NOT;
+
+		sKeywords["type"]		 =	Sym::TYPE;
       
 		sKeywords["true"]     = Token(Sym::BOOL, true);
 		sKeywords["false"]    = Token(Sym::BOOL, false);
