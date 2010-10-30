@@ -1,0 +1,71 @@
+= Language Reference =
+convert this page with: http://sourceforge.net/projects/wiki2xhtml/ ??
+
+== Variables ==
+
+=== Data Types ===
+The data types in birthstone are number (float), boolean, and string. To convert between types, read "type conversion" in the "Tips & Tricks" section of this document.
+
+=== Declaring, Initializing, and Assigning Variables ==
+Variables must be declaried and initialized before being used (except with the read command as discussed later). To declare and initialize a variable use the initialize operator ( := ). For example,
+	number := 0;
+	string := "";
+	boolean:= false;
+declares the variables number, bool, and string, and initializes them to 0, "", and false, respectively.
+A variable may be redeclared any number of times -- the variable will simply be bound to a new value.
+A variable may also be reassigned using the assignment operator ( = ). When a variable is reassigned (as opposed to redeclared), the variable retains it's old type. Here's an example:
+	x := "aa";
+	y := "bb";
+	x := 1;
+	y =  2;
+
+In this example, x is first initialized to "aa", then it is rebound to the value 1 (a number). The variable y is first initialized to "bb", and then *reassigned* to the value 2. Since y is a string, it stays a string when it is reassigned, so the number 2 is converted to the string "2", and y ends up with a value of "2" (as a string).
+
+
+
+== Input and Output ==
+
+=== Writing to the console ===
+Birthstone has two commands to write to the console: print and write. The difference is that print outputs a newline character after printing the data, while write prints just the data without appending a newline character. Here's an example of the classic "Hello, world" program written in birthstone:
+	write "Hello, ";
+	print "world!";
+This prints out "Hello, world!" to the console, followed by a newline.
+Any type of variable, literal, or expression can be printed using the print or write command.
+
+=== Reading from the console ===
+To read input from the console, use the read command. The syntax for the read command is read variableName. If you are reading into a variable that has already been declared, the input will be the same type as the variable. If you are reading into a variable that has not been previously declared, a string is read in. Here's an example:
+	num := 0;
+	str := "";
+	bool:= false;
+
+	write "Enter a number: ";
+	read num;
+
+	write "Enter a string: ";
+	read str;
+
+	write "Enter a boolean: ";
+	read bool;
+
+	write "Enter a string: ";
+	read var;
+
+This example reads a number into num, a string into str, a boolean into bool, and a string into var (since var hasn't been declared previously). 
+	
+
+=== File I/O ===
+Birthstone doesn't yet support file I/O. This may be supported in the future.
+
+
+== Loops ==
+
+== Conditionals ==
+
+== Tips & Tricks ==
+
+=== Type Conversion ===
+
+
+Copyright (C) 2010 by Robert Tolliver (Robb.Tolli@gmail.com)
+This document is part of the Birthstone documentation.
+See the file doc_license.txt for copying conditions.
