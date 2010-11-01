@@ -1,13 +1,24 @@
-= Language Reference =
-convert this page with: http://sourceforge.net/projects/wiki2xhtml/ ??
+
+= Birthstone Language Reference =
+Copyright (C) 2010 by Robert Tolliver (Robb.Tolli@gmail.com)
+This document is part of the Birthstone documentation.
+See the file doc_license.txt for copying conditions.
+
+convert this page to html with: http://sourceforge.net/projects/wiki2xhtml/ ??
 
 == Variables ==
 
 === Data Types ===
-The data types in birthstone are number (float), boolean, and string. To convert between types, read "type conversion" in the "Tips & Tricks" section of this document.
+The data types in birthstone are number (floating point), boolean, string. Birthstone is loosly typed, so types will be implicitly converted accourding the context. To explicitly convert between types, read "type conversion" in the "Tips & Tricks" section of this document.  In general, the type of the result of a binary operation (like a + b) will be the type of the first operand. The exception is the comparison and logical operators, which always return booleans.
+
+The unary type operator will return a string representation of the type of it's operand. For example:
+	type "abc"; # returns "String"
+	type 0;		# returns "Number"
+	type true;	# returns "Boolean"
+	type x;		# returns "None" if x is undeclared, or one of the above types if x has been declared
 
 === Declaring, Initializing, and Assigning Variables ==
-Variables must be declaried and initialized before being used (except with the read command as discussed later). To declare and initialize a variable use the initialize operator ( := ). For example,
+To declare and initialize a variable use the initialize operator ( := ). For example,
 	number := 0;
 	string := "";
 	boolean:= false;
@@ -58,14 +69,49 @@ Birthstone doesn't yet support file I/O. This may be supported in the future.
 
 
 == Loops ==
+Birthstone supports 3 types of loops: do-while, while, and for loops. These loops behave in the same way as in most programming languages.
+Below is the syntax for each loop (the items in angle brackets are placeholders for code). The body of each type of loop can either be a single statement or a block (group of statements) deliminated by braces ({}).
+
+	do <statement>; while (<condition>);
+
+	do
+	{
+		<statement>;
+		...
+	} while (<condition>);
+
+	while(<condition>) <statement>;
+
+	while(<condition>)
+	{
+		<statement>;
+		...
+	}
+
+	for (<initialize>;<condition>;<increment>) <statement>;
+
+	for (<initialize>;<condition>;<increment>)
+	{
+		<statement>;
+		...
+	}
 
 == Conditionals ==
+A conditional statement in Birthstone consists of an if statement, any number of elif (else if) statements, and optionally an else statement. The body of each part of the conditional can either be either a single statement or a block (group of statements) deliminated by braces ({}). Below is the syntax for each loop (the items in angle brackets are placeholders for code and the square brackets ([]) indicate optional componants).
+
+if (<condition1>)
+{
+	...
+}
+[elif (<condition2>) {...} [elif (<condition3>) {...} [...] ] ]
+[else {...}]
+
 
 == Tips & Tricks ==
 
 === Type Conversion ===
-
-
-Copyright (C) 2010 by Robert Tolliver (Robb.Tolli@gmail.com)
-This document is part of the Birthstone documentation.
-See the file doc_license.txt for copying conditions.
+====String to Number====
+To convert a string to a number, you can either negate it twice or add 0 to it. For Example:
+	x := - -"4";	# x is the number 4
+	y := 0 + "7";	# y is the number 7
+Note: when double negating something you must use '- -x' or '-(-x)', otherwise the interpreter sees '--' as the decrement operator, which is only valid on numeric variables.
