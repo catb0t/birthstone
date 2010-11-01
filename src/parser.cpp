@@ -989,8 +989,11 @@ Token Parser::factor()
 		#ifdef BS_DEBUG
 		/* DEBUG */ std::cerr << token << std::endl;
 		#endif // BS_DEBUG
-// 		std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
-		error(std::string("got: ") + token.repr()
+
+		if (token.getType() == S_FAIL)
+			error(token.getStr());
+		else
+			error(std::string("got: ") + token.repr()
 		      + " expected: Number, Bool, String, Identifier or parenthetical expression.");
 	}
 	return token;
