@@ -4,24 +4,24 @@
 #include <iostream>
 #include "token.h"
 
-Token endTkn(Sym::END);
-Token noTkn(Sym::NONE);
-Token trueTkn(Sym::BOOL, true);
-Token	falseTkn(Sym::BOOL, false);
+Token endTkn(S_END);
+Token noTkn(S_NONE);
+Token trueTkn(S_BOOL, true);
+Token	falseTkn(S_BOOL, false);
 
 Token::Token(Symbol type) : mType(type)
 {
-	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
+	if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
 		mVal.s = new std::string("");
 }
 
 Token::Token(Symbol type, const std::string &str) : mType(type)
 {
-   if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
+   if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
 		mVal.s = new std::string(str);
 	else
 	{
-      mType = Sym::FAIL;
+      mType = S_FAIL;
 		std::string error = "ERROR: only FAIL, STR, and ID types can have string values";
 		mVal.s = new std::string(error);
 	}
@@ -29,11 +29,11 @@ Token::Token(Symbol type, const std::string &str) : mType(type)
 
 Token::Token(Symbol type, const double &num) : mType(type)
 {
-   if (mType == Sym::NUM)
+   if (mType == S_NUM)
 		mVal.d =num;
 	else
 	{
-      mType = Sym::FAIL;
+      mType = S_FAIL;
 		std::string error = "ERROR: only NUM type tokens can have numerical values";
 		mVal.s = new std::string(error);
 	}
@@ -41,11 +41,11 @@ Token::Token(Symbol type, const double &num) : mType(type)
 
 Token::Token(Symbol type, bool boolean) : mType(type)
 {
-	if (mType == Sym::BOOL)
+	if (mType == S_BOOL)
 		mVal.b = boolean;
 	else
 	{
-		mType = Sym::FAIL;
+		mType = S_FAIL;
 		std::string error = "ERROR: only BOOL type tokens can have boolean values";
 		mVal.s = new std::string(error);
 	}
@@ -53,17 +53,17 @@ Token::Token(Symbol type, bool boolean) : mType(type)
 
 Token::Token(const Token &token) : mType(token.mType)
 {
-      if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
+      if ((token.mType == S_ID) || (token.mType == S_FAIL) || (token.mType == S_STR))
 			mVal.s = new std::string(*token.mVal.s);
-      else if (token.mType == Sym::NUM)
+      else if (token.mType == S_NUM)
 			mVal.d = token.mVal.d;
-		else if (token.mType == Sym::BOOL)
+		else if (token.mType == S_BOOL)
 			mVal.b = token.mVal.b;
 }
 
 Token::~Token()
 {
-	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
+	if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
 	{
 		if (mVal.s)
 			delete  mVal.s;
@@ -76,7 +76,7 @@ inline Symbol Token::getType() const { return mType; }
 
 std::string Token::getStr() const
 {
-   if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
+   if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
 		return *mVal.s;
 	else
 		return "";
@@ -84,7 +84,7 @@ std::string Token::getStr() const
 
 double Token::getNum() const
 {
-   if (mType == Sym::NUM)
+   if (mType == S_NUM)
 		return mVal.d;
 	else
 		return 0.0;
@@ -92,7 +92,7 @@ double Token::getNum() const
 
 bool Token::getBool() const
 {
-	if (mType == Sym::BOOL)
+	if (mType == S_BOOL)
 		return mVal.b;
 	else
 		return false;
@@ -101,31 +101,31 @@ bool Token::getBool() const
 				
 void Token::setStr(std::string s)
 {
-	if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
+	if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
 	{
 		delete mVal.s;
 		mVal.s = new std::string(s);
 	}
 	else
 	{
-		mType = Sym::STR;
+		mType = S_STR;
 		mVal.s = new std::string(s);
 	}
 }
 
 void Token::setNum(double n) 
 {
-	if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
+	if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
 		delete [] mVal.s;
-	mType = Sym::NUM;
+	mType = S_NUM;
 	mVal.d = n;
 }
 
 void Token::setBool(bool b)
 {
-	if (mVal.s && ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR)))
+	if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
 		delete [] mVal.s;
-	mType = Sym::BOOL;
+	mType = S_BOOL;
 	mVal.b = b;
 }
 
@@ -134,27 +134,27 @@ std::string Token::repr() 	const
 	std::stringstream s;
 		// TODO: make sure this matches enum Symbol exactly
 	static std::string typeName[] = {
-		"NONE", "FAIL", "END", "ID", "NUM", "STR", "BOOL",
+		"NONE", "FAIL", "END", "ID", "NUM", " STR", "BOOL",
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
 		"PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
 		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
 		"IF", "ELIF", "ELSE", "WRITE", "PRINT", "DEF", "CLASS",
-		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ",
-		"ASSIGN", "INIT", "AND", "OR", "NOT", "INCR", "DECR", "COMMA", "SC", "QUIT"};
+		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ", "DEL",
+		"ASSIGN", "INIT", "AND", "OR", "NOT", "INCR", "DECR", "TYPE", "COMMA", "SC", "QUIT"};
 		
 		s << '<';
-// 		if ((getType() >= Sym::NONE) && (getType() <= Sym::QUIT))
+// 		if ((getType() >= S_NONE) && (getType() <= S_QUIT))
 			 s << typeName[getType()];
 // 		else
 // 			s << getType();
 
-		if ((getType() == Sym::STR) || (getType() == Sym::FAIL))
+		if ((getType() == S_STR) || (getType() == S_FAIL))
 			s << ", \"" << getStr() <<'"';
-		else if (getType() == Sym::ID)
+		else if (getType() == S_ID)
 			s << ", " << getStr();
-		else if (getType() == Sym::NUM)
+		else if (getType() == S_NUM)
 			s << ", " << getNum();
-		else if (getType() == Sym::NUM)
+		else if (getType() == S_NUM)
 			s << ", " << std::boolalpha << getBool() << std::noboolalpha;
 		s << '>';
 		return s.str();
@@ -163,7 +163,7 @@ std::string Token::repr() 	const
 Token &Token::operator =(const Token &token)
 {
 
-	if ((mType == Sym::ID) || (mType == Sym::FAIL) || (mType == Sym::STR))
+	if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
 	{
 		if (mVal.s)
 			delete  mVal.s;
@@ -171,11 +171,11 @@ Token &Token::operator =(const Token &token)
 	}
 	mType = token.mType;
 	
-	if ((token.mType == Sym::ID) || (token.mType == Sym::FAIL) || (token.mType == Sym::STR))
+	if ((token.mType == S_ID) || (token.mType == S_FAIL) || (token.mType == S_STR))
 		mVal.s = new std::string(*token.mVal.s);
-	else if (token.mType == Sym::NUM)
+	else if (token.mType == S_NUM)
 		mVal.d = token.mVal.d;
-	else if (token.mType == Sym::BOOL)
+	else if (token.mType == S_BOOL)
 		mVal.b = token.mVal.b;
 	
 	return *this;
@@ -188,7 +188,7 @@ Token::operator Symbol() const
 
 Token::operator bool() const
 {
-	return (getType() != Sym::NONE);
+	return (getType() != S_NONE);
 }
 
 std::ostream &operator <<(std::ostream &stream, const Token &token)

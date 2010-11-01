@@ -24,7 +24,7 @@
 #include <iostream>
 #endif // BS_DEBUG
 
-SavedTokenStream::SavedTokenStream() : mStream(), mToken(Sym::END) //, mPos(mStream.begin())
+SavedTokenStream::SavedTokenStream() : mStream(), mToken(S_END) //, mPos(mStream.begin())
 {
 // 	mStream.reserve(20);
 }
@@ -32,7 +32,7 @@ SavedTokenStream::SavedTokenStream() : mStream(), mToken(Sym::END) //, mPos(mStr
 const Token &SavedTokenStream::getNext()
 {
 	if (mStream.empty())
-		mToken = Token(Sym::END);
+		mToken = Token(S_END);
 	else
 	{
 		mToken = mStream.front();
@@ -43,7 +43,7 @@ const Token &SavedTokenStream::getNext()
 
 // 	if (mStream.empty() || (mPos == mStream.end()))
 // 	{
-// 		mToken = Token(Sym::END);
+// 		mToken = Token(S_END);
 // 	}
 // 	else
 // 	{

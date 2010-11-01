@@ -23,7 +23,6 @@
 
 #include <string>
 #include "symbol.h"
-using Sym::Symbol;
 
 /******************************************************************************
 *
@@ -33,7 +32,7 @@ class Token
 	public:
 		
 		
-      Token(Symbol type = Sym::NONE);
+      Token(Symbol type = S_NONE);
 		Token(Symbol type, const std::string &str);
 		Token(Symbol type, const double &num);
 		Token(Symbol type, bool boolean);

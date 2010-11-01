@@ -30,9 +30,6 @@
 #include "lexer.h"
 // #include "object.h"
 
-using namespace Sym;
-
-
 /******************************************************************************
 * Birthstone parser.
 ******************************************************************************/
@@ -49,6 +46,7 @@ class Parser
 		double      toNum  (Token t);
 		bool        toBool (Token t);
 		Token &lookup(Token id);
+		Token deleteVar(Token id);
 
 		bool accept(Symbol sym);
 		bool expect(Symbol sym);
@@ -59,6 +57,9 @@ class Parser
 		bool function();
 		bool print();
 		bool read();
+		bool deleteCmd();
+		bool breakStmt() throw(Symbol);
+		bool contStmt() throw(Symbol);
 		
 		bool ifCond();
 		bool elifCond(bool &ignore);
@@ -67,7 +68,7 @@ class Parser
 		bool loop();
 
 		bool block(bool createScope = true);
-		bool stmt();
+		bool stmt() throw(Symbol);
 		
 		Token asgnmt();
 		Token orOp();

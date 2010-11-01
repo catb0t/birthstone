@@ -30,13 +30,13 @@
 std::map <std::string, Token> Lexer::sKeywords;
 
 Lexer::Lexer(std::istream &input)
-   : mInput(&input), mLineNum(1), mToken(Sym::END)
+   : mInput(&input), mLineNum(1), mToken(S_END)
 {
 	 setupKeywords(); 
 }
 
 Lexer::Lexer(const Lexer &lexer)
-	: mInput(lexer.mInput), mLineNum(1), mToken(Sym::END)
+	: mInput(lexer.mInput), mLineNum(1), mToken(S_END)
 {}
 
 Lexer::~Lexer() {}
@@ -45,36 +45,40 @@ void Lexer::setupKeywords()
 {
 	if (sKeywords.empty())
 	{
-		sKeywords["if"]       =	Sym::IF;
-		sKeywords["elif"]     = Sym::ELIF;
-		sKeywords["else"]     =	Sym::ELSE;
-
-		sKeywords["do"]    	 =	Sym::DO;
-		sKeywords["while"]    =	Sym::WHILE;
-		sKeywords["until"]    =	Sym::UNTIL;
-		sKeywords["for"]      =	Sym::FOR;
-		sKeywords["in"]       =	Sym::IN;
-		sKeywords["break"]    =	Sym::BREAK;
-		sKeywords["continue"] =	Sym::CONT;
-
-		sKeywords["read"] 	 =	Sym::READ;
-		sKeywords["write"] 	 =	Sym::WRITE;
-		sKeywords["print"] 	 =	Sym::PRINT;
-
-		sKeywords["def"] 		 =	Sym::DEF;
-		sKeywords["class"] 	 = Sym::CLASS;
+		sKeywords["None"]     =	S_NONE;
 		
-      sKeywords["and"]		 = Sym::AND;
-		sKeywords["or"]		 =	Sym::OR;
-		sKeywords["not"]		 =	Sym::NOT;
+		sKeywords["if"]       =	S_IF;
+		sKeywords["elif"]     = S_ELIF;
+		sKeywords["else"]     =	S_ELSE;
 
-		sKeywords["type"]		 =	Sym::TYPE;
+		sKeywords["do"]    	 =	S_DO;
+		sKeywords["while"]    =	S_WHILE;
+		sKeywords["until"]    =	S_UNTIL;
+		sKeywords["for"]      =	S_FOR;
+		sKeywords["in"]       =	S_IN;
+		sKeywords["break"]    =	S_BREAK;
+		sKeywords["continue"] =	S_CONT;
+
+		sKeywords["read"] 	 =	S_READ;
+		sKeywords["write"] 	 =	S_WRITE;
+		sKeywords["print"] 	 =	S_PRINT;
+		sKeywords["delete"] 	 =	S_DEL;
+
+
+		sKeywords["def"] 		 =	S_DEF;
+		sKeywords["class"] 	 = S_CLASS;
+		
+      sKeywords["and"]		 = S_AND;
+		sKeywords["or"]		 =	S_OR;
+		sKeywords["not"]		 =	S_NOT;
+
+		sKeywords["type"]		 =	S_TYPE;
       
-		sKeywords["true"]     = Token(Sym::BOOL, true);
-		sKeywords["false"]    = Token(Sym::BOOL, false);
+		sKeywords["true"]     = Token(S_BOOL, true);
+		sKeywords["false"]    = Token(S_BOOL, false);
 
-		sKeywords["exit"]     = Sym::QUIT;
-		sKeywords["quit"]     = Sym::QUIT;
+		sKeywords["exit"]     = S_QUIT;
+		sKeywords["quit"]     = S_QUIT;
 	}
 }
 
@@ -84,7 +88,7 @@ const Token &Lexer::getNext()
 	char ch = mInput->peek();
 	
 	if (mInput->eof())
-		mToken = Token(Sym::END);
+		mToken = Token(S_END);
 	else if (ch == '#')
 	{
 		do
@@ -111,42 +115,42 @@ const Token &Lexer::getNext()
 	else if (ch == '(')
 	{
 		mInput->get();
-		mToken = Sym::O_PARAN;
+		mToken = S_O_PARAN;
 	}
 	else if (ch == ')')
 	{
 		mInput->get();
-		mToken = Sym::C_PARAN;
+		mToken = S_C_PARAN;
 	}
 	else if (ch == '[')
 	{
 		mInput->get();
-		mToken = Sym::O_BRACKET;
+		mToken = S_O_BRACKET;
 	}
 	else if (ch == ']')
 	{
 		mInput->get();
-		mToken = Sym::C_BRACKET;
+		mToken = S_C_BRACKET;
 	}
 	else if (ch == '{')
 	{
 		mInput->get();
-		mToken = Sym::O_BRACE;
+		mToken = S_O_BRACE;
 	}
 	else if (ch == '}')
 	{
 		mInput->get();
-		mToken = Sym::C_BRACE;
+		mToken = S_C_BRACE;
 	}
 	else if (ch == ';')
 	{
 		mInput->get();
-		mToken = Sym::SC;
+		mToken = S_SC;
 	}
 	else if (ch == ',')
 	{
 		mInput->get();
-		mToken = Sym::COMMA;
+		mToken = S_COMMA;
 	}
 	else if (isalpha(ch) || ch == '_')
 	{
@@ -163,7 +167,7 @@ const Token &Lexer::getNext()
 		if (it != sKeywords.end()) // keyword
 			mToken = it->second;
 		else //identifier
-			mToken = Token(Sym::ID, mTokenStr);
+			mToken = Token(S_ID, mTokenStr);
 	}
    else if ((ch == '"') || (ch == '\''))
 	{
@@ -198,7 +202,7 @@ const Token &Lexer::getNext()
          
 		} 
 		mInput->get();
-		mToken = Token(Sym::STR, mTokenStr);
+		mToken = Token(S_STR, mTokenStr);
 	}
 	else if (ch == '+')
 	{
@@ -207,25 +211,25 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Sym::PLUS_EQ;
+			mToken = S_PLUS_EQ;
 		}
 		else if (ch == '+')
 		{
 			mInput->get();
-			mToken = Sym::INCR;
+			mToken = S_INCR;
 		}
 		else
-			mToken = Sym::PLUS;
+			mToken = S_PLUS;
 	}
 	else if (ch == '*')
 	{
 		mInput->get();
-		mToken = Sym::TIMES;
+		mToken = S_TIMES;
 	}
 	else if (ch == '/')
 	{
 		mInput->get();
-		mToken = Sym::DIVIDE;
+		mToken = S_DIVIDE;
 	}
 	else if ((ch == '-') || (ch == '.') || isdigit(ch))
 	{
@@ -239,17 +243,17 @@ const Token &Lexer::getNext()
 			ch = mInput->peek();
 			if (ch == '-')
 			{
-				t = Token(Sym::DECR);
+				t = Token(S_DECR);
 				mInput->get();
 			}
 			else if ((!isdigit(ch) && (ch != '.')) 
-				|| (mToken.getType() == Sym::NUM) || (mToken.getType() == Sym::ID)
-				|| (mToken.getType() == Sym::STR))
-				t = Token(Sym::MINUS);
+				|| (mToken.getType() == S_NUM) || (mToken.getType() == S_ID)
+				|| (mToken.getType() == S_STR))
+				t = Token(S_MINUS);
 			else
 				mTokenStr += '-';
 		}
-		if (t.getType() != Sym::NONE)
+		if (t.getType() != S_NONE)
 			mToken = t;
 		else
 		{ 
@@ -261,7 +265,7 @@ const Token &Lexer::getNext()
 				mInput->get();
 				ch = mInput->peek();
 			} while(!(mInput->eof()) && (isdigit(ch) || (!foundPoint && (ch == '.'))));
-			mToken = Token(Sym::NUM, atof(mTokenStr.c_str()));
+			mToken = Token(S_NUM, atof(mTokenStr.c_str()));
 		}
 
 	}
@@ -272,10 +276,10 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Sym::LESS_EQ);
+			mToken = Token(S_LESS_EQ);
 		}
 		else
-			mToken = Token(Sym::LESS);
+			mToken = Token(S_LESS);
 	}
 	else if (ch == '>')
 	{
@@ -284,10 +288,10 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Sym::GREATER_EQ);
+			mToken = Token(S_GREATER_EQ);
 		}
 		else
-			mToken = Token(Sym::GREATER);
+			mToken = Token(S_GREATER);
 	}
 	else if (ch == '=')
 	{
@@ -296,10 +300,10 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Sym::EQ);
+			mToken = Token(S_EQ);
 		}
 		else
-			mToken = Token(Sym::ASSIGN);
+			mToken = Token(S_ASSIGN);
 	}
 	else if (ch == '&')
 	{
@@ -308,10 +312,10 @@ const Token &Lexer::getNext()
 		if (ch == '&')
 		{
 			mInput->get();
-			mToken = Token(Sym::AND);
+			mToken = Token(S_AND);
 		}
 		else
-			mToken = Token(Sym::FAIL, std::string("expected: \"&&\" found \"&") + ch + "\"");
+			mToken = Token(S_FAIL, std::string("expected: \"&&\" found \"&") + ch + "\"");
 	}
 	
 	else if (ch == '|')
@@ -321,10 +325,10 @@ const Token &Lexer::getNext()
 		if (ch == '|')
 		{
 			mInput->get();
-			mToken = Token(Sym::OR);
+			mToken = Token(S_OR);
 		}
 		else
-			mToken = Token(Sym::FAIL, std::string("expected: \"||\" found \"|") + ch + "\"");
+			mToken = Token(S_FAIL, std::string("expected: \"||\" found \"|") + ch + "\"");
 	}
 	else if (ch == '!')
 	{
@@ -333,10 +337,10 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Sym::NOT_EQ);
+			mToken = Token(S_NOT_EQ);
 		}
 		else
-			mToken = Token(Sym::NOT);
+			mToken = Token(S_NOT);
 	}
 	else if (ch == ':')
 	{
@@ -345,15 +349,15 @@ const Token &Lexer::getNext()
 		if (ch == '=')
 		{
 			mInput->get();
-			mToken = Token(Sym::INIT);
+			mToken = Token(S_INIT);
 		}
 		else
-			mToken = Token(Sym::FAIL, std::string("expected: ':=' found ':") + ch + "'");
+			mToken = Token(S_FAIL, std::string("expected: ':=' found ':") + ch + "'");
 	}
 	else
 	{
 		mInput->get();
-		mToken = Token(Sym::FAIL, std::string("Invalid mToken: '") + ch + '\'');
+		mToken = Token(S_FAIL, std::string("Invalid mToken: '") + ch + '\'');
 	}
 	
 	return mToken;
@@ -384,7 +388,7 @@ Lexer &Lexer::operator=(const Lexer &lexer)
 			Token token = lex.getNext();
 			
 			std::cout << "   ";
-			while ((token.getType() != Sym::END) /*&& (token.getType() != FAIL)*/)
+			while ((token.getType() != S_END) /*&& (token.getType() != FAIL)*/)
 			{
  				std::cout << token << ' ';
 				token = lex.getNext();
