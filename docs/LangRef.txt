@@ -9,7 +9,7 @@ convert this page to html with: http://sourceforge.net/projects/wiki2xhtml/ ??
 == Variables ==
 
 === Data Types ===
-The data types in birthstone are number (floating point), boolean, string. Birthstone is loosly typed, so types will be implicitly converted accourding the context. To explicitly convert between types, read "type conversion" in the "Tips & Tricks" section of this document.  In general, the type of the result of a binary operation (like a + b) will be the type of the first operand. The exception is the comparison and logical operators, which always return booleans.
+The data types in birthstone are number (floating point), boolean, string, and none. Birthstone is loosly typed, so types will be implicitly converted accourding the context. To explicitly convert between types, read "type conversion" in the "Tips & Tricks" section of this document.  In general, the type of the result of a binary operation (like a + b) will be the type of the first operand. The exception is the comparison and logical operators, which always return booleans.
 
 The unary type operator will return a string representation of the type of it's operand. For example:
 	type "abc"; # returns "String"
@@ -32,7 +32,14 @@ A variable may also be reassigned using the assignment operator ( = ). When a va
 
 In this example, x is first initialized to "aa", then it is rebound to the value 1 (a number). The variable y is first initialized to "bb", and then *reassigned* to the value 2. Since y is a string, it stays a string when it is reassigned, so the number 2 is converted to the string "2", and y ends up with a value of "2" (as a string).
 
+=== Deleting variables ===
+A variable can be deleted (removed from the symbol table) using the delete operator. For example,
+	x := 0;
+	print x; # prints 0
+	delete x;
+	print x; # undefined variable: x
 
+Variables will generally not need to be deleted. Note that deleting a local variable will allow you access to a global variable with the same name.
 
 == Input and Output ==
 

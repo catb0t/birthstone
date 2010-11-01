@@ -22,7 +22,6 @@
 #define BS_LEXER_H
 
 #include "symbol.h"
-using Sym::Symbol;
 #include "token.h"
 #include "token_stream.h"
 
