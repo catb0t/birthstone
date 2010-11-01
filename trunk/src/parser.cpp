@@ -239,7 +239,7 @@ bool Parser::function()
 
 bool Parser::print()
 {
-	bool newLine;
+	bool newLine = false;
 
 // 	std::cerr << __FILE__ << ':' << __LINE__ << ": print()" << std::endl;
 
@@ -634,6 +634,8 @@ Token Parser::comp()
 		Token token2 = sum();
 		if (mExec)
 		{
+			if (token2.getType() == Sym::ID)
+				token2 = lookup(token2);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  == toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -650,7 +652,7 @@ Token Parser::comp()
 		if (mExec)
 		{
 			if (token2.getType() == Sym::ID)
-				token2 = lookup(token);
+				token2 = lookup(token2);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  != toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -667,7 +669,7 @@ Token Parser::comp()
 		if (mExec)
 		{
 			if (token2.getType() == Sym::ID)
-				token2 = lookup(token);
+				token2 = lookup(token2);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  <  toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -684,7 +686,7 @@ Token Parser::comp()
 		if (mExec)
 		{
 			if (token2.getType() == Sym::ID)
-				token2 = lookup(token);
+				token2 = lookup(token2);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  <= toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -701,7 +703,7 @@ Token Parser::comp()
 		if (mExec)
 		{
 			if (token2.getType() == Sym::ID)
-				token2 = lookup(token);
+				token2 = lookup(token2);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  >  toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -718,7 +720,7 @@ Token Parser::comp()
 		if (mExec)
 		{
 			if (token2.getType() == Sym::ID)
-				token2 = lookup(token);
+				token2 = lookup(token2);
 			if (token.getType() == Sym::STR)
 				token = Token(Sym::BOOL, token.getStr()  >= toStr(token2));
 			else if (token.getType() == Sym::NUM)
@@ -811,16 +813,17 @@ Token Parser::product()
 // TODO: Implement unary not
 Token Parser::unary()
 {
-	if (mExec)
+
+	if (accept(Sym::NOT))
+		return (mExec?Token(Sym::BOOL, !toBool(unary())):unary());
+	else if (accept(Sym::MINUS))
+		return (mExec?Token(Sym::NUM, -toNum(unary())):unary());
+	else if (accept(Sym::INCR))
 	{
-		if (accept(Sym::NOT))
-			return Token(Sym::BOOL, !toBool(unary()));
-		else if (accept(Sym::MINUS))
-			return Token(Sym::NUM, -toNum(unary()));
-		else if (accept(Sym::INCR))
+		Token &var = lookup(mToken);
+		expect(Sym::ID);
+		if (mExec)
 		{
-			Token &var = lookup(mToken);
-			expect(Sym::ID);
 			if (var.getType() == Sym::NUM)
 			{
 				var.setNum(var.getNum() + 1);
@@ -829,10 +832,13 @@ Token Parser::unary()
 			else
 				error("only numeric variables can be incremented");
 		}
-		else if (accept(Sym::DECR))
+	}
+	else if (accept(Sym::DECR))
+	{
+		Token &var = lookup(mToken);
+		expect(Sym::ID);
+		if (mExec)
 		{
-			Token &var = lookup(mToken);
-			expect(Sym::ID);
 			if (var.getType() == Sym::NUM)
 			{
 				var.setNum(var.getNum() - 1);
@@ -841,13 +847,18 @@ Token Parser::unary()
 			else
 				error("only numeric variables can be decremented");
 		}
-		else if (accept(Sym::TYPE))
+	}
+	else if (accept(Sym::TYPE))
+	{
+		bool paran = accept(Sym::O_PARAN);
+		Token t = unary();
+		if (mExec)
 		{
-			Token t = mToken;
-			expect(Sym::ID);
-			bool paran = accept(Sym::O_PARAN);
+			if (t.getType() == Sym::ID)
+				t = lookup(t).getType();
+
 			std::string typeName;
-			switch (lookup(t).getType())
+			switch (t.getType())
 			{
 				case Sym::NUM:
 					typeName = "Number";
@@ -858,8 +869,12 @@ Token Parser::unary()
 				case Sym::BOOL:
 					typeName = "Boolean";
 					break;
-				default:
+				case Sym::NONE:
+
 					typeName = "None";
+					break;
+				default:
+					typeName = "Invalid";
 					break;
 			}
 			if (paran)
