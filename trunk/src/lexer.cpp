@@ -357,7 +357,7 @@ const Token &Lexer::getNext()
 	else
 	{
 		mInput->get();
-		mToken = Token(S_FAIL, std::string("Invalid mToken: '") + ch + '\'');
+		mToken = Token(S_FAIL, std::string("Invalid token: '") + ch + '\'');
 	}
 	
 	return mToken;
