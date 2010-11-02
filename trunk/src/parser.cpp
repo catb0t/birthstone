@@ -232,11 +232,11 @@ bool Parser::code()
 {
 	if (accept(S_QUIT))
 		return false;
-	block() || ifCond() || loop() || function() ||  stmt();
+	block() || ifCond() || loop() || defFunc() ||  stmt();
 	return true;
 }
 
-bool Parser::function()
+bool Parser::defFunc()
 {
 	if (!accept(S_DEF))
 		return false;
@@ -244,15 +244,47 @@ bool Parser::function()
 	std::string funcName = mToken.getStr();
 	expect(S_ID);
 	bool oldExec = mExec;
-	std::vector<Token> parameters;
+	std::vector<std::string> params;
 	mExec = false;
 	expect(S_O_PARAN);
-	//....
-	expect(S_C_PARAN);
 
-	block();
+	std::string param = mToken.getStr();
+	if (accept(S_ID))
+	{
+		params.push_back(param);
+		while (accept(S_COMMA))
+		{
+			param = mToken.getStr();
+			expect(S_ID);
+			params.push_back(param);
+		}
+	}
+
+	expect(S_C_PARAN);
+	SavedTokenStream funcBody; // function body
+
+	mSave = &funcBody;
+	expect(S_O_BRACE);
+	while (!accept(S_C_BRACE))
+	{
+		accept(S_RET);
+		stmt();		
+	}
+	mSave = NULL;	
+
+
+	#ifdef BS_DEBUG	// DEBUG:
+		std::cerr << "function defined: " << funcName << "(";
+		for (std::vector<std::string>::iterator i = args.begin(); i < args.end(); ++i)
+		{
+			if (i != args.begin())
+				std::cerr << ", ";
+			std::cerr << *i; 
+		}
+		std::cerr << ")" << std::endl;
+	#endif // BS_DEBUG
 	
-	//TODO: bool Parser::function()
+	// TODO: bool Parser::defFunc()
 	mExec = oldExec;
 	return true;
 }

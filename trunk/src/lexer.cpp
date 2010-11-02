@@ -49,6 +49,8 @@ void Lexer::setupKeywords()
 		
 		sKeywords["if"]       =	S_IF;
 		sKeywords["elif"]     = S_ELIF;
+		sKeywords["elsif"] 	 = S_ELIF;
+		sKeywords["elseif"]   = S_ELIF;
 		sKeywords["else"]     =	S_ELSE;
 
 		sKeywords["do"]    	 =	S_DO;
@@ -67,6 +69,7 @@ void Lexer::setupKeywords()
 
 		sKeywords["def"] 		 =	S_DEF;
 		sKeywords["class"] 	 = S_CLASS;
+		sKeywords["return"]   = S_RET;
 		
       sKeywords["and"]		 = S_AND;
 		sKeywords["or"]		 =	S_OR;

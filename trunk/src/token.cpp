@@ -138,7 +138,7 @@ std::string Token::repr() 	const
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
 		"PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
 		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
-		"IF", "ELIF", "ELSE", "WRITE", "PRINT", "DEF", "CLASS",
+		"IF", "ELIF", "ELSE", "WRITE", "PRINT", "DEF", "CLASS", "RET",
 		"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "READ", "DEL",
 		"ASSIGN", "INIT", "AND", "OR", "NOT", "INCR", "DECR", "TYPE", "COMMA", "SC", "QUIT"};
 		
