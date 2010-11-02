@@ -82,7 +82,7 @@ while (i < 10)
 }
 print;
 print "for loop: numbers 1-10 should be printed";
-for(i = 1; i <= 10; i = i + 1)
+for(i = 1; i <= 10; ++i)
 	write " " + i;
 print;
 
