@@ -38,7 +38,6 @@ class Parser
 	public:
 		Parser(std::istream &input);
 		bool run();
-		void newInput(std::istream &input);
 		
 	protected:
 		const Token &getNext();
@@ -86,7 +85,6 @@ class Parser
 		Lexer mLexer;
 		Token mToken;
 		std::list<std::map<std::string,Token> > mSymTbls;
-// 		std::map<std::string,Token> mSymTbl; //TODO: remove mSymTbl and replace with mSymTbls
 		std::stack<SavedTokenStream> mTknStreams;
 		bool mExec; // execute (true) or ignore (false) commands?
 		SavedTokenStream *mSave; // save tokens?

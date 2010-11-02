@@ -69,12 +69,6 @@ bool Parser::run()
 	return cont;
 }
 
-void Parser::newInput(std::istream &input)
-{
- 	mLexer = Lexer(input);
-}
-
-
 std::string Parser::toStr(Token t)
 {
 // 	std::cerr << __FILE__ << ':' << __LINE__ << ": toStr()" << std::endl;
@@ -155,7 +149,7 @@ Token &Parser::lookup(Token id)
 // 	std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
 	if (id.getType() != S_ID) // (token is not an ID)
 	{
-		error(std::string("expected identifier, got: ") + id.repr());
+// 		error(std::string("expected identifier, got: ") + id.repr());
 		return noTkn;  
 	}
 	//else: (token is an ID)
@@ -908,6 +902,7 @@ Token Parser::unary()
 		return (mExec?Token(S_NUM, -toNum(unary())):unary());
 	else if (accept(S_INCR))
 	{
+		Token token = mToken;
 		Token &var = lookup(mToken);
 		expect(S_ID);
 		if (mExec)
@@ -920,25 +915,30 @@ Token Parser::unary()
 			else
 				error("only numeric variables can be incremented");
 		}
+		return token;
 	}
 	else if (accept(S_DECR))
 	{
-		Token &var = lookup(mToken);
-		expect(S_ID);
+		Token token = mToken;
+		accept(S_ID);
+		
 		if (mExec)
 		{
+			Token &var = lookup(token);
 			if (var.getType() == S_NUM)
 			{
 				var.setNum(var.getNum() - 1);
 				return var;
 			}
-			else
+			else if (var.getType() != S_NONE)
 				error("only numeric variables can be decremented");
+			else
+				return Token(S_NUM, toNum(unary()));
 		}
+		return token;
 	}
 	else if (accept(S_TYPE))
 	{
-		bool paran = accept(S_O_PARAN);
 		Token t = unary();
 		if (mExec)
 		{
@@ -965,10 +965,9 @@ Token Parser::unary()
 					typeName = "Invalid";
 					break;
 			}
-			if (paran)
-				expect(S_C_PARAN);
 			return Token(S_STR,typeName);
 		}
+		return t;
 	}
 	return factor();
 }
@@ -982,8 +981,25 @@ Token Parser::factor()
 		token = asgnmt();
 		expect(S_C_PARAN);
 	}
-	else if (accept(S_NUM) || accept(S_BOOL) || accept(S_STR) || accept(S_ID) || accept(S_NONE))
+	else if (accept(S_NUM) || accept(S_BOOL) || accept(S_STR) || accept(S_NONE))
 		; //just accept them, we already saved the accepted token as token
+	else if (accept(S_ID))
+	{
+		if (accept(S_INCR) && mExec) //post-increment: old value is returned
+		{
+			Token &val = lookup(token);
+			Token oldVal = val;
+			val.setNum(val.getNum() + 1);
+			return oldVal;
+		}
+		else if (accept(S_DECR) && mExec) //post-decrement: old value is returned
+		{
+			Token &val = lookup(token);
+			Token oldVal = val;
+			val.setNum(val.getNum() - 1);
+			return oldVal;
+		}
+	}
 	else
 	{
 		#ifdef BS_DEBUG
