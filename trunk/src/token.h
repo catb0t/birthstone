@@ -23,6 +23,7 @@
 
 #include <string>
 #include "symbol.h"
+class Func;
 
 /******************************************************************************
 *
@@ -36,13 +37,15 @@ class Token
 		Token(Symbol type, const std::string &str);
 		Token(Symbol type, const double &num);
 		Token(Symbol type, bool boolean);
+		Token(Symbol type, const Func &func);
 		Token(const Token &token);
 		~Token();
 
 		Symbol      getType() const;
-		std::string getStr()  const;
-		double      getNum()  const;
+		std::string getStr () const;
+		double      getNum () const;
 		bool        getBool() const;
+		Func        getFunc() const;
 
 		void setStr(std::string s);
 		void setNum(double n) ;
@@ -61,6 +64,7 @@ class Token
 			double d;
 			bool b;
 			std::string *s;
+			Func *f;
 		} mVal;
 };
 std::ostream &operator <<(std::ostream &stream, const Token &token);

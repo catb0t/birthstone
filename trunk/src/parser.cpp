@@ -990,8 +990,10 @@ Token Parser::unary()
 					typeName = "Boolean";
 					break;
 				case S_NONE:
-
 					typeName = "None";
+					break;
+				case S_FUNC:
+					typeName = "Function";
 					break;
 				default:
 					typeName = "Invalid";

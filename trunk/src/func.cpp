@@ -20,10 +20,16 @@
 ******************************************************************************/
 
 #include "func.h"
-Func::Func(std::string name, std::vector<std::string> params, SavedTokenStream funcBody)
+Func::Func(std::vector<std::string> params, SavedTokenStream funcBody) : mParams(params), mFuncBody(funcBody)
 {
 }
 
-void Func::call(std::vector<std::string> args)
+inline const std::vector<std::string> &Func::getParams() const
 {
+	return mParams;
+}
+
+inline const SavedTokenStream &Func::getFuncBody() const
+{
+	return mFuncBody;
 }

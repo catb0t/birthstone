@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include "token.h"
+#include "func.h"
 
 Token endTkn(S_END);
 Token noTkn(S_NONE);
@@ -51,6 +52,12 @@ Token::Token(Symbol type, bool boolean) : mType(type)
 	}
 }
 
+Token::Token(Symbol type, const Func &func)
+{
+#warning TODO: implement Token::Token(Symbol type, const Func &func)
+}
+
+
 Token::Token(const Token &token) : mType(token.mType)
 {
       if ((token.mType == S_ID) || (token.mType == S_FAIL) || (token.mType == S_STR))
@@ -97,8 +104,13 @@ bool Token::getBool() const
 	else
 		return false;
 }
+		
 
-				
+Func Token::getFunc() const
+{
+#warning TODO: implement Func Token::getFunc() const
+}
+		
 void Token::setStr(std::string s)
 {
 	if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
@@ -134,7 +146,7 @@ std::string Token::repr() 	const
 	std::stringstream s;
 		// TODO: make sure this matches enum Symbol exactly
 	static std::string typeName[] = {
-		"NONE", "FAIL", "END", "ID", "NUM", " STR", "BOOL",
+		"NONE", "FAIL", "END", "ID", "NUM", " STR", "BOOL", "FUNC",
 		"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
 		"PLUS_EQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
 		"LESS", "LESS_EQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
