@@ -22,15 +22,18 @@
 #define BS_FUNC_H
 #include <string>
 #include <vector>
-#include "token.h"
+#include "token_stream.h"
+
+class SavedTokenStream;
 
 class Func
 {
 	public:
-		Func(std::string name, std::vector<std::string> params, SavedTokenStream funcBody);
-		void call(std::vector<std::string> args);
+		Func(std::vector<std::string> params, SavedTokenStream funcBody);
+		const std::vector<std::string> &getParams() const;
+		const SavedTokenStream &getFuncBody() const;
+		
 	private:
-		std::string mName;
 		std::vector<std::string> mParams;
 		SavedTokenStream mFuncBody;
 };
