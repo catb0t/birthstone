@@ -24,9 +24,10 @@
 #include "parser.h"
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(S_NONE),
-                                      mExec(true), mSave(NULL)
+                                      mExec(true), mSave(NULL),
+												  mBreak (false), mCont(false)
 {
-	mSymTbls.push_back(std::map<std::string,Token>());
+	mSymTbls.push_back(std::map<std::string,Token>()); // global scope symbol table
 }
 
 const Token &Parser::getNext()
@@ -275,9 +276,9 @@ bool Parser::defFunc()
 
 	#ifdef BS_DEBUG	// DEBUG:
 		std::cerr << "function defined: " << funcName << "(";
-		for (std::vector<std::string>::iterator i = args.begin(); i < args.end(); ++i)
+		for (std::vector<std::string>::iterator i = params.begin(); i < params.end(); ++i)
 		{
-			if (i != args.begin())
+			if (i != params.begin())
 				std::cerr << ", ";
 			std::cerr << *i; 
 		}
@@ -378,34 +379,6 @@ bool Parser::deleteCmd()
 	return false;
 }
 
-bool Parser::breakStmt() throw(Symbol)
-{
-	if (accept(S_BREAK))
-	{
-		
-		if (mExec)
-		{
-			accept(S_SC);
-			throw(S_BREAK);
-		}
-		return true;
-	}
-	return false;
-}
-
-bool Parser::contStmt() throw(Symbol)
-{
-	if (accept(S_CONT))
-	{
-		if (mExec)
-		{
-			accept(S_SC);
-			throw(S_CONT);
-		}
-		return true;
-	}
-	return false;
-}
 
 bool Parser::ifCond()
 {
@@ -547,23 +520,24 @@ bool Parser::loop()
 
 		while(toBool(asgnmt()))
 		{
-			bool cont = false;
-			Token condTkn=mToken;
+			Token condTkn = mToken;
 			mTknStreams.push(cmds);
 			getNext();
-			try
+
+			block(false) || stmt();
+			
+			if (mBreak)
 			{
-				block(false) || stmt();
+				mBreak = false;
+				mExec = true;
+				break;
 			}
-			catch (Symbol s)
+			else if (mCont)
 			{
-				if (s == S_BREAK)
-					break;
-				else if (s == S_CONT)
-					mExec = false;
-				else
-					throw;
+				mCont = false;
+				mExec = true;
 			}
+			
 			mTknStreams.pop(); //pop cmds
 			mToken = condTkn;
 			accept(S_END);
@@ -606,29 +580,31 @@ bool Parser::block(bool createScope)
 	return false;
 }
 
-bool Parser::stmt() throw(Symbol)
+bool Parser::stmt() 
 {
 	if (accept(S_SC))
 		return false; //empty statement returns false
 
-	if (print() || read() || deleteCmd())
+	if (accept(S_BREAK))
+	{
+		if (mExec)
+		{
+			mBreak = true;
+			mExec = false;
+		}
+	}
+	else if (accept(S_CONT))
+	{
+		if (mExec)
+		{
+			mCont = true;
+			mExec = false;
+		}
+	}
+	else if (print() || read() || deleteCmd())
 		return true;
-
-	bool breakOrCont = false;
-	try
-	{
-		breakOrCont = breakStmt() || contStmt();
-	}
-	catch (Symbol)
-	{
-		throw;
-	}
 	
-
-	if (!breakOrCont)
-		asgnmt();
 	expect(S_SC);
-
 	return true;
 
 }
@@ -1019,6 +995,10 @@ Token Parser::factor()
 		; //just accept them, we already saved the accepted token as token
 	else if (accept(S_ID))
 	{
+		if (accept(S_O_PARAN))
+		{
+			call(token.getStr());
+		}
 		if (accept(S_INCR) && mExec) //post-increment: old value is returned
 		{
 			Token &val = lookup(token);
@@ -1047,4 +1027,11 @@ Token Parser::factor()
 		      + " expected: Number, Bool, String, Identifier or parenthetical expression.");
 	}
 	return token;
+}
+
+
+Token Parser::call(std::string funcName)
+{
+	//TODO: implement Token call(std::string funcName)
+	return mToken; //for now
 }
