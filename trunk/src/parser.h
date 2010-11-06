@@ -67,7 +67,7 @@ class Parser
 		bool loop();
 
 		bool block(bool createScope = true);
-		bool stmt() throw(Symbol);
+		bool stmt();
 		
 		Token asgnmt();
 		Token orOp();
@@ -78,6 +78,8 @@ class Parser
 		Token unary();
 		Token factor();
 
+		Token call(std::string funcName);
+
 
 		
 	private:
@@ -86,8 +88,10 @@ class Parser
 		Token mToken;
 		std::list<std::map<std::string,Token> > mSymTbls;
 		std::stack<SavedTokenStream> mTknStreams;
-		bool mExec; // execute (true) or ignore (false) commands?
 		SavedTokenStream *mSave; // save tokens?
+		bool mExec; // execute (true) or ignore (false) commands?
+		bool mBreak;
+		bool mCont;
 };
 
 

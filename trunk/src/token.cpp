@@ -52,9 +52,16 @@ Token::Token(Symbol type, bool boolean) : mType(type)
 	}
 }
 
-Token::Token(Symbol type, const Func &func)
+Token::Token(Symbol type, const Func &func) :mType(type)
 {
-#warning TODO: implement Token::Token(Symbol type, const Func &func)
+	if (mType == S_FUNC)
+		mVal.f = new Func(func);
+	else
+	{
+		mType = S_FAIL;
+		std::string error = "ERROR: only FUNC type tokens can have function values";
+		mVal.s = new std::string(error);
+	}
 }
 
 
@@ -76,6 +83,8 @@ Token::~Token()
 			delete  mVal.s;
 		mVal.s = NULL;
 	}
+	if (mType == S_FUNC)
+		delete  mVal.f;
 }
 
 inline Symbol Token::getType() const { return mType; }
@@ -106,9 +115,13 @@ bool Token::getBool() const
 }
 		
 
-Func Token::getFunc() const
+Func &Token::getFunc() const
 {
-#warning TODO: implement Func Token::getFunc() const
+	if (mType == S_FUNC)
+		return *mVal.f;
+#warning TODO: implement TypeException
+// 	else
+// 		throw TypeException(/*expected: */S_FUNC, /*got: */ mType);
 }
 		
 void Token::setStr(std::string s)

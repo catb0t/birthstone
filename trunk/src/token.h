@@ -45,7 +45,7 @@ class Token
 		std::string getStr () const;
 		double      getNum () const;
 		bool        getBool() const;
-		Func        getFunc() const;
+		Func        &getFunc() const;
 
 		void setStr(std::string s);
 		void setNum(double n) ;
