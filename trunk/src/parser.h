@@ -78,7 +78,7 @@ class Parser
 		Token unary();
 		Token factor();
 
-		Token call(std::string funcName);
+		Token call(const Token &funcName);
 
 
 		
