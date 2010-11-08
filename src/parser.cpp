@@ -23,6 +23,10 @@
 #include <sstream>
 #include "parser.h"
 
+#ifdef BS_DEBUG
+#include <cassert>
+#endif
+
 Parser::Parser(std::istream &input) : mLexer(input), mToken(S_NONE),
                                       mExec(true), mSave(NULL),
 												  mBreak (false), mCont(false)
@@ -213,7 +217,7 @@ inline bool Parser::expect(Symbol sym)
 		return true;
 
 	// else:
-	error (std::string("error: expected ") + Token(sym).repr() + " got: " + mToken.repr());
+	error (std::string("ERROR: expected: ") + Token(sym).repr() + " got: " + mToken.repr());
 	return false;
 }
 
@@ -286,7 +290,7 @@ bool Parser::defFunc()
 	#endif // BS_DEBUG
 	
 	// TODO: bool Parser::defFunc()
-	mExec = oldExec;
+	mExec = oldExec && !(mCont || mBreak);
 	return true;
 }
 
@@ -300,11 +304,10 @@ bool Parser::print()
 	{
 // 		std::cerr << __FILE__ << ':' << __LINE__ << ": print(): got <PRINT> or <WRITE>" << std::endl;
 		std::string str = "";
-		if (!accept(S_SC))
+		if (mToken != S_SC)
 		{
 			str = toStr(asgnmt());
 // 			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
-			expect(S_SC);
 		}
 
 		if (mExec)
@@ -312,6 +315,10 @@ bool Parser::print()
 			std::cout << str;
 			if (newLine)
 				std::cout << std::endl;
+		#ifdef BS_DEBUG
+			else
+				std::cout << std::flush;
+		#endif // BS_DEBUG
 		}
 		return true;
 	}
@@ -359,7 +366,6 @@ bool Parser::read()
 				}
 			}
 		}
-		expect(S_SC);
 		return true;
 	}
 		
@@ -394,13 +400,16 @@ bool Parser::ifCond()
 		
 		mExec = oldExec && condition;
 		block() || stmt();
-		mExec = oldExec;
+		mExec = oldExec && !(mCont || mBreak);
 		
 		while (elifCond(condition))
 			;
 		elseCond(condition);
 
 
+		#ifdef BS_DEBUG
+		assert( mExec == false || mCont == false);
+		#endif
 		return true;
 	}
 	// else: 
@@ -429,7 +438,7 @@ bool Parser::elifCond(bool &ignore)
 		mExec = oldExec && condition;
 			
 		block() || stmt();
-		mExec = oldExec;
+		mExec = oldExec && !(mCont || mBreak);
 
 		return true;
 	}
@@ -444,7 +453,7 @@ bool Parser::elseCond(bool ignore)
 		bool oldExec = mExec;
 		mExec = oldExec && !ignore;
 		block() || stmt();
-		mExec = oldExec;
+		mExec = oldExec && !(mCont || mBreak);
 		return true;
 	}
 	return false;
@@ -516,7 +525,7 @@ bool Parser::loop()
 		mTknStreams.push(cond);
 		Token oldTkn = mToken;
 		getNext();
-		mExec = oldExec;
+		mExec = oldExec && !(mCont || mBreak);
 
 		while(toBool(asgnmt()))
 		{
@@ -550,7 +559,7 @@ bool Parser::loop()
 				mTknStreams.pop(); //pop incr
 				mToken = cmdsTkn;
 			}
-			mExec = oldExec;
+			mExec = oldExec && !(mCont || mBreak);
 
 		}
 		mTknStreams.pop(); //pop cond
@@ -601,8 +610,8 @@ bool Parser::stmt()
 			mExec = false;
 		}
 	}
-	else if (print() || read() || deleteCmd())
-		return true;
+	else
+		print() || read() || deleteCmd() || asgnmt();
 	
 	expect(S_SC);
 	return true;
@@ -997,7 +1006,7 @@ Token Parser::factor()
 	{
 		if (accept(S_O_PARAN))
 		{
-			call(token.getStr());
+			call(token);
 		}
 		if (accept(S_INCR) && mExec) //post-increment: old value is returned
 		{
@@ -1030,8 +1039,14 @@ Token Parser::factor()
 }
 
 
-Token Parser::call(std::string funcName)
+Token Parser::call(const Token &funcName)
 {
-	//TODO: implement Token call(std::string funcName)
-	return mToken; //for now
+	Token funcTkn = lookup(funcName);
+	if (funcTkn.getType() == S_FUNC)
+	{
+		Func &func = funcTkn.getFunc();
+		
+		
+	}
+	return noTkn; //for now
 }
