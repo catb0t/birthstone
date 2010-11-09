@@ -290,7 +290,7 @@ bool Parser::defFunc()
 	#endif // BS_DEBUG
 	
 	// TODO: bool Parser::defFunc()
-	mExec = oldExec && !(mCont || mBreak);
+	mExec = oldExec;
 	return true;
 }
 
@@ -453,7 +453,7 @@ bool Parser::elseCond(bool ignore)
 		bool oldExec = mExec;
 		mExec = oldExec && !ignore;
 		block() || stmt();
-		mExec = oldExec && !(mCont || mBreak);
+  		mExec = oldExec && !(mCont || mBreak);
 		return true;
 	}
 	return false;
@@ -525,7 +525,7 @@ bool Parser::loop()
 		mTknStreams.push(cond);
 		Token oldTkn = mToken;
 		getNext();
-		mExec = oldExec && !(mCont || mBreak);
+		mExec = oldExec;
 
 		while(toBool(asgnmt()))
 		{
@@ -559,7 +559,7 @@ bool Parser::loop()
 				mTknStreams.pop(); //pop incr
 				mToken = cmdsTkn;
 			}
-			mExec = oldExec && !(mCont || mBreak);
+			mExec = oldExec;
 
 		}
 		mTknStreams.pop(); //pop cond

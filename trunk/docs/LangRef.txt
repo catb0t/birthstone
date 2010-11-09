@@ -35,9 +35,9 @@ In this example, x is first initialized to "aa", then it is rebound to the value
 === Deleting variables ===
 A variable can be deleted (removed from the symbol table) using the delete operator. For example,
 	x := 0;
-	print x; # prints 0
+	print x;  # prints 0
 	delete x;
-	print x; # undefined variable: x
+	print x;  # ERROR: undefined variable: x
 
 Variables will generally not need to be deleted. Note that deleting a local variable will allow you access to a global variable with the same name.
 
@@ -76,7 +76,7 @@ Birthstone doesn't yet support file I/O. This may be supported in the future.
 
 
 == Loops ==
-Birthstone supports 3 types of loops: do-while, while, and for loops. These loops behave in the same way as in most programming languages.
+Birthstone supports 3 types of loops: do-while, while, and (three-statement) for loops. These loops behave in the same way as in most programming languages.
 Below is the syntax for each loop (the items in angle brackets are placeholders for code). The body of each type of loop can either be a single statement or a block (group of statements) deliminated by braces ({}).
 
 	do <statement>; while (<condition>);
@@ -104,7 +104,7 @@ Below is the syntax for each loop (the items in angle brackets are placeholders 
 	}
 
 == Conditionals ==
-A conditional statement in Birthstone consists of an if statement, any number of elif (else if) statements, and optionally an else statement. The body of each part of the conditional can either be either a single statement or a block (group of statements) deliminated by braces ({}). Below is the syntax for each loop (the items in angle brackets are placeholders for code and the square brackets ([]) indicate optional componants).
+A conditional statement in Birthstone consists of an if statement, any number of elif (else if) statements, and optionally an else statement. Note: elif, elsif, and elseif (no space) are all supported for the else if part of the conditional. The body of each part of the conditional can either be either a single statement or a block (group of statements enclosed in braces ({})). Below is the syntax for each loop (the items in angle brackets are placeholders for code and the square brackets ([]) indicate optional componants).
 
 if (<condition1>)
 {
@@ -117,8 +117,16 @@ if (<condition1>)
 == Tips & Tricks ==
 
 === Type Conversion ===
-====String to Number====
-To convert a string to a number, you can either negate it twice or add 0 to it. For Example:
-	x := - -"4";	# x is the number 4
-	y := 0 + "7";	# y is the number 7
-Note: when double negating something you must use '- -x' or '-(-x)', otherwise the interpreter sees '--' as the decrement operator, which is only valid on numeric variables.
+====Converting to Number====
+To convert a string to a number, you can either negate it twice or add 0 to it. To convert a boolean to a number, only double negation is possible, because addition is not valid on booleans.
+
+For Example:
+	a := - -"4";	# a is the number 4
+	b := --true;   # b is the number 1
+	c := 0 + "7";	# c is the number 7
+Note: When double negating a variable you must use '- -x' or '-(-x)', otherwise the interpreter sees '--' as the decrement operator, which is only valid on numeric variables. When double negating a literal, the space or parathesis are unnessary.
+
+====Converting to a Boolean====
+To convert to a boolean, simply use a double not (!!). Empty strings ("") and 0 will be converted to false and other strings mand numbers will be converted to true.
+
+====Converting to a String====
