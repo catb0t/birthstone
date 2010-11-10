@@ -200,7 +200,8 @@ inline bool Parser::accept(Symbol sym)
 	if (mToken.getType() == sym)
 	{
 #ifdef BS_DEBUG
-		/* DEBUG */ std::cerr << (mExec ? "accepted " : "ignored ") << mToken << std::endl;
+		std::cerr << "x: " << mExec << " b: " << mBreak << " c: " << mCont << '\t';
+      std::cerr << (mExec ? "accepted " : "ignored ") << mToken << std::endl;
 #endif // BS_DEBUG
 		 
 		getNext();
@@ -521,11 +522,12 @@ bool Parser::loop()
 			expect(S_C_PARAN);
 			expect(S_SC);
 		}
-
-		mTknStreams.push(cond);
-		Token oldTkn = mToken;
-		getNext();
+		
 		mExec = oldExec;
+		Token oldTkn = mToken;
+		mTknStreams.push(cond);
+		getNext();
+
 
 		while(toBool(asgnmt()))
 		{
@@ -537,6 +539,7 @@ bool Parser::loop()
 			
 			if (mBreak)
 			{
+				std::cerr << __FILE__ << ':' << __LINE__<< std::endl;
 				mBreak = false;
 				mExec = true;
 				break;
@@ -560,11 +563,10 @@ bool Parser::loop()
 				mToken = cmdsTkn;
 			}
 			mExec = oldExec;
-
 		}
 		mTknStreams.pop(); //pop cond
-		mToken = oldTkn;
 		mSymTbls.pop_back();
+		mToken = oldTkn; //restore old Token
 		return true;
 	}
 	return false;
