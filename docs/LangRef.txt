@@ -15,15 +15,16 @@ The unary type operator will return a string representation of the type of it's 
 	type "abc"; # returns "String"
 	type 0;		# returns "Number"
 	type true;	# returns "Boolean"
-	type x;		# returns "None" if x is undeclared, or one of the above types if x has been declared
+	type x;		# returns "None" if x is undeclared, or returns one of the above types if x has been declared
+					# this can be used to deturmine if a variable has been declared.
 
 === Declaring, Initializing, and Assigning Variables ==
-To declare and initialize a variable use the initialize operator ( := ). For example,
+To declare and initialize a variable use the initialize operator ( := ). 
 	number := 0;
 	string := "";
 	boolean:= false;
-declares the variables number, bool, and string, and initializes them to 0, "", and false, respectively.
-A variable may be redeclared any number of times -- the variable will simply be bound to a new value.
+The example above declares the variables number, bool, and string, and initializes them to 0, "", and false, respectively.
+A variable may be redeclared any number of times -- the variable will be bound to a new type and value.
 A variable may also be reassigned using the assignment operator ( = ). When a variable is reassigned (as opposed to redeclared), the variable retains it's old type. Here's an example:
 	x := "aa";
 	y := "bb";
@@ -76,8 +77,8 @@ Birthstone doesn't yet support file I/O. This may be supported in the future.
 
 
 == Loops ==
-Birthstone supports 3 types of loops: do-while, while, and (three-statement) for loops. These loops behave in the same way as in most programming languages.
-Below is the syntax for each loop (the items in angle brackets are placeholders for code). The body of each type of loop can either be a single statement or a block (group of statements) deliminated by braces ({}).
+Birthstone supports 3 types of loops: do-while, while, and (three-statement) for loops. These loops behave in the same way as in most programming languages. While loops are used when the condition require to continue through the loop is known. A do-while loop is simular except that the body of the loop will be excuted once before the condition is checked. A for loop is used when the required number of iterations is know, or the programmer need to keep track of which iteration the loop is on or how many iterations it has gone through when the loop is done.
+Below is the syntax for each loop (the items in angle brackets are placeholders for code). The body of each type of loop can either be a single statement or a block (group of statements) deliminated by braces ({}). The body of a loop make contain break or continue statements. Brak and continue act the same way as in most programming languages. A break statement will quit out of the loop. A continue statement will resume execution at the begining of the next iteration of the loop, ignoring everything below the continue in the current iteration of the loop.
 
 	do <statement>; while (<condition>);
 
@@ -127,6 +128,17 @@ For Example:
 Note: When double negating a variable you must use '- -x' or '-(-x)', otherwise the interpreter sees '--' as the decrement operator, which is only valid on numeric variables. When double negating a literal, the space or parathesis are unnessary.
 
 ====Converting to a Boolean====
-To convert to a boolean, simply use a double not (!!). Empty strings ("") and 0 will be converted to false and other strings mand numbers will be converted to true.
+To convert to a boolean, simply use a double not (!!). Empty strings ("") and 0 will be converted to false and other strings and numbers will be converted to true.
+For Example:
+	a := !!"";		# a is false
+	b := !!7;		# b is true
+
+Alternatively, you could OR the value with false or AND the value with true;
+	c := false || "string"	# c is true
+	d := true && 0;			# d is false
 
 ====Converting to a String====
+To convert a number or boolean to a string, concatenate the empty string with it.
+For Example:
+	a := "" + 7;		# a is the string "7"
+	b := "" + false;	# b is the string "false"
