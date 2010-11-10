@@ -218,7 +218,11 @@ inline bool Parser::expect(Symbol sym)
 		return true;
 
 	// else:
-	error (std::string("ERROR: expected: ") + Token(sym).repr() + " got: " + mToken.repr());
+	error (std::string("ERROR: expected: ") + Token(sym).repr() + " got: " + mToken.repr()
+#ifdef BS_DEBUG
+			+ (mTknStreams.empty()?" from Parser":" from Saved")
+#endif // BS_DEBUG		
+			);
 	return false;
 }
 
@@ -539,9 +543,9 @@ bool Parser::loop()
 			
 			if (mBreak)
 			{
-				std::cerr << __FILE__ << ':' << __LINE__<< std::endl;
 				mBreak = false;
 				mExec = true;
+				mTknStreams.pop(); //pop cmds
 				break;
 			}
 			else if (mCont)
