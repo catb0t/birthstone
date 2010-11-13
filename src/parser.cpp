@@ -21,7 +21,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
+#include <vector>
+#include "func.h"
 #include "parser.h"
+
+
+
 
 #ifdef BS_DEBUG
 #include <cassert>
@@ -29,7 +34,7 @@
 
 Parser::Parser(std::istream &input) : mLexer(input), mToken(S_NONE),
                                       mExec(true), mSave(NULL),
-												  mBreak (false), mCont(false)
+												  mBreak (false), mCont(false), mRet(false), mRetVal(noTkn)
 {
 	mSymTbls.push_back(std::map<std::string,Token>()); // global scope symbol table
 }
@@ -293,7 +298,8 @@ bool Parser::defFunc()
 		}
 		std::cerr << ")" << std::endl;
 	#endif // BS_DEBUG
-	
+
+	mSymTbls.back()[funcName] = Token(S_FUNC,*(new Func(params,funcBody)));
 	// TODO: bool Parser::defFunc()
 	mExec = oldExec;
 	return true;
@@ -553,6 +559,11 @@ bool Parser::loop()
 				mCont = false;
 				mExec = true;
 			}
+			else if (!mExec)
+			{
+				mTknStreams.pop(); //pop cmds
+				break;
+			}
 			
 			mTknStreams.pop(); //pop cmds
 			mToken = condTkn;
@@ -614,6 +625,25 @@ bool Parser::stmt()
 		{
 			mCont = true;
 			mExec = false;
+		}
+	}
+	else if (accept(S_RET))
+	{
+		if (mExec)
+		{
+			mRet = true;
+			if (!accept(S_SC))
+			{
+				mRetVal = asgnmt();
+				mExec = false;
+			}
+			else
+			{
+				mRetVal = noTkn;
+				mExec = false;
+				return true;
+			}
+			
 		}
 	}
 	else
@@ -915,7 +945,6 @@ Token Parser::product()
 	return token;
 }
 
-// TODO: Implement unary not
 Token Parser::unary()
 {
 
@@ -1028,6 +1057,13 @@ Token Parser::factor()
 			val.setNum(val.getNum() - 1);
 			return oldVal;
 		}
+		else if (accept(S_O_BRACKET))
+		{
+			using std::vector;
+// 			vector<Token &>
+			//TODO: implement Lists
+			
+		}
 	}
 	else
 	{
@@ -1047,12 +1083,33 @@ Token Parser::factor()
 
 Token Parser::call(const Token &funcName)
 {
-	Token funcTkn = lookup(funcName);
-	if (funcTkn.getType() == S_FUNC)
-	{
-		Func &func = funcTkn.getFunc();
-		
-		
-	}
+// 	Token &funcTkn = lookup(funcName);
+// 	if (funcTkn.getType() == S_FUNC)
+// 	{
+// 		Func &func = funcTkn.getFunc();
+// 		std::vector<std::string> vec;
+// 		for (std::vector<std::string>::iterator i
+// 					= func.getParams().begin();
+// 			i < func.getParams().end(); ++i)
+// 		{
+// 			if (i != func.getParams().begin())
+// 			{
+// 				if (accept(S_O_PARAN))
+// 					error(std::string("Too few arguments to ") + funcName);
+// 				expect(S_COMMA);
+// 			}
+// 			mSymTbls.back()[*i] = asgnmt();
+// 
+// 		}
+// 		if (accept(S_COMMA))
+// 			error(std::string("Too many arguments to ") + funcName);
+// 		expect(S_C_PARAN);
+// 		mTknStreams.push(func.getFuncBody());
+// 		// TODO: implement Token Parser::call(const Token &funcName)
+// 		block(false);
+// 		mTknStreams.pop(); //func.getFuncBody()
+// 
+// 		return mRetVal;
+// 	}
 	return noTkn; //for now
 }

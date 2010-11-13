@@ -18,87 +18,18 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
-#ifndef BS_PARSER_H
-#define BS_PARSER_H
-#include <map>
-#include <istream>
+#ifndef BS_TYPE_EXCEPTION_H
+#define BS_TYPE_EXCEPTION_H
 #include <string>
-#include <memory>
-#include <stack>
-#include <list>
-#include "symbol.h"
-#include "lexer.h"
-// #include "object.h"
-
-/******************************************************************************
-* Birthstone parser.
-******************************************************************************/
-class Parser
+#include <exception>
+class TypeException : public std::exception
 {
 	public:
-		Parser(std::istream &input);
-		bool run();
-		
-	protected:
-		const Token &getNext();
-		std::string toStr  (Token t);
-		double      toNum  (Token t);
-		bool        toBool (Token t);
-		Token &lookup(Token id);
-		Token deleteVar(Token id);
-
-		bool accept(Symbol sym);
-		bool expect(Symbol sym);
-		bool error(std::string msg);
-			
-		bool code();
-
-		bool defFunc();
-		bool print();
-		bool read();
-		bool deleteCmd();
-		bool breakStmt() throw(Symbol);
-		bool contStmt() throw(Symbol);
-		
-		bool ifCond();
-		bool elifCond(bool &ignore);
-		bool elseCond(bool ignore);
-
-		bool loop();
-
-		bool block(bool createScope = true);
-		bool stmt();
-		
-		Token asgnmt();
-		Token orOp();
-		Token andOp();
-		Token comp();
-		Token sum();
-		Token product();
-		Token unary();
-		Token factor();
-
-		Token call(const Token &funcName);
-
-
-		
+		TypeException(const char* description = "") : mWhat(description) {}
+		~TypeException() throw() { delete [] mWhat; }
+		std::string what() throw() { return mWhat; }
 	private:
+		const char *mWhat;
+}
 
-		Lexer mLexer;
-		Token mToken;
-		std::list<std::map<std::string,Token> > mSymTbls;
-		std::stack<SavedTokenStream> mTknStreams;
-		SavedTokenStream *mSave; // save tokens?
-		bool mExec; // execute (true) or ignore (false) commands?
-		bool mBreak;
-		bool mCont;
-		bool mRet;
-		Token mRetVal;
-};
-
-
-
-
-
-
-#endif // not defined BS_PARSER_H
+#endif // ndef BS_TYPE_EXCEPT_H
