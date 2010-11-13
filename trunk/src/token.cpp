@@ -4,19 +4,22 @@
 #include <iostream>
 #include "token.h"
 #include "func.h"
+#include "type_exception.h"
 
 Token endTkn(S_END);
 Token noTkn(S_NONE);
 Token trueTkn(S_BOOL, true);
 Token	falseTkn(S_BOOL, false);
 
-Token::Token(Symbol type) : mType(type)
+Token::Token(Symbol type) throw (TypeException) : mType(type)
 {
 	if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
 		mVal.s = new std::string("");
+// 	else if (mType == S_FUNC || mType == S_LIST)
+// 		throw TypeException("This type requires a value");
 }
 
-Token::Token(Symbol type, const std::string &str) : mType(type)
+Token::Token(Symbol type, const std::string &str) throw (TypeException): mType(type)
 {
    if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
 		mVal.s = new std::string(str);
@@ -28,7 +31,7 @@ Token::Token(Symbol type, const std::string &str) : mType(type)
 	}
 }
 
-Token::Token(Symbol type, const double &num) : mType(type)
+Token::Token(Symbol type, const double &num) throw (TypeException): mType(type)
 {
    if (mType == S_NUM)
 		mVal.d =num;
@@ -40,7 +43,7 @@ Token::Token(Symbol type, const double &num) : mType(type)
 	}
 }
 
-Token::Token(Symbol type, bool boolean) : mType(type)
+Token::Token(Symbol type, bool boolean) throw (TypeException): mType(type)
 {
 	if (mType == S_BOOL)
 		mVal.b = boolean;
@@ -52,7 +55,7 @@ Token::Token(Symbol type, bool boolean) : mType(type)
 	}
 }
 
-Token::Token(Symbol type, const Func &func) :mType(type)
+Token::Token(Symbol type, const Func &func) throw (TypeException): mType(type)
 {
 	if (mType == S_FUNC)
 		mVal.f = new Func(func);
@@ -65,7 +68,7 @@ Token::Token(Symbol type, const Func &func) :mType(type)
 }
 
 
-Token::Token(const Token &token) : mType(token.mType)
+Token::Token(const Token &token) throw (TypeException): mType(token.mType)
 {
       if ((token.mType == S_ID) || (token.mType == S_FAIL) || (token.mType == S_STR))
 			mVal.s = new std::string(*token.mVal.s);

@@ -25,6 +25,9 @@
 #include "symbol.h"
 class Func;
 
+#include "type_exception.h"
+
+
 /******************************************************************************
 *
 ******************************************************************************/
@@ -33,12 +36,12 @@ class Token
 	public:
 		
 		
-      Token(Symbol type = S_NONE);
-		Token(Symbol type, const std::string &str);
-		Token(Symbol type, const double &num);
-		Token(Symbol type, bool boolean);
-		Token(Symbol type, const Func &func);
-		Token(const Token &token);
+      Token(Symbol type = S_NONE) throw (TypeException);
+		Token(Symbol type, const std::string &str) throw (TypeException);
+		Token(Symbol type, const double &num) throw (TypeException);
+		Token(Symbol type, bool boolean) throw (TypeException);
+		Token(Symbol type, const Func &func) throw (TypeException);
+		Token(const Token &token) throw (TypeException);
 		~Token();
 
 		Symbol      getType() const;
@@ -72,6 +75,6 @@ std::ostream &operator <<(std::ostream &stream, const Token &token);
 extern Token endTkn;
 extern Token noTkn;
 extern Token trueTkn;
-extern Token	falseTkn;
+extern Token falseTkn;
 
 #endif //ndef BS_TOKEN_H
