@@ -22,6 +22,8 @@
 #define BS_TOKEN_H
 
 #include <string>
+#include <new>
+#include <vector>
 #include <boost/any.hpp>
 #include "symbol.h"
 class Func;
@@ -35,18 +37,23 @@ class Func;
 class Token
 {
 	public:
-      Token(Symbol type = S_NONE) throw (TypeException);
-		Token(Symbol type, const std::string &str) throw (TypeException);
-		Token(Symbol type, const double &num) throw (TypeException);
-		Token(Symbol type, bool boolean) throw (TypeException);
-		Token(Symbol type, const Func &func) throw (TypeException);
-		Token(const Token &token) throw (TypeException);
+      Token(Symbol type = S_NONE) 						throw (TypeException);
+		Token(Symbol type, const std::string &str) 	throw (TypeException, std::bad_alloc);
+
+		Token(const std::string &str)				throw (std::bad_alloc); // Type: S_STR
+		Token(const double &num) 					throw (std::bad_alloc); // Type: S_NUM
+		Token(bool boolean) 							throw (std::bad_alloc); // Type: S_BOOL
+		Token(const Func &func)						throw (std::bad_alloc); // Type: S_FUNC
+		Token(const std::vector<Token> &list)	throw (std::bad_alloc); // Type: S_LIST
+		
+		Token(const Token &token) throw (std::bad_alloc);
 
 		Symbol      getType() const throw ();
 		std::string getStr () const throw (TypeException);
 		double      getNum () const throw (TypeException);
 		bool        getBool() const throw (TypeException);
 		Func        getFunc() const throw (TypeException);
+		const std::vector<Token> &getList() const throw (TypeException);
 
 		void setStr(std::string s);
 		void setNum(double n) ;
@@ -54,7 +61,7 @@ class Token
 		
 		std::string repr() 	 const; // string representation of the token: "<TYPE, value>"
 		
-		Token &operator =(const Token &token);
+		Token &operator =(const Token &token) throw(std::bad_alloc);
 		operator Symbol() const;
 		operator bool() const;
 

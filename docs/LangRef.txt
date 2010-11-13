@@ -142,3 +142,39 @@ To convert a number or boolean to a string, concatenate the empty string with it
 For Example:
 	a := "" + 7;		# a is the string "7"
 	b := "" + false;	# b is the string "false"
+
+== Reserved Keywords ==
+None
+if
+elif
+elsif
+elseif
+else
+do
+while
+until
+for
+in
+break
+continue
+
+read
+write
+print
+delete
+
+def
+class
+return
+
+and
+or
+not
+
+type
+
+true
+false
+
+exit
+quit
