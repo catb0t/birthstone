@@ -2,159 +2,147 @@
 #include <map>
 #include <sstream>
 #include <iostream>
+#include <boost/any.hpp>
 #include "token.h"
 #include "func.h"
 #include "type_exception.h"
+using namespace std;
+using namespace boost;
 
 Token endTkn(S_END);
 Token noTkn(S_NONE);
 Token trueTkn(S_BOOL, true);
 Token	falseTkn(S_BOOL, false);
 
-Token::Token(Symbol type) throw (TypeException) : mType(type)
+Token::Token(Symbol type) throw (TypeException) : mType(type), mVal()
 {
-	if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
-		mVal.s = new std::string("");
-// 	else if (mType == S_FUNC || mType == S_LIST)
-// 		throw TypeException("This type requires a value");
+	if (mType == S_ID || mType == S_FAIL || mType == S_STR || mType == S_FUNC ||
+		 mType == S_LIST)
+		throw TypeException("This type requires a value");
 }
 
-Token::Token(Symbol type, const std::string &str) throw (TypeException): mType(type)
+Token::Token(Symbol type, const std::string &str) throw (TypeException): mType(type), mVal(str)
+{
+   if (!((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
+		throw TypeException("ERROR: only FAIL, STR, and ID types can have string values");
+}
+
+Token::Token(Symbol type, const double &num) throw (TypeException): mType(type), mVal(num)
+{
+   if (mType != S_NUM)
+		throw TypeException("ERROR: only NUM type tokens can have numerical values");
+}
+
+Token::Token(Symbol type, bool boolean) throw (TypeException): mType(type), mVal(boolean)
+{
+	if (mType != S_BOOL)
+		throw TypeException("ERROR: only BOOL type tokens can have boolean values");
+}
+
+Token::Token(Symbol type, const Func &func) throw (TypeException): mType(type), mVal(func)
+{
+	if (mType != S_FUNC)
+		throw TypeException("ERROR: only FUNC type tokens can have function values");
+}
+
+
+Token::Token(const Token &token) throw (TypeException): mType(token.mType), mVal(token.mVal)
+{
+	
+}
+
+inline Symbol Token::getType() const  throw () { return mType; }
+
+
+std::string Token::getStr() const throw (TypeException)
 {
    if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
-		mVal.s = new std::string(str);
-	else
 	{
-      mType = S_FAIL;
-		std::string error = "ERROR: only FAIL, STR, and ID types can have string values";
-		mVal.s = new std::string(error);
+		try
+		{
+			return any_cast<string>(mVal);
+		}
+		catch(const boost::bad_any_cast &)
+		{
+			throw TypeException("ERROR: Token is not a string");
+		}
 	}
+	else
+		throw TypeException("ERROR: Token is not a string");
+	return "";
 }
 
-Token::Token(Symbol type, const double &num) throw (TypeException): mType(type)
+double Token::getNum() const throw (TypeException)
 {
    if (mType == S_NUM)
-		mVal.d =num;
-	else
 	{
-      mType = S_FAIL;
-		std::string error = "ERROR: only NUM type tokens can have numerical values";
-		mVal.s = new std::string(error);
+		try
+		{
+			return any_cast<double>(mVal);
+		}
+		catch(const boost::bad_any_cast &)
+		{
+			throw TypeException("ERROR: Token is not a number");
+		}
 	}
+	else
+		throw TypeException("ERROR: Token is not a number");
+	return 0.0;
 }
 
-Token::Token(Symbol type, bool boolean) throw (TypeException): mType(type)
+bool Token::getBool() const throw (TypeException)
 {
 	if (mType == S_BOOL)
-		mVal.b = boolean;
-	else
 	{
-		mType = S_FAIL;
-		std::string error = "ERROR: only BOOL type tokens can have boolean values";
-		mVal.s = new std::string(error);
+		try
+		{
+			return any_cast<bool>(mVal);
+		}
+		catch(const boost::bad_any_cast &)
+		{
+			throw TypeException("ERROR: Token is not a boolean");
+		}
 	}
-}
-
-Token::Token(Symbol type, const Func &func) throw (TypeException): mType(type)
-{
-	if (mType == S_FUNC)
-		mVal.f = new Func(func);
 	else
-	{
-		mType = S_FAIL;
-		std::string error = "ERROR: only FUNC type tokens can have function values";
-		mVal.s = new std::string(error);
-	}
-}
-
-
-Token::Token(const Token &token) throw (TypeException): mType(token.mType)
-{
-      if ((token.mType == S_ID) || (token.mType == S_FAIL) || (token.mType == S_STR))
-			mVal.s = new std::string(*token.mVal.s);
-      else if (token.mType == S_NUM)
-			mVal.d = token.mVal.d;
-		else if (token.mType == S_BOOL)
-			mVal.b = token.mVal.b;
-}
-
-Token::~Token()
-{
-	if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
-	{
-		if (mVal.s)
-			delete  mVal.s;
-		mVal.s = NULL;
-	}
-	if (mType == S_FUNC)
-		delete  mVal.f;
-}
-
-inline Symbol Token::getType() const { return mType; }
-
-
-std::string Token::getStr() const
-{
-   if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
-		return *mVal.s;
-	else
-		return "";
-}
-
-double Token::getNum() const
-{
-   if (mType == S_NUM)
-		return mVal.d;
-	else
-		return 0.0;
-}
-
-bool Token::getBool() const
-{
-	if (mType == S_BOOL)
-		return mVal.b;
-	else
-		return false;
+		throw TypeException("ERROR: Token is not a boolean");
+	return false;
 }
 		
 
-Func &Token::getFunc() const
+Func Token::getFunc() const throw (TypeException)
 {
 	if (mType == S_FUNC)
-		return *mVal.f;
-#warning TODO: implement TypeException
-// 	else
-// 		throw TypeException(/*expected: */S_FUNC, /*got: */ mType);
+	{
+		try
+		{
+			return any_cast<Func>(mVal);
+		}
+		catch(const boost::bad_any_cast &)
+		{
+			throw TypeException("ERROR: Token is not a function");
+		}
+	}
+	else
+		throw TypeException("ERROR: Token is not a function");
 }
 		
 void Token::setStr(std::string s)
 {
-	if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
-	{
-		delete mVal.s;
-		mVal.s = new std::string(s);
-	}
-	else
+	if ((mType != S_ID) && (mType != S_FAIL))
 	{
 		mType = S_STR;
-		mVal.s = new std::string(s);
 	}
+	mVal = s;
 }
 
 void Token::setNum(double n) 
 {
-	if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
-		delete [] mVal.s;
-	mType = S_NUM;
-	mVal.d = n;
+	mVal = n;
 }
 
 void Token::setBool(bool b)
 {
-	if (mVal.s && ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
-		delete [] mVal.s;
-	mType = S_BOOL;
-	mVal.b = b;
+	mVal = b;
 }
 
 std::string Token::repr() 	const
@@ -191,21 +179,8 @@ std::string Token::repr() 	const
 Token &Token::operator =(const Token &token)
 {
 
-	if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
-	{
-		if (mVal.s)
-			delete  mVal.s;
-		mVal.s = NULL;
-	}
 	mType = token.mType;
-	
-	if ((token.mType == S_ID) || (token.mType == S_FAIL) || (token.mType == S_STR))
-		mVal.s = new std::string(*token.mVal.s);
-	else if (token.mType == S_NUM)
-		mVal.d = token.mVal.d;
-	else if (token.mType == S_BOOL)
-		mVal.b = token.mVal.b;
-	
+	mVal = token.mVal;
 	return *this;
 }
 
