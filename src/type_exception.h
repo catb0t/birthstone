@@ -30,6 +30,6 @@ class TypeException : public std::exception
 		std::string what() throw() { return mWhat; }
 	private:
 		const char *mWhat;
-}
+};
 
 #endif // ndef BS_TYPE_EXCEPT_H

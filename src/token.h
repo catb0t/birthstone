@@ -22,6 +22,7 @@
 #define BS_TOKEN_H
 
 #include <string>
+#include <boost/any.hpp>
 #include "symbol.h"
 class Func;
 
@@ -34,21 +35,18 @@ class Func;
 class Token
 {
 	public:
-		
-		
       Token(Symbol type = S_NONE) throw (TypeException);
 		Token(Symbol type, const std::string &str) throw (TypeException);
 		Token(Symbol type, const double &num) throw (TypeException);
 		Token(Symbol type, bool boolean) throw (TypeException);
 		Token(Symbol type, const Func &func) throw (TypeException);
 		Token(const Token &token) throw (TypeException);
-		~Token();
 
-		Symbol      getType() const;
-		std::string getStr () const;
-		double      getNum () const;
-		bool        getBool() const;
-		Func        &getFunc() const;
+		Symbol      getType() const throw ();
+		std::string getStr () const throw (TypeException);
+		double      getNum () const throw (TypeException);
+		bool        getBool() const throw (TypeException);
+		Func        getFunc() const throw (TypeException);
 
 		void setStr(std::string s);
 		void setNum(double n) ;
@@ -61,14 +59,8 @@ class Token
 		operator bool() const;
 
 	private:
-		Symbol mType;
-		union
-		{
-			double d;
-			bool b;
-			std::string *s;
-			Func *f;
-		} mVal;
+ 		Symbol mType;
+ 		boost::any mVal;
 };
 std::ostream &operator <<(std::ostream &stream, const Token &token);
 
