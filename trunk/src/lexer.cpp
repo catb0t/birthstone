@@ -77,8 +77,8 @@ void Lexer::setupKeywords()
 
 		sKeywords["type"]		 =	S_TYPE;
       
-		sKeywords["true"]     = Token(S_BOOL, true);
-		sKeywords["false"]    = Token(S_BOOL, false);
+		sKeywords["true"]     = trueTkn;
+		sKeywords["false"]    = falseTkn;
 
 		sKeywords["exit"]     = S_QUIT;
 		sKeywords["quit"]     = S_QUIT;
@@ -268,7 +268,7 @@ const Token &Lexer::getNext()
 				mInput->get();
 				ch = mInput->peek();
 			} while(!(mInput->eof()) && (isdigit(ch) || (!foundPoint && (ch == '.'))));
-			mToken = Token(S_NUM, atof(mTokenStr.c_str()));
+			mToken = Token(atof(mTokenStr.c_str()));
 		}
 
 	}

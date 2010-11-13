@@ -299,7 +299,7 @@ bool Parser::defFunc()
 		std::cerr << ")" << std::endl;
 	#endif // BS_DEBUG
 
-	mSymTbls.back()[funcName] = Token(S_FUNC,*(new Func(params,funcBody)));
+	mSymTbls.back()[funcName] = Token(Func(params,funcBody));
 	// TODO: bool Parser::defFunc()
 	mExec = oldExec;
 	return true;
@@ -350,7 +350,7 @@ bool Parser::read()
 		{
 			std::string str;
 			std::getline(std::cin, str);
-			mSymTbls.back()[name] = Token(S_STR, str);
+			mSymTbls.back()[name] = Token(str);
 		}
 		else
 		{
@@ -706,9 +706,9 @@ Token Parser::asgnmt()
 			if (mExec)
 			{
 				if (token.getType() == S_STR)
-					token = Token(S_STR, token.getStr() + toStr(token2));
+					token = Token(token.getStr() + toStr(token2));
 				else if (token.getType() == S_NUM)
-					token = Token(S_NUM, token.getNum() + toNum(token2));
+					token = Token(token.getNum() + toNum(token2));
 				else if (token.getType() == S_BOOL)
 					error("cannot add to a bool");
 				mSymTbls.back()[id] = token;
@@ -732,9 +732,9 @@ Token Parser::orOp()
 			lVal = lVal || rVal;
 
 		if (lVal)
-			return Token(S_BOOL, true);
+			return Token(true);
 		//else:
-		return Token(S_BOOL, false);
+		return Token(false);
 	}
 	//else:
 	return token;
@@ -751,9 +751,9 @@ Token Parser::andOp()
 		if (mExec)
 			lVal = lVal && rVal;
 		if (lVal)
-			return Token(S_BOOL, true);
+			return Token(true);
 		//else:
-		return Token(S_BOOL, false);;
+		return Token(false);;
 		}
 	//else:
 	return token;
@@ -772,11 +772,11 @@ Token Parser::comp()
 			if (token2.getType() == S_ID)
 				token2 = lookup(token2);
 			if (token.getType() == S_STR)
-				token = Token(S_BOOL, token.getStr()  == toStr(token2));
+				token = Token(token.getStr()  == toStr(token2));
 			else if (token.getType() == S_NUM)
-				token = Token(S_BOOL, token.getNum()  == toNum(token2));
+				token = Token(token.getNum()  == toNum(token2));
 			else if (token.getType() == S_BOOL)
-				token = Token(S_BOOL, token.getBool() == toBool(token2));
+				token = Token(token.getBool() == toBool(token2));
 		}
 	}
 	else if (accept(S_NOT_EQ))
@@ -789,11 +789,11 @@ Token Parser::comp()
 			if (token2.getType() == S_ID)
 				token2 = lookup(token2);
 			if (token.getType() == S_STR)
-				token = Token(S_BOOL, token.getStr()  != toStr(token2));
+				token = Token(token.getStr()  != toStr(token2));
 			else if (token.getType() == S_NUM)
-				token = Token(S_BOOL, token.getNum()  != toNum(token2));
+				token = Token(token.getNum()  != toNum(token2));
 			else if (token.getType() == S_BOOL)
-				token = Token(S_BOOL, token.getBool() != toBool(token2));
+				token = Token(token.getBool() != toBool(token2));
 		}
 	}
 	else if (accept(S_LESS))
@@ -806,11 +806,11 @@ Token Parser::comp()
 			if (token2.getType() == S_ID)
 				token2 = lookup(token2);
 			if (token.getType() == S_STR)
-				token = Token(S_BOOL, token.getStr()  <  toStr(token2));
+				token = Token(token.getStr()  <  toStr(token2));
 			else if (token.getType() == S_NUM)
-				token = Token(S_BOOL, token.getNum()  <  toNum(token2));
+				token = Token(token.getNum()  <  toNum(token2));
 			else if (token.getType() == S_BOOL)
-				token = Token(S_BOOL, token.getBool() <  toBool(token2));
+				token = Token(token.getBool() <  toBool(token2));
 		}
 	}
 	else if (accept(S_LESS_EQ))
@@ -823,11 +823,11 @@ Token Parser::comp()
 			if (token2.getType() == S_ID)
 				token2 = lookup(token2);
 			if (token.getType() == S_STR)
-				token = Token(S_BOOL, token.getStr()  <= toStr(token2));
+				token = Token(token.getStr()  <= toStr(token2));
 			else if (token.getType() == S_NUM)
-				token = Token(S_BOOL, token.getNum()  <= toNum(token2));
+				token = Token(token.getNum()  <= toNum(token2));
 			else if (token.getType() == S_BOOL)
-				token = Token(S_BOOL, token.getBool() <= toBool(token2));
+				token = Token(token.getBool() <= toBool(token2));
 		}
 	}
 	else if (accept(S_GREATER))
@@ -840,11 +840,11 @@ Token Parser::comp()
 			if (token2.getType() == S_ID)
 				token2 = lookup(token2);
 			if (token.getType() == S_STR)
-				token = Token(S_BOOL, token.getStr()  >  toStr(token2));
+				token = Token(token.getStr()  >  toStr(token2));
 			else if (token.getType() == S_NUM)
-				token = Token(S_BOOL, token.getNum()  >  toNum(token2));
+				token = Token(token.getNum()  >  toNum(token2));
 			else if (token.getType() == S_BOOL)
-				token = Token(S_BOOL, token.getBool() >  toBool(token2));
+				token = Token(token.getBool() >  toBool(token2));
 		}
 	}
 	else if (accept(S_GREATER_EQ))
@@ -857,11 +857,11 @@ Token Parser::comp()
 			if (token2.getType() == S_ID)
 				token2 = lookup(token2);
 			if (token.getType() == S_STR)
-				token = Token(S_BOOL, token.getStr()  >= toStr(token2));
+				token = Token(token.getStr()  >= toStr(token2));
 			else if (token.getType() == S_NUM)
-				token = Token(S_BOOL, token.getNum()  >= toNum(token2));
+				token = Token(token.getNum()  >= toNum(token2));
 			else if (token.getType() == S_BOOL)
-				token = Token(S_BOOL, token.getBool() >= toBool(token2));
+				token = Token(token.getBool() >= toBool(token2));
 		}
 	}
 	return token;
@@ -881,9 +881,9 @@ Token Parser::sum()
 			if (mExec)
 			{
 				if (token.getType() == S_STR)
-					token = Token(S_STR, token.getStr() + toStr(token2));
+					token = Token(token.getStr() + toStr(token2));
 				else if (token.getType() == S_NUM)
-					token = Token(S_NUM, token.getNum() + toNum(token2));
+					token = Token(token.getNum() + toNum(token2));
 				else if (token.getType() == S_BOOL)
 					error("cannot add to a bool");
 			}
@@ -897,7 +897,7 @@ Token Parser::sum()
 				if (token.getType() == S_STR)
 					error("cannot subtract from a string");
 				else if (token.getType() == S_NUM)
-					token = Token(S_NUM, token.getNum() - toNum(token2));
+					token = Token(token.getNum() - toNum(token2));
 				else if (token.getType() == S_BOOL)
 					error("cannot subtract from a bool");
 			}
@@ -922,7 +922,7 @@ Token Parser::product()
 				if (token.getType() == S_STR)
 					error("cannot multiply a string");
 				else if (token.getType() == S_NUM)
-					token = Token(S_NUM, token.getNum() * toNum(token2));
+					token = Token(token.getNum() * toNum(token2));
 				else if (token.getType() == S_BOOL)
 					error("cannot multiply a bool");
 			}
@@ -936,7 +936,7 @@ Token Parser::product()
 				if (token.getType() == S_STR)
 					error("cannot divide string");
 				else if (token.getType() == S_NUM)
-					token = Token(S_NUM, token.getNum() / toNum(token2));
+					token = Token(token.getNum() / toNum(token2));
 				else if (token.getType() == S_BOOL)
 					error("cannot divide a bool");
 			}
@@ -949,9 +949,9 @@ Token Parser::unary()
 {
 
 	if (accept(S_NOT))
-		return (mExec?Token(S_BOOL, !toBool(unary())):unary());
+		return (mExec?Token(!toBool(unary())):unary());
 	else if (accept(S_MINUS))
-		return (mExec?Token(S_NUM, -toNum(unary())):unary());
+		return (mExec?Token(-toNum(unary())):unary());
 	else if (accept(S_INCR))
 	{
 		Token token = mToken;
@@ -985,7 +985,7 @@ Token Parser::unary()
 			else if (var.getType() != S_NONE)
 				error("only numeric variables can be decremented");
 			else
-				return Token(S_NUM, toNum(unary()));
+				return Token(toNum(unary()));
 		}
 		return token;
 	}
@@ -1015,11 +1015,14 @@ Token Parser::unary()
 				case S_FUNC:
 					typeName = "Function";
 					break;
+				case S_LIST:
+					typeName = "List";
+					break;
 				default:
 					typeName = "Invalid";
 					break;
 			}
-			return Token(S_STR,typeName);
+			return Token(typeName);
 		}
 		return t;
 	}
@@ -1034,6 +1037,23 @@ Token Parser::factor()
 	{
 		token = asgnmt();
 		expect(S_C_PARAN);
+	}
+	else if (accept(S_O_BRACKET))
+	{
+		std::vector<Token> lst;
+		if (!accept(S_C_BRACKET))
+		{
+			Token element;
+			do
+			{
+				element = unary();
+				if (element.getType() == S_ID)
+					element = lookup(element);
+				lst.push_back(element);
+			} while (accept(S_COMMA));
+			expect(S_C_BRACKET);
+		}
+		token = Token(lst);
 	}
 	else if (accept(S_NUM) || accept(S_BOOL) || accept(S_STR) || accept(S_NONE))
 		; //just accept them, we already saved the accepted token as token
