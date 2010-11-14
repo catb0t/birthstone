@@ -102,6 +102,19 @@ std::string Parser::toStr(Token t)
 		sstream << t.getNum();
 		return sstream.str();
 	}
+	else 	if (t.getType() == S_LIST)
+	{	
+// 		std::string repr = "[";
+// 		for(std::vector<Token>::iterator i = t.getList().begin(); i < t.getList().end(); ++i)
+// 		{
+// 			if (i != t.getList().begin())
+// 			{
+// 				repr += ", ";
+// 			}
+// 			repr += toStr(*i);
+// 		}
+// 		repr += "]";
+	}
 	// else:
 	error(std::string("toStr(): ") + t.repr() + " invalid type for conversion");
 	return "";
@@ -1077,13 +1090,7 @@ Token Parser::factor()
 			val.setNum(val.getNum() - 1);
 			return oldVal;
 		}
-		else if (accept(S_O_BRACKET))
-		{
-			using std::vector;
-// 			vector<Token &>
-			//TODO: implement Lists
-			
-		}
+
 	}
 	else
 	{

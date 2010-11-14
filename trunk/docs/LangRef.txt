@@ -145,11 +145,13 @@ For Example:
 
 == Reserved Keywords ==
 None
+
 if
 elif
 elsif
 elseif
 else
+	
 do
 while
 until
@@ -161,7 +163,7 @@ continue
 read
 write
 print
-delete
+
 
 def
 class
@@ -172,6 +174,7 @@ or
 not
 
 type
+delete
 
 true
 false
