@@ -487,6 +487,73 @@ bool Parser::elseCond(bool ignore)
 
 bool Parser::loop()
 {
+	if (accept(S_FOR))
+		forLoop()
+	else if (accept(S_WHILE))
+		whileLoop();
+	else if (accept(S_DO))
+		doWhileLoop();
+	else
+		return false;
+	return true;
+}
+
+void Parser::forLoop()
+{
+	if (accept(S_O_PARAN))
+	{
+		//...
+	}
+	else
+		forInLoop();
+}
+
+void Parser::forInLoop()
+{
+}
+
+void Parser::whileLoop()
+{
+}
+void Parser::doWhileLoop()
+{
+}
+void Parser::loopBody(SavedTokenStream cmds)
+{
+	Token condTkn = mToken;
+	mTknStreams.push(cmds);
+	getNext();
+
+	block(false) || stmt();
+
+	if (mBreak)
+	{
+		mBreak = false;
+		mExec = true;
+		mTknStreams.pop(); //pop cmds
+		break;
+	}
+	else if (mCont)
+	{
+		mCont = false;
+		mExec = true;
+	}
+	else if (!mExec)
+	{
+		mTknStreams.pop(); //pop cmds
+		break;
+	}
+
+	mTknStreams.pop(); //pop cmds
+	mToken = condTkn;
+	accept(S_END);
+	mTknStreams.pop(); //pop cond
+	mSymTbls.pop_back();
+	mToken = oldTkn; //restore old Token
+			
+}
+
+/*		
 	bool isWhile = false, isDoWhile = false, isFor = false, isForIn = false;
 	if ((isWhile = accept(S_WHILE)) || (isDoWhile = accept(S_DO)) \
 		|| (isFor = accept(S_FOR)))
@@ -629,7 +696,8 @@ bool Parser::loop()
 		return true;
 	}
 	return false;
-}
+	
+} */
 
 bool Parser::block(bool createScope)
 {
