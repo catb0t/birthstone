@@ -104,16 +104,17 @@ std::string Parser::toStr(Token t)
 	}
 	else 	if (t.getType() == S_LIST)
 	{	
-// 		std::string repr = "[";
-// 		for(std::vector<Token>::iterator i = t.getList().begin(); i < t.getList().end(); ++i)
-// 		{
-// 			if (i != t.getList().begin())
-// 			{
-// 				repr += ", ";
-// 			}
-// 			repr += toStr(*i);
-// 		}
-// 		repr += "]";
+		std::string repr = "[";
+		for(std::vector<Token>::const_iterator i = t.getList().begin(); i < t.getList().end(); ++i)
+		{
+			if (i != t.getList().begin())
+			{
+				repr += ", ";
+			}
+			repr += toStr(*i);
+		}
+		repr += "]";
+		return repr;
 	}
 	// else:
 	error(std::string("toStr(): ") + t.repr() + " invalid type for conversion");
@@ -236,7 +237,7 @@ inline bool Parser::expect(Symbol sym)
 		return true;
 
 	// else:
-	error (std::string("ERROR: expected: ") + Token(sym).repr() + " got: " + mToken.repr()
+	error (std::string("ERROR: expected: ") + symName[sym] + " got: " + mToken.repr()
 #ifdef BS_DEBUG
 			+ (mTknStreams.empty()?" from Parser":" from Saved")
 #endif // BS_DEBUG		
@@ -486,13 +487,18 @@ bool Parser::elseCond(bool ignore)
 
 bool Parser::loop()
 {
-	bool isWhile = false, isDoWhile = false, isFor = false;
+	bool isWhile = false, isDoWhile = false, isFor = false, isForIn = false;
 	if ((isWhile = accept(S_WHILE)) || (isDoWhile = accept(S_DO)) \
 		|| (isFor = accept(S_FOR)))
 	{
 		SavedTokenStream cond; // condition
 		SavedTokenStream cmds; // commands
 		SavedTokenStream incr; // increment   (for loops only)
+
+		// variables for for-in loops
+		std::vector<Token>::const_iterator iter;
+		Token id, list;
+// 		Sym type = S_NONE;
 		
 		bool oldExec = mExec;
 		
@@ -502,19 +508,40 @@ bool Parser::loop()
 		// while (...) or for(...;...;...)
 		if (!isDoWhile)
 		{
-			expect(S_O_PARAN);
-			if (isFor)
+			if (!isFor)
+				expect(S_O_PARAN);
+			else // if (isFor)
 			{
+				//TODO: make for-in work with pre-existing variables
+				if (isForIn = !accept(S_O_PARAN)) // For-in loop
+				{
+					isFor = false;
+					id = mToken;
+					expect(S_ID);
+// 					type = lookup(S_ID).getType();
+					expect(S_IN);
+					list = mToken;
+					if (!(accept(S_ID) && (list = lookup(list)).getType() != S_LIST))
+						expect(S_LIST);
+					iter = list.getList().begin();
 
+				}
+				else
+				{
 				asgnmt();
 				expect(S_SC);
+				}
 			}
-		
+		}
+
+		if (!isForIn)
+		{
 			mExec = false;
 			mSave = &cond;
 			asgnmt();
 			mSave = NULL;
 			cond.add(S_END);
+		}
 
 			if (isFor)
 			{
@@ -525,7 +552,7 @@ bool Parser::loop()
 				incr.add(S_END);
 			}
 			expect(S_C_PARAN);
-		}
+		
 
 		mExec = isDoWhile && oldExec; // do-while executes once before checking condition
 		mSave = &cmds;
@@ -552,8 +579,10 @@ bool Parser::loop()
 		getNext();
 
 
-		while(toBool(asgnmt()))
+		while ((isForIn &&  iter < list.getList().end()) || (!isForIn && toBool(asgnmt())))
 		{
+			if (isForIn)
+				mSymTbls.back()[id.getStr()] = *iter;
 			Token condTkn = mToken;
 			mTknStreams.push(cmds);
 			getNext();
@@ -581,7 +610,9 @@ bool Parser::loop()
 			mTknStreams.pop(); //pop cmds
 			mToken = condTkn;
 			accept(S_END);
-			if (isFor)
+			if (isForIn)
+				++iter;
+			else if (isFor)
 			{
 				Token cmdsTkn=mToken;
 				mTknStreams.push(incr);
@@ -745,9 +776,9 @@ Token Parser::orOp()
 			lVal = lVal || rVal;
 
 		if (lVal)
-			return Token(true);
+			return trueTkn;
 		//else:
-		return Token(false);
+		return falseTkn;
 	}
 	//else:
 	return token;
@@ -899,6 +930,14 @@ Token Parser::sum()
 					token = Token(token.getNum() + toNum(token2));
 				else if (token.getType() == S_BOOL)
 					error("cannot add to a bool");
+				else if (token.getType() == S_LIST)
+				{
+					if (token2.getType() == S_ID)
+						token2 = lookup(token2);
+					std::vector<Token> newList(token.getList());
+					newList.push_back(token2);
+					token = Token(newList);
+				}
 			}
 			
 		}
@@ -1008,7 +1047,7 @@ Token Parser::unary()
 		if (mExec)
 		{
 			if (t.getType() == S_ID)
-				t = lookup(t).getType();
+				t = lookup(t);
 
 			std::string typeName;
 			switch (t.getType())
