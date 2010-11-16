@@ -20,6 +20,8 @@
 ******************************************************************************/
 #ifndef BS_SYMBOL_H
 #define BS_SYMBOL_H
+#include <map>
+#include <string>
 
 enum Symbol
 {
@@ -32,6 +34,18 @@ enum Symbol
 	S_DO, S_WHILE, S_UNTIL, S_FOR, S_IN, S_BREAK, S_CONT,  
 	S_ASSIGN, S_INIT, S_AND, S_OR, S_NOT, S_INCR, S_DECR, S_TYPE, S_COMMA, S_SC, S_QUIT
 
+};
+
+const std::string symName[] = {
+	"NONE ", "FAIL", "END", "ID", "NUM", " STR", "BOOL", "LIST", "FUNC",
+	"O_PARAN", "C_PARAN", "O_BRACE", "C_BRACE", "O_BRACKET", "C_BRACKET",
+	"PLUEQ", "PLUS", "MINUS", "TIMES", "DIVIDE",
+	"LESS", "LESEQ", "EQ", "NOT_EQ", "GREATER", "GREATER_EQ",
+	"IF", "ELIF", "ELSE",
+	"WRITE", "PRINT", "READ", "DEF", "CLASS", "RET", "DEL",
+	"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT",
+	"ASSIGN", "INIT", "AND", "OR", "NOT", "INCR", "DECR", "TYPE", "COMMA", "SC", "QUIT"
+		
 };
       
 

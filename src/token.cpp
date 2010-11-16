@@ -184,21 +184,11 @@ std::string Token::repr() 	const
 {
 	std::stringstream s;
 		// TODO: make sure this matches enum Symbol exactly
-	static std::string typeName[] = {
-	"S_NONE ", "S_FAIL", "S_END", "S_ID", "S_NUM", " S_STR", "S_BOOL", "S_LIST", "S_FUNC",
-	"S_O_PARAN", "S_C_PARAN", "S_O_BRACE", "S_C_BRACE", "S_O_BRACKET", "S_C_BRACKET",
-	"S_PLUS_EQ", "S_PLUS", "S_MINUS", "S_TIMES", "S_DIVIDE",
-	"S_LESS", "S_LESS_EQ", "S_EQ", "S_NOT_EQ", "S_GREATER", "S_GREATER_EQ",
-	"S_IF", "S_ELIF", "S_ELSE",
-	"S_WRITE", "S_PRINT", "S_READ", "S_DEF", "S_CLASS", "S_RET", "S_DEL",
-	"S_DO", "S_WHILE", "S_UNTIL", "S_FOR", "S_IN", "S_BREAK", "S_CONT",
-	"S_ASSIGN", "S_INIT", "S_AND", "S_OR", "S_NOT", "S_INCR", "S_DECR", "S_TYPE", "S_COMMA", "S_SC", "S_QUIT"
-		
-	};
+
 		
 		s << '<';
 // 		if ((getType() >= S_NONE) && (getType() <= S_QUIT))
-			 s << typeName[getType()];
+			 s << symName[getType()];
 // 		else
 // 			s << getType();
 
