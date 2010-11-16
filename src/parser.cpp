@@ -22,8 +22,12 @@
 #include <cstdlib>
 #include <sstream>
 #include <vector>
+// #include <boost/foreach.hpp>
+// #define foreach         BOOST_FOREACH
+// #define reverse_foreach BOOST_REVERSE_FOREACH
 #include "func.h"
 #include "parser.h"
+using namespace std;
 
 
 
@@ -488,7 +492,7 @@ bool Parser::elseCond(bool ignore)
 bool Parser::loop()
 {
 	if (accept(S_FOR))
-		forLoop()
+		forLoop();
 	else if (accept(S_WHILE))
 		whileLoop();
 	else if (accept(S_DO))
@@ -510,11 +514,72 @@ void Parser::forLoop()
 
 void Parser::forInLoop()
 {
+	SavedTokenStream cmds;
+	mSymTbls.push_back(std::map<std::string,Token>());
+	
+	Token id = mToken;
+	expect (S_ID);
+	expect(S_IN);
+	Token list = asgnmt();
+	if (list.getType() == S_ID)
+		list = lookup(list);
+	if (list.getType() != S_LIST)
+		throw TypeException("List required for for-in loop");
+
+	bool oldExec = mExec;
+	mExec = false;
+	mSave = &cmds;
+	block(false) || stmt();
+	mSave = NULL;
+	cmds.add(S_END);
+	mExec = oldExec;
+
+	// 	foreach (Token t, list.getList())
+	for (vector<Token>::const_iterator iter = list.getList().begin();
+			 iter < list.getList().end(); ++iter)
+	{
+		if (!mExec) break;
+		mSymTbls.back()[id.getStr()] = *iter; //TODO: allow for in to use pre-existing variables
+		loopBody(cmds);
+	}
+	mSymTbls.pop_front();
 }
 
 void Parser::whileLoop()
 {
+	SavedTokenStream cond;
+	SavedTokenStream cmds;
+	bool oldExec = mExec;
+	// put a new symbol table on the stack
+	mSymTbls.push_back(std::map<std::string,Token>());
+
+	expect(S_O_PARAN);
+	mExec = false; //stop executing
+	mSave = &cond;
+	asgnmt();
+	mSave = NULL;
+	cond.add(S_END);
+	expect(S_C_PARAN);
+	
+	mSave = &cmds;
+	block(false) || stmt();
+	mSave = NULL;
+	cmds.add(S_END);
+	mExec = oldExec;
+
+	Token oldTkn = mToken;
+	mTknStreams.push(cond);
+	getNext();
+
+	while (toBool(asgnmt()))
+		loopBody(cmds);
+
+	mTknStreams.pop(); // pop cond
+	mSymTbls.pop_front();
+
 }
+
+
 void Parser::doWhileLoop()
 {
 }
@@ -550,7 +615,7 @@ void Parser::loopBody(SavedTokenStream cmds)
 	mTknStreams.pop(); //pop cond
 	mSymTbls.pop_back();
 	mToken = oldTkn; //restore old Token
-			
+		
 }
 
 /*		
