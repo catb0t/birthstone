@@ -65,6 +65,11 @@ class Parser
 		bool elseCond(bool ignore);
 
 		bool loop();
+		void forLoop();
+		void forInLoop();
+		void whileLoop();
+		void doWhileLoop();
+		void loopBody(SavedTokenStream cmds);
 
 		bool block(bool createScope = true);
 		bool stmt();
