@@ -538,7 +538,23 @@ void Parser::forInLoop()
 	for (vector<Token>::const_iterator iter = list.getList().begin();
 			 iter < list.getList().end(); ++iter)
 	{
-		if (!mExec) break;
+		if (mBreak)
+		{
+			mBreak = false;
+			mExec = true;
+			mTknStreams.pop(); //pop cmds
+			break;
+		}
+		else if (mCont)
+		{
+			mCont = false;
+			mExec = true;
+		}
+		else if (!mExec)
+		{
+			mTknStreams.pop(); //pop cmds
+			break;
+		}
 		mSymTbls.back()[id.getStr()] = *iter; //TODO: allow for in to use pre-existing variables
 		loopBody(cmds);
 	}
@@ -572,7 +588,26 @@ void Parser::whileLoop()
 	getNext();
 
 	while (toBool(asgnmt()))
+	{
+		if (mBreak)
+		{
+			mBreak = false;
+			mExec = true;
+			mTknStreams.pop(); //pop cmds
+			break;
+		}
+		else if (mCont)
+		{
+			mCont = false;
+			mExec = true;
+		}
+		else if (!mExec)
+		{
+			mTknStreams.pop(); //pop cmds
+			break;
+		}
 		loopBody(cmds);
+	}
 
 	mTknStreams.pop(); // pop cond
 	mSymTbls.pop_front();
@@ -585,34 +620,18 @@ void Parser::doWhileLoop()
 }
 void Parser::loopBody(SavedTokenStream cmds)
 {
-	Token condTkn = mToken;
+	Token oldTkn = mToken;
 	mTknStreams.push(cmds);
 	getNext();
 
 	block(false) || stmt();
 
-	if (mBreak)
-	{
-		mBreak = false;
-		mExec = true;
-		mTknStreams.pop(); //pop cmds
-		break;
-	}
-	else if (mCont)
-	{
-		mCont = false;
-		mExec = true;
-	}
-	else if (!mExec)
-	{
-		mTknStreams.pop(); //pop cmds
-		break;
-	}
+
 
 	mTknStreams.pop(); //pop cmds
-	mToken = condTkn;
+	mToken = oldTkn;
 	accept(S_END);
-	mTknStreams.pop(); //pop cond
+	
 	mSymTbls.pop_back();
 	mToken = oldTkn; //restore old Token
 		
