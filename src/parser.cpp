@@ -296,6 +296,7 @@ bool Parser::defFunc()
 	expect(S_C_PARAN);
 	SavedTokenStream funcBody; // function body
 
+
 	mSave = &funcBody;
 	expect(S_O_BRACE);
 	while (!accept(S_C_BRACE))
@@ -303,7 +304,8 @@ bool Parser::defFunc()
 		accept(S_RET);
 		stmt();		
 	}
-	mSave = NULL;	
+	mSave = NULL;
+
 
 
 	#ifdef BS_DEBUG	// DEBUG:
@@ -333,14 +335,17 @@ bool Parser::print()
 	{
 // 		std::cerr << __FILE__ << ':' << __LINE__ << ": print(): got <PRINT> or <WRITE>" << std::endl;
 		std::string str = "";
+
 		if (mToken != S_SC)
 		{
-			str = toStr(asgnmt());
-// 			std::cerr << __FILE__ << ':' << __LINE__ << std::endl;
+			if (mExec)
+				str = toStr(asgnmt());
+			else
+				asgnmt();
 		}
-
 		if (mExec)
 		{
+	
 			std::cout << str;
 			if (newLine)
 				std::cout << std::endl;
@@ -1304,23 +1309,23 @@ Token Parser::call(const Token &funcName)
 // 	Token &funcTkn = lookup(funcName);
 // 	if (funcTkn.getType() == S_FUNC)
 // 	{
-// 		Func &func = funcTkn.getFunc();
+// 		Func func = funcTkn.getFunc();
 // 		std::vector<std::string> vec;
-// 		for (std::vector<std::string>::iterator i
+// 		for (std::vector<std::string>::const_iterator i
 // 					= func.getParams().begin();
 // 			i < func.getParams().end(); ++i)
 // 		{
 // 			if (i != func.getParams().begin())
 // 			{
 // 				if (accept(S_O_PARAN))
-// 					error(std::string("Too few arguments to ") + funcName);
+// 					error(std::string("Too few arguments to ") + funcName.getStr());
 // 				expect(S_COMMA);
 // 			}
 // 			mSymTbls.back()[*i] = asgnmt();
 // 
 // 		}
 // 		if (accept(S_COMMA))
-// 			error(std::string("Too many arguments to ") + funcName);
+// 			error(std::string("Too many arguments to ") + funcName.getStr());
 // 		expect(S_C_PARAN);
 // 		mTknStreams.push(func.getFuncBody());
 // 		// TODO: implement Token Parser::call(const Token &funcName)
