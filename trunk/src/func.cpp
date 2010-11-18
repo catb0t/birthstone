@@ -24,12 +24,12 @@ Func::Func(std::vector<std::string> params, SavedTokenStream funcBody) : mParams
 {
 }
 
-inline const std::vector<std::string> &Func::getParams() const
+const std::vector<std::string> &Func::getParams() const
 {
 	return mParams;
 }
 
-inline const SavedTokenStream &Func::getFuncBody() const
+const SavedTokenStream &Func::getFuncBody() const
 {
 	return mFuncBody;
 }

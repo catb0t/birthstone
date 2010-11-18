@@ -273,27 +273,30 @@ bool Parser::defFunc()
 {
 	if (!accept(S_DEF))
 		return false;
-
-	std::string funcName = mToken.getStr();
+	Token id = mToken;
 	expect(S_ID);
+	std::string funcName = id.getStr();
 	bool oldExec = mExec;
 	std::vector<std::string> params;
 	mExec = false;
 	expect(S_O_PARAN);
 
-	std::string param = mToken.getStr();
-	if (accept(S_ID))
-	{
-		params.push_back(param);
-		while (accept(S_COMMA))
+	if (!accept(S_C_PARAN))
 		{
-			param = mToken.getStr();
-			expect(S_ID);
+		std::string param = mToken.getStr();
+		if (accept(S_ID))
+		{
 			params.push_back(param);
+			while (accept(S_COMMA))
+			{
+				param = mToken.getStr();
+				expect(S_ID);
+				params.push_back(param);
+			}
 		}
+	
+		expect(S_C_PARAN);
 	}
-
-	expect(S_C_PARAN);
 	SavedTokenStream funcBody; // function body
 
 
@@ -492,7 +495,152 @@ bool Parser::elseCond(bool ignore)
 	}
 	return false;
 }
+bool Parser::loop()
+{
+	bool isWhile = false, isDoWhile = false, isFor = false, isForIn = false;
+	if ((isWhile = accept(S_WHILE)) || (isDoWhile = accept(S_DO)) \
+			 || (isFor = accept(S_FOR)))
+	{
+		SavedTokenStream cond; // condition
+		SavedTokenStream cmds; // commands
+		SavedTokenStream incr; // increment   (for loops only)
 
+                // variables for for-in loops
+		std::vector<Token>::const_iterator iter;
+		Token id, list;
+//              Sym type = S_NONE;
+                
+		bool oldExec = mExec;
+                
+                // put a new symbol table on the stack
+		mSymTbls.push_back(std::map<std::string,Token>());
+
+                // while (...) or for(...;...;...)
+		if (!isDoWhile)
+		{
+			if (!isFor)
+				expect(S_O_PARAN);
+			else // if (isFor)
+			{
+                                //TODO: make for-in work with pre-existing variables
+				if (isForIn = !accept(S_O_PARAN)) // For-in loop
+				{
+					isFor = false;
+					id = mToken;
+					expect(S_ID);
+//                                      type = lookup(S_ID).getType();
+					expect(S_IN);
+					list = mToken;
+					if (!(accept(S_ID) && (list = lookup(list)).getType() != S_LIST))
+						expect(S_LIST);
+					iter = list.getList().begin();
+
+				}
+				else
+				{
+					asgnmt();
+					expect(S_SC);
+				}
+			}
+		}
+
+		if (!isForIn)
+		{
+			mExec = false;
+			mSave = &cond;
+			asgnmt();
+			mSave = NULL;
+			cond.add(S_END);
+		}
+
+		if (isFor)
+		{
+			expect(S_SC);
+			mSave = &incr;
+			asgnmt();
+			mSave = NULL;
+			incr.add(S_END);
+		}
+		expect(S_C_PARAN);
+                
+
+		mExec = isDoWhile && oldExec; // do-while executes once before checking condition
+		mSave = &cmds;
+		block() || stmt();
+		mSave = NULL;
+		cmds.add(S_END);
+		mExec = false;
+
+		if (isDoWhile)
+		{
+			expect(S_WHILE);
+			expect(S_O_PARAN);
+			mSave = &cond;
+			asgnmt();
+			mSave = NULL;
+			cond.add(S_END);
+			expect(S_C_PARAN);
+			expect(S_SC);
+		}
+                
+		mExec = oldExec;
+		Token oldTkn = mToken;
+		mTknStreams.push(cond);
+		getNext();
+
+
+		while ((isForIn &&  iter < list.getList().end()) || (!isForIn && toBool(asgnmt())))
+		{
+			if (isForIn)
+				mSymTbls.back()[id.getStr()] = *iter;
+			Token condTkn = mToken;
+			mTknStreams.push(cmds);
+			getNext();
+
+			block(false) || stmt();
+                        
+			if (mBreak)
+			{
+				mBreak = false;
+				mExec = true;
+				mTknStreams.pop(); //pop cmds
+				break;
+			}
+			else if (mCont)
+			{
+				mCont = false;
+				mExec = true;
+			}
+			else if (!mExec)
+			{
+				mTknStreams.pop(); //pop cmds
+				break;
+			}
+                        
+			mTknStreams.pop(); //pop cmds
+			mToken = condTkn;
+			accept(S_END);
+			if (isForIn)
+				++iter;
+			else if (isFor)
+			{
+				Token cmdsTkn=mToken;
+				mTknStreams.push(incr);
+				getNext();
+				asgnmt();
+				mTknStreams.pop(); //pop incr
+				mToken = cmdsTkn;
+			}
+			mExec = oldExec;
+		}
+		mTknStreams.pop(); //pop cond
+		mSymTbls.pop_back();
+		mToken = oldTkn; //restore old Token
+		return true;
+	}
+	return false;
+}
+/*
 
 bool Parser::loop()
 {
@@ -598,7 +746,7 @@ void Parser::whileLoop()
 		{
 			mBreak = false;
 			mExec = true;
-			mTknStreams.pop(); //pop cmds
+// 			mTknStreams.pop(); //pop cmds
 			break;
 		}
 		else if (mCont)
@@ -608,7 +756,7 @@ void Parser::whileLoop()
 		}
 		else if (!mExec)
 		{
-			mTknStreams.pop(); //pop cmds
+// 			mTknStreams.pop(); //pop cmds
 			break;
 		}
 		loopBody(cmds);
@@ -640,153 +788,8 @@ void Parser::loopBody(SavedTokenStream cmds)
 	mSymTbls.pop_back();
 	mToken = oldTkn; //restore old Token
 		
-}
+}*/
 
-/*		
-	bool isWhile = false, isDoWhile = false, isFor = false, isForIn = false;
-	if ((isWhile = accept(S_WHILE)) || (isDoWhile = accept(S_DO)) \
-		|| (isFor = accept(S_FOR)))
-	{
-		SavedTokenStream cond; // condition
-		SavedTokenStream cmds; // commands
-		SavedTokenStream incr; // increment   (for loops only)
-
-		// variables for for-in loops
-		std::vector<Token>::const_iterator iter;
-		Token id, list;
-// 		Sym type = S_NONE;
-		
-		bool oldExec = mExec;
-		
-		// put a new symbol table on the stack
-		mSymTbls.push_back(std::map<std::string,Token>());
-
-		// while (...) or for(...;...;...)
-		if (!isDoWhile)
-		{
-			if (!isFor)
-				expect(S_O_PARAN);
-			else // if (isFor)
-			{
-				//TODO: make for-in work with pre-existing variables
-				if (isForIn = !accept(S_O_PARAN)) // For-in loop
-				{
-					isFor = false;
-					id = mToken;
-					expect(S_ID);
-// 					type = lookup(S_ID).getType();
-					expect(S_IN);
-					list = mToken;
-					if (!(accept(S_ID) && (list = lookup(list)).getType() != S_LIST))
-						expect(S_LIST);
-					iter = list.getList().begin();
-
-				}
-				else
-				{
-				asgnmt();
-				expect(S_SC);
-				}
-			}
-		}
-
-		if (!isForIn)
-		{
-			mExec = false;
-			mSave = &cond;
-			asgnmt();
-			mSave = NULL;
-			cond.add(S_END);
-		}
-
-			if (isFor)
-			{
-				expect(S_SC);
-				mSave = &incr;
-				asgnmt();
-				mSave = NULL;
-				incr.add(S_END);
-			}
-			expect(S_C_PARAN);
-		
-
-		mExec = isDoWhile && oldExec; // do-while executes once before checking condition
-		mSave = &cmds;
-		block() || stmt();
-		mSave = NULL;
-		cmds.add(S_END);
-		mExec = false;
-
-		if (isDoWhile)
-		{
-			expect(S_WHILE);
-			expect(S_O_PARAN);
-			mSave = &cond;
-			asgnmt();
-			mSave = NULL;
-			cond.add(S_END);
-			expect(S_C_PARAN);
-			expect(S_SC);
-		}
-		
-		mExec = oldExec;
-		Token oldTkn = mToken;
-		mTknStreams.push(cond);
-		getNext();
-
-
-		while ((isForIn &&  iter < list.getList().end()) || (!isForIn && toBool(asgnmt())))
-		{
-			if (isForIn)
-				mSymTbls.back()[id.getStr()] = *iter;
-			Token condTkn = mToken;
-			mTknStreams.push(cmds);
-			getNext();
-
-			block(false) || stmt();
-			
-			if (mBreak)
-			{
-				mBreak = false;
-				mExec = true;
-				mTknStreams.pop(); //pop cmds
-				break;
-			}
-			else if (mCont)
-			{
-				mCont = false;
-				mExec = true;
-			}
-			else if (!mExec)
-			{
-				mTknStreams.pop(); //pop cmds
-				break;
-			}
-			
-			mTknStreams.pop(); //pop cmds
-			mToken = condTkn;
-			accept(S_END);
-			if (isForIn)
-				++iter;
-			else if (isFor)
-			{
-				Token cmdsTkn=mToken;
-				mTknStreams.push(incr);
-				getNext();
-				asgnmt();
-				mTknStreams.pop(); //pop incr
-				mToken = cmdsTkn;
-			}
-			mExec = oldExec;
-		}
-		mTknStreams.pop(); //pop cond
-		mSymTbls.pop_back();
-		mToken = oldTkn; //restore old Token
-		return true;
-	}
-	return false;
-	
-} */
 
 bool Parser::block(bool createScope)
 {
@@ -1306,33 +1309,33 @@ Token Parser::factor()
 
 Token Parser::call(const Token &funcName)
 {
-// 	Token &funcTkn = lookup(funcName);
-// 	if (funcTkn.getType() == S_FUNC)
-// 	{
-// 		Func func = funcTkn.getFunc();
-// 		std::vector<std::string> vec;
-// 		for (std::vector<std::string>::const_iterator i
-// 					= func.getParams().begin();
-// 			i < func.getParams().end(); ++i)
-// 		{
-// 			if (i != func.getParams().begin())
-// 			{
-// 				if (accept(S_O_PARAN))
-// 					error(std::string("Too few arguments to ") + funcName.getStr());
-// 				expect(S_COMMA);
-// 			}
-// 			mSymTbls.back()[*i] = asgnmt();
-// 
-// 		}
-// 		if (accept(S_COMMA))
-// 			error(std::string("Too many arguments to ") + funcName.getStr());
-// 		expect(S_C_PARAN);
-// 		mTknStreams.push(func.getFuncBody());
-// 		// TODO: implement Token Parser::call(const Token &funcName)
-// 		block(false);
-// 		mTknStreams.pop(); //func.getFuncBody()
-// 
-// 		return mRetVal;
-// 	}
+	Token &funcTkn = lookup(funcName);
+	if (funcTkn.getType() == S_FUNC)
+	{
+		Func func = funcTkn.getFunc();
+		std::vector<std::string> vec;
+		for (std::vector<std::string>::const_iterator i
+					= func.getParams().begin();
+			i < func.getParams().end(); ++i)
+		{
+			if (i != func.getParams().begin())
+			{
+				if (accept(S_C_PARAN))
+					error(std::string("Too few arguments to ") + funcName.getStr());
+				expect(S_COMMA);
+			}
+			mSymTbls.back()[*i] = asgnmt();
+
+		}
+		if (accept(S_COMMA))
+			error(std::string("Too many arguments to ") + funcName.getStr());
+		expect(S_C_PARAN);
+		mTknStreams.push(func.getFuncBody());
+		// TODO: implement Token Parser::call(const Token &funcName)
+		block(false);
+		mTknStreams.pop(); //func.getFuncBody()
+
+		return mRetVal;
+	}
 	return noTkn; //for now
 }
