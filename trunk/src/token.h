@@ -26,6 +26,8 @@
 #include <vector>
 #include <boost/any.hpp>
 #include "symbol.h"
+#include <fstream>
+#include <boost/shared_ptr.hpp>
 class Func;
 
 #include "type_exception.h"
@@ -45,6 +47,8 @@ class Token
 		Token(bool boolean) 							throw (std::bad_alloc); // Type: S_BOOL
 		Token(const Func &func)						throw (std::bad_alloc); // Type: S_FUNC
 		Token(const std::vector<Token> &list)	throw (std::bad_alloc); // Type: S_LIST
+		Token(boost::shared_ptr<std::fstream> file) throw (std::bad_alloc); // Type: S_FILE
+
 		
 		Token(const Token &token) throw (std::bad_alloc);
 
@@ -54,6 +58,7 @@ class Token
 		bool        getBool() const throw (TypeException);
 		Func        getFunc() const throw (TypeException);
 		const std::vector<Token> &getList() const throw (TypeException);
+		boost::shared_ptr<std::fstream> getFile() const throw (TypeException);
 
 		void setStr(std::string s);
 		void setNum(double n) ;
