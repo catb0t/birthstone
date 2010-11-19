@@ -1088,17 +1088,25 @@ Token Parser::sum()
 					token = Token(token.getNum() + toNum(token2));
 				else if (token.getType() == S_BOOL)
 					error("cannot add to a bool");
-				else if (token.getType() == S_LIST)
+    				else if (token.getType() == S_LIST)
 				{
 					if (token2.getType() == S_ID)
 						token2 = lookup(token2);
 					std::vector<Token> newList(token.getList());
-					newList.push_back(token2);
+					if (token2.getType() == S_LIST)
+					{
+						for (std::vector<Token>::const_iterator i = token2.getList().begin();
+							  i < token2.getList().end(); ++i)
+							newList.push_back(*i);
+					}
+					else
+						newList.push_back(token2);
 					token = Token(newList);
 				}
 			}
+			}
 			
-		}
+		
 		else if (accept(S_MINUS))
 		{
 			Token token2 = product();
