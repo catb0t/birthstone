@@ -22,12 +22,31 @@
 class CopyCounter
 {
 public:
-	unsigned int currentCount();
-	unsigned int totalCount();
+	unsigned int currentCount() { return *curCnt;   }
+	unsigned int totalCount()   { return *totalCnt; }
 protected:
-	CopyCounter(); // create a counts
-	CopyCounter(const CopyCounter &counter);
-	~CopyCounter(); // decrement current count or destroy counts  if current count is one
+	CopyCounter()
+	{
+		curCnt = new unsigned int(1);
+		totalCnt = new unsigned int(1);
+	}
+	
+	CopyCounter(const CopyCounter &counter)
+ 	: curCnt(counter.curCnt), totalCnt(counter.totalCnt)
+	{
+		++(*curCnt);
+		++(*totalCnt);
+	}
+	
+	~CopyCounter()
+	{
+		--(*curCnt);
+		if (*curCnt == 0)
+		{
+			delete curCnt;
+			delete totalCnt;
+		}
+	}
 private:
 	unsigned int *curCnt;
 	unsigned int *totalCnt;
