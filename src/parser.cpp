@@ -22,9 +22,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <vector>
-// #include <boost/foreach.hpp>
-// #define foreach         BOOST_FOREACH
-// #define reverse_foreach BOOST_REVERSE_FOREACH
+#include <fstream>
 #include "func.h"
 #include "parser.h"
 using namespace std;

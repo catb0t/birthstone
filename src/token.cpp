@@ -25,6 +25,8 @@
 #include <new>
 #include <vector>
 #include <boost/any.hpp>
+#include <fstream>
+#include <boost/shared_ptr.hpp>
 #include "token.h"
 #include "func.h"
 #include "type_exception.h"
@@ -62,6 +64,8 @@ Token::Token(const Func &func)			throw (std::bad_alloc)
 	: mType(S_FUNC), mVal(func) {}
 Token::Token(const std::vector<Token> &list)	throw (std::bad_alloc)
 	:mType(S_LIST), mVal(list) {}
+Token::Token(shared_ptr<std::fstream> file) throw (std::bad_alloc)
+	:mType(S_FILE), mVal(file) {}
 
 Token::Token(const Token &token) throw (std::bad_alloc)
 	: mType(token.mType), mVal(token.mVal)
@@ -159,6 +163,23 @@ const vector<Token> &Token::getList() const throw (TypeException)
 	}
 	else
 		throw TypeException("ERROR: Token is not a list");
+}
+
+shared_ptr<fstream> Token::getFile() const throw (TypeException)
+{
+	if (mType == S_FILE)
+	{
+		try
+		{
+			return *any_cast<shared_ptr<fstream> >(&mVal);
+		}
+		catch(const boost::bad_any_cast &)
+		{
+			throw TypeException("ERROR: Token is not a file");
+		}
+	}
+	else
+		throw TypeException("ERROR: Token is not a file");
 }
 
 void Token::setStr(std::string s)

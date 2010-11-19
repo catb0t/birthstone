@@ -64,9 +64,14 @@ void Lexer::setupKeywords()
 		sKeywords["read"] 	 =	S_READ;
 		sKeywords["write"] 	 =	S_WRITE;
 		sKeywords["print"] 	 =	S_PRINT;
+
+		sKeywords["open"]		 = S_OPEN;
+		sKeywords["close"]	 = S_CLOSE;
+		sKeywords["fread"] 	 =	S_FREAD;
+		sKeywords["fwrite"] 	 =	S_FWRITE;
+		sKeywords["fprint"] 	 =	S_FPRINT;
+		
 		sKeywords["delete"] 	 =	S_DEL;
-
-
 		sKeywords["def"] 		 =	S_DEF;
 		sKeywords["class"] 	 = S_CLASS;
 		sKeywords["return"]   = S_RET;
