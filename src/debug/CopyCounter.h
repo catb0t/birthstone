@@ -19,20 +19,19 @@
 ******************************************************************************/
 #ifndef COPY_COUNTER_HPP
 #define COPY_COUNTER_HPP
+
 class CopyCounter
 {
 public:
 	unsigned int currentCount() { return *curCnt;   }
 	unsigned int totalCount()   { return *totalCnt; }
+	unsigned int id()           { return *idNum;    }
 protected:
-	CopyCounter()
-	{
-		curCnt = new unsigned int(1);
-		totalCnt = new unsigned int(1);
-	}
+	CopyCounter();
+
 	
 	CopyCounter(const CopyCounter &counter)
- 	: curCnt(counter.curCnt), totalCnt(counter.totalCnt)
+ 	: curCnt(counter.curCnt), totalCnt(counter.totalCnt), idNum(counter.idNum)
 	{
 		++(*curCnt);
 		++(*totalCnt);
@@ -48,8 +47,15 @@ protected:
 		}
 	}
 private:
-	unsigned int *curCnt;
-	unsigned int *totalCnt;
+	static unsigned int idGen;
+	unsigned int *curCnt, *totalCnt, *idNum;
 
 };
+CopyCounter::CopyCounter()
+	: curCnt(new unsigned int(1)), totalCnt(new unsigned int(1))
+{
+	static unsigned int idGen = 0;
+	idNum = new unsigned int(idGen++);
+
+}
 #endif
