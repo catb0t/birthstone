@@ -43,7 +43,7 @@ const std::map <std::string, Token> &Lexer::keywords()
 	using namespace boost::assign; // bring 'map_list_of()' into scope
 	// http://www.boost.org/doc/libs/1_45_0/libs/assign/doc/index.html#map_list_of
 	
-	static std::map <std::string, Token> keywords
+	static const std::map <std::string, Token> keywordsMap
 		= map_list_of ("None", noTkn) ("if", S_IF) ("elif", S_ELIF)
    	("elsif", S_ELIF)("elseif", S_ELIF)("else", S_ELSE)("do", S_DO)
 		("while", S_WHILE)("until", S_UNTIL)("for", S_FOR)("in", S_IN)
@@ -54,7 +54,7 @@ const std::map <std::string, Token> &Lexer::keywords()
 		("not", S_NOT)("type", S_TYPE)("true", trueTkn)("false", falseTkn)
 		("exit", S_QUIT)("quit", S_QUIT);
 
-		return keywords;
+		return keywordsMap;
 	
 }
 
