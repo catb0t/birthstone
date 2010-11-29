@@ -42,6 +42,7 @@ class Lexer : public TokenStream
 
 		const Token &getNext();
 		unsigned int getLine() const;
+		const std::map <std::string, Token> &keywords();
 
 		Lexer & operator=(const Lexer &lexer);
 	private:
@@ -51,7 +52,6 @@ class Lexer : public TokenStream
 		unsigned int  mLineNum;
 		Token         mToken;
 		
-		static std::map <std::string, Token> sKeywords;
 };
 
 #endif //ifndef BS_LEXER_H

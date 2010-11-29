@@ -27,13 +27,9 @@
 #include <sstream>
 
 
-std::map <std::string, Token> Lexer::sKeywords;
-
 Lexer::Lexer(std::istream &input)
    : mInput(&input), mLineNum(1), mToken(S_END)
-{
-	 setupKeywords(); 
-}
+{}
 
 Lexer::Lexer(const Lexer &lexer)
 	: mInput(lexer.mInput), mLineNum(1), mToken(S_END)
@@ -41,54 +37,27 @@ Lexer::Lexer(const Lexer &lexer)
 
 Lexer::~Lexer() {}
 
-void Lexer::setupKeywords()
+#include <boost/assign/list_of.hpp> // for 'map_list_of()'
+const std::map <std::string, Token> &Lexer::keywords()
 {
-	if (sKeywords.empty())
-	{
-		sKeywords["None"]     =	S_NONE;
-		
-		sKeywords["if"]       =	S_IF;
-		sKeywords["elif"]     = S_ELIF;
-		sKeywords["elsif"] 	 = S_ELIF;
-		sKeywords["elseif"]   = S_ELIF;
-		sKeywords["else"]     =	S_ELSE;
+	using namespace boost::assign; // bring 'map_list_of()' into scope
+	// http://www.boost.org/doc/libs/1_45_0/libs/assign/doc/index.html#map_list_of
+	
+	static std::map <std::string, Token> keywords
+		= map_list_of ("None", noTkn) ("if", S_IF) ("elif", S_ELIF)
+   	("elsif", S_ELIF)("elseif", S_ELIF)("else", S_ELSE)("do", S_DO)
+		("while", S_WHILE)("until", S_UNTIL)("for", S_FOR)("in", S_IN)
+		("break", S_BREAK)("continue", S_CONT)("read", S_READ)("write", S_WRITE)
+		("print", S_PRINT)("open", S_OPEN)("close", S_CLOSE) ("fread", S_FREAD)
+		("fwrite", S_FWRITE)("fprint", S_FPRINT)("delete", S_DEL)("def", S_DEF)
+		("class", S_CLASS)("return", S_RET)("and", S_AND)("or", S_OR)
+		("not", S_NOT)("type", S_TYPE)("true", trueTkn)("false", falseTkn)
+		("exit", S_QUIT)("quit", S_QUIT);
 
-		sKeywords["do"]    	 =	S_DO;
-		sKeywords["while"]    =	S_WHILE;
-		sKeywords["until"]    =	S_UNTIL;
-		sKeywords["for"]      =	S_FOR;
-		sKeywords["in"]       =	S_IN;
-		sKeywords["break"]    =	S_BREAK;
-		sKeywords["continue"] =	S_CONT;
-
-		sKeywords["read"] 	 =	S_READ;
-		sKeywords["write"] 	 =	S_WRITE;
-		sKeywords["print"] 	 =	S_PRINT;
-
-		sKeywords["open"]		 = S_OPEN;
-		sKeywords["close"]	 = S_CLOSE;
-		sKeywords["fread"] 	 =	S_FREAD;
-		sKeywords["fwrite"] 	 =	S_FWRITE;
-		sKeywords["fprint"] 	 =	S_FPRINT;
-		
-		sKeywords["delete"] 	 =	S_DEL;
-		sKeywords["def"] 		 =	S_DEF;
-		sKeywords["class"] 	 = S_CLASS;
-		sKeywords["return"]   = S_RET;
-		
-      sKeywords["and"]		 = S_AND;
-		sKeywords["or"]		 =	S_OR;
-		sKeywords["not"]		 =	S_NOT;
-
-		sKeywords["type"]		 =	S_TYPE;
-      
-		sKeywords["true"]     = trueTkn;
-		sKeywords["false"]    = falseTkn;
-
-		sKeywords["exit"]     = S_QUIT;
-		sKeywords["quit"]     = S_QUIT;
-	}
+		return keywords;
+	
 }
+
 
 const Token &Lexer::getNext()
 {
@@ -171,8 +140,8 @@ const Token &Lexer::getNext()
 			ch = mInput->peek();
 		} while (!(mInput->eof()) && (isalnum(ch) || ch == '_'));
 		
-		std::map <std::string, Token>::iterator it = sKeywords.find(mTokenStr);
-		if (it != sKeywords.end()) // keyword
+		std::map <std::string, Token>::const_iterator it = keywords().find(mTokenStr);
+		if (keywords().find(mTokenStr) != keywords().end()) // keyword
 			mToken = it->second;
 		else //identifier
 			mToken = Token(S_ID, mTokenStr);
