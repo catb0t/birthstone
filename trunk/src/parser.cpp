@@ -25,6 +25,7 @@
 #include <fstream>
 #include "func.h"
 #include "parser.h"
+#include <boost/lexical_cast.hpp>
 using namespace std;
 
 
@@ -83,6 +84,7 @@ bool Parser::run()
 
 std::string Parser::toStr(Token t)
 {
+
 // 	std::cerr << __FILE__ << ':' << __LINE__ << ": toStr()" << std::endl;
 	if (t.getType() == S_ID)
 	{
@@ -100,9 +102,7 @@ std::string Parser::toStr(Token t)
 		return (t.getBool() ? "true" : "false");
 	else 	if (t.getType() == S_NUM)
 	{
-		std::ostringstream sstream;
-		sstream << t.getNum();
-		return sstream.str();
+		return boost::lexical_cast<string>(t.getNum());
 	}
 	else 	if (t.getType() == S_LIST)
 	{	
@@ -136,7 +136,7 @@ double Parser::toNum(Token t)
 	if (t.getType() == S_NUM)
 		return t.getNum();
 	else if (t.getType() == S_STR)
-		return atof(t.getStr().c_str());
+		return boost::lexical_cast<double>(t.getStr());
 	else 	if (t.getType() == S_BOOL)
 		return static_cast<double>(t.getBool());
 	// else:
