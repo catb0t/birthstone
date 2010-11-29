@@ -29,7 +29,6 @@
 #include <fstream>
 #include <boost/shared_ptr.hpp>
 class Func;
-
 #include "type_exception.h"
 
 

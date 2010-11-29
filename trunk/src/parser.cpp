@@ -161,6 +161,8 @@ bool Parser::toBool (Token t)
 		return t.getNum() /*!= 0 */ ;
 	else if (t.getType() == S_STR)
 		return (t.getStr() != "");
+	else if (t.getType() == S_FILE)
+		return (!t.getFile()->fail());
 	// else:
 	error("toBool(): invalid type for conversion");
 	return false;
@@ -1236,6 +1238,9 @@ Token Parser::unary()
 				case S_LIST:
 					typeName = "List";
 					break;
+				case S_FILE:
+					typeName = "File";
+					break;
 				default:
 					typeName = "Invalid";
 					break;
@@ -1244,6 +1249,22 @@ Token Parser::unary()
 		}
 		return t;
 	}
+		else if (accept(S_OPEN))
+		{
+			Token t = asgnmt();
+			if (t.getType() == S_ID)
+				t = lookup(t);
+			if (t.getType() != S_STR)
+				error("open requires a filename as a string");
+			if (mExec)
+			{
+				Token file = Token(boost::shared_ptr<fstream>(new fstream(t.getStr().c_str())));
+				return file;
+			}
+			return t;
+		}
+
+	
 	return factor();
 }
 
