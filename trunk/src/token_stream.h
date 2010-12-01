@@ -39,6 +39,7 @@ class SavedTokenStream : public TokenStream
 		SavedTokenStream();
 		const Token &getNext();
 		void add(const Token &token);
+		bool empty() const;
 		void rewind();
 	private:
 		Token mToken;

@@ -30,6 +30,7 @@
 #include <boost/shared_ptr.hpp>
 class Func;
 #include "type_exception.h"
+// #include "ref.h"
 
 
 /******************************************************************************
@@ -47,22 +48,25 @@ class Token
 		Token(const Func &func)						throw (std::bad_alloc); // Type: S_FUNC
 		Token(const std::vector<Token> &list)	throw (std::bad_alloc); // Type: S_LIST
 		Token(boost::shared_ptr<std::fstream> file) throw (std::bad_alloc); // Type: S_FILE
-
+// 		Token(Ref<Token> &r); // Type: S_REF
 		
 		Token(const Token &token) throw (std::bad_alloc);
 
-		Symbol      getType() const throw ();
-		std::string getStr () const throw (TypeException);
-		double      getNum () const throw (TypeException);
-		bool        getBool() const throw (TypeException);
-		Func        getFunc() const throw (TypeException);
-		const std::vector<Token> &getList() const throw (TypeException);
+		Symbol      getType()                     const throw ();
+		std::string getStr ()                     const throw (TypeException);
+		double      getNum ()                     const throw (TypeException);
+		bool        getBool()                     const throw (TypeException);
+		Func        getFunc()                     const throw (TypeException);
+		const std::vector<Token> &getList()       const throw (TypeException);
 		boost::shared_ptr<std::fstream> getFile() const throw (TypeException);
+// 		Ref<Token>  getRef()                      const throw (TypeException);
+		
 
 		void setStr(std::string s);
 		void setNum(double n) ;
 		void setBool(bool b);
-		
+// 		void setRef(Token &t);
+				
 		std::string repr() 	 const; // string representation of the token: "<TYPE, value>"
 		
 		Token &operator =(const Token &token) throw(std::bad_alloc);

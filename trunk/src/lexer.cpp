@@ -119,6 +119,11 @@ const Token &Lexer::getNext()
 		mInput->get();
 		mToken = S_C_BRACE;
 	}
+	else if (ch == '%')
+	{
+		mInput->get();
+		mToken = S_F;
+	}
 	else if (ch == ';')
 	{
 		mInput->get();

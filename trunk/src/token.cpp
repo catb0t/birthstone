@@ -24,12 +24,14 @@
 #include <iostream>
 #include <new>
 #include <vector>
-#include <boost/any.hpp>
 #include <fstream>
+#include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/format.hpp>
 #include "token.h"
 #include "func.h"
 #include "type_exception.h"
+
 using namespace std;
 using namespace boost;
 
@@ -49,7 +51,7 @@ Token::Token(Symbol type) throw (TypeException)
 Token::Token(Symbol type, const std::string &str) throw (TypeException, std::bad_alloc)
 	: mType(type), mVal(str)
 {
-   if (!((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
+	if (!((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR)))
 		throw TypeException("ERROR: only FAIL, STR, and ID types can have string values");
 }
 
@@ -182,6 +184,8 @@ shared_ptr<fstream> Token::getFile() const throw (TypeException)
 		throw TypeException("ERROR: Token is not a file");
 }
 
+
+
 void Token::setStr(std::string s)
 {
 	if ((mType != S_ID) && (mType != S_FAIL))
@@ -204,9 +208,7 @@ void Token::setBool(bool b)
 std::string Token::repr() 	const
 {
 	std::stringstream s;
-		// TODO: make sure this matches enum Symbol exactly
 
-		
 		s << '<';
 // 		if ((getType() >= S_NONE) && (getType() <= S_QUIT))
 			 s << symName[getType()];

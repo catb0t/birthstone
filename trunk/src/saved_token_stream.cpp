@@ -20,9 +20,9 @@
 ******************************************************************************/
 #include "token_stream.h"
 
-#ifdef BS_DEBUG
+//#ifdef BS_DEBUG
 #include <iostream>
-#endif // BS_DEBUG
+//#endif // BS_DEBUG
 
 SavedTokenStream::SavedTokenStream() : mStream(), mToken(S_END) //, mPos(mStream.begin())
 {
@@ -53,6 +53,10 @@ const Token &SavedTokenStream::getNext()
 	return mToken;
 }
 
+bool SavedTokenStream::empty() const
+{
+	return mStream.empty();
+}
 
 void SavedTokenStream::add(const Token &token)
 {
