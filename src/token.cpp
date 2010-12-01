@@ -68,7 +68,9 @@ Token::Token(const std::vector<Token> &list)	throw (std::bad_alloc)
 	:mType(S_LIST), mVal(list) {}
 Token::Token(shared_ptr<std::fstream> file) throw (std::bad_alloc)
 	:mType(S_FILE), mVal(file) {}
-
+Token::Token(Token *ref)throw (std::bad_alloc)
+	:mType(S_REF), mVal(ref) {}
+		
 Token::Token(const Token &token) throw (std::bad_alloc)
 	: mType(token.mType), mVal(token.mVal)
 {
@@ -80,6 +82,7 @@ inline Symbol Token::getType() const  throw () { return mType; }
 
 std::string Token::getStr() const throw (TypeException)
 {
+	
    if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
 	{
 		try
