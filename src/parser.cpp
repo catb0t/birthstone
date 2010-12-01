@@ -26,7 +26,9 @@
 #include "func.h"
 #include "parser.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 using namespace std;
+using namespace boost;
 
 
 
@@ -282,7 +284,7 @@ bool Parser::defFunc()
 	expect(S_O_PARAN);
 
 	if (!accept(S_C_PARAN))
-		{
+	{
 		std::string param = mToken.getStr();
 		if (accept(S_ID))
 		{
@@ -793,10 +795,11 @@ void Parser::loopBody(SavedTokenStream cmds)
 
 bool Parser::block(bool createScope)
 {
+
 	if (accept(S_O_BRACE))
 	{
 		if (createScope)
-			mSymTbls.push_back(std::map<std::string,Token>());
+			mSymTbls.push_back(SymTbl());
 		
 		while (!accept(S_C_BRACE))
 			code();
@@ -1249,22 +1252,20 @@ Token Parser::unary()
 		}
 		return t;
 	}
-		else if (accept(S_OPEN))
+	else if (accept(S_OPEN))
+	{
+		Token t = asgnmt();
+		if (t.getType() == S_ID)
+			t = lookup(t);
+		if (t.getType() != S_STR)
+			error("open requires a filename as a string");
+		if (mExec)
 		{
-			Token t = asgnmt();
-			if (t.getType() == S_ID)
-				t = lookup(t);
-			if (t.getType() != S_STR)
-				error("open requires a filename as a string");
-			if (mExec)
-			{
-				Token file = Token(boost::shared_ptr<fstream>(new fstream(t.getStr().c_str())));
-				return file;
-			}
-			return t;
+			Token file = Token(boost::shared_ptr<fstream>(new fstream(t.getStr().c_str())));
+			return file;
 		}
-
-	
+		return t;
+	}
 	return factor();
 }
 
@@ -1294,7 +1295,33 @@ Token Parser::factor()
 		}
 		token = Token(lst);
 	}
-	else if (accept(S_NUM) || accept(S_BOOL) || accept(S_STR) || accept(S_NONE))
+	else if (accept(S_STR) && accept(S_F))
+	{
+		Token formatStr = token;
+		if (formatStr.getType() == S_ID)
+			formatStr = lookup(formatStr);
+		if (formatStr.getType() != S_STR)
+			error("format string must be a string");
+		format f(formatStr.getStr());
+
+		do {
+			Token t = asgnmt();
+			if (t.getType() == S_ID)
+				t = lookup(t);
+
+			if (t.getType() == S_STR)
+				f % t.getStr();
+			else 	if (t.getType() == S_BOOL)
+				f % t.getBool();
+			else 	if (t.getType() == S_NUM)
+				f % t.getNum();
+			else
+				error("format can only be used on numbers, strings and bools");
+
+		} while (accept(S_F));
+		token =  f.str();
+	}
+	else if (accept(S_NUM) || accept(S_STR) || accept(S_BOOL) || accept(S_NONE))
 		; //just accept them, we already saved the accepted token as token
 	else if (accept(S_ID))
 	{
@@ -1341,6 +1368,9 @@ Token Parser::call(const Token &funcName)
 	{
 		Func func = funcTkn.getFunc();
 		std::vector<std::string> vec;
+
+		mSymTbls.push_back(SymTbl());
+		
 		for (std::vector<std::string>::const_iterator i
 					= func.getParams().begin();
 			i < func.getParams().end(); ++i)
@@ -1351,17 +1381,23 @@ Token Parser::call(const Token &funcName)
 					error(std::string("Too few arguments to ") + funcName.getStr());
 				expect(S_COMMA);
 			}
-			mSymTbls.back()[*i] = asgnmt();
-
+			Token arg = asgnmt();
+			
+			mSymTbls.back()[*i] = arg;
+			cerr << __FILE__ << ':' << __LINE__ //<<':'<< __PRETTY_FUNCTION__
+					<< " param: " << *i << " arg: " << arg << " lookup: " << lookup(*i) <<endl;
 		}
 		if (accept(S_COMMA))
 			error(std::string("Too many arguments to ") + funcName.getStr());
 		expect(S_C_PARAN);
+		Token oldTkn = mToken;
 		mTknStreams.push(func.getFuncBody());
 		// TODO: implement Token Parser::call(const Token &funcName)
 		block(false);
 		mTknStreams.pop(); //func.getFuncBody()
+		mToken = oldTkn;
 
+		mSymTbls.pop_back();
 		return mRetVal;
 	}
 	return noTkn; //for now

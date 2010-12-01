@@ -14,7 +14,6 @@ The unary type operator will return a string representation of the type of it's 
   type x;             # returns "None" if x is undeclared,
                # or returns one of the above types if x has been declared
                     # this can be used to determine if a variable has been declared.
- 
 Declaring, Initializing, and Assigning Variables
 To declare and initialize a variable use the initialize operator ( := ).
    number := 0;
@@ -53,7 +52,7 @@ Birthstone has two commands to write to the console: print and write. The differ
    write "Hello, ";
    print "world!";
 This prints out "Hello, world!" to the console, followed by a newline.
-Most type of variables, literas, and expressions can be printed using the print or write command. The one exception is that printing a function variable will result in an error.
+Most type of variables, literals, and expressions can be printed using the print or write command. The one exception is that printing a function variable will result in an error.
 Reading from the console
 To read input from the console, use the read command. The syntax for the read command is read variableName. If you are reading into a variable that has already been declared, the input will be the same type as the variable. If you are reading into a variable that has not been previously declared, a string is read in. Here's an example:
 num := 0;
@@ -73,6 +72,15 @@ write "Enter a string: ";
 read var;
  
 This example reads a number into num, a string into str, a boolean into bool, and a string into var (since var hasn't been declared previously). 
+Formatting strings
+Formatting strings in Birthstone involves a formatting string, followed any number of arguments each proceeded by the format operator (%). For example:
+length := 4;
+width  := 5;
+message := 'The area of a %.2f x %.2f rectangle is %.2f.' % length 
+          % width % (length * width);
+In this example, the first “%.2f” formats the first argument (length), the second “%.2f” formats the second argument (width), and the third  “%.2f” formats the third argument (length*width). The result is that the string message is initialized with the value “The area of a 4.00 x 5.00 rectangle is 20.00.” 
+ 
+The format string supports all of the standard C/C++ printf format flags plus some additional format flags. Formatting strings are implemented using the Boost C++ format library, which implements all the format flags of Unix98 open-group’s printf. You can see those websites for details about which format flags can be used.
 File I/O
 File I/O in Birthstone in a work in progress. Once implement file I/O will work something like this:
 inFile := open “input.txt”;   # open the input file
@@ -88,8 +96,8 @@ close  outFile;         # close the output file
  
  
 Loops
-Birthstone supports 3 types of loops: do-while, while, and (three-statement) for loops. These loops behave in the same way as in most programming languages. While loops are used when the condition require to continue through the loop is known. A do-while loop is simular except that the body of the loop will be excuted once before the condition is checked. A for loop is used when the required number of iterations is know, or the programmer need to keep track of which iteration the loop is on or how many iterations it has gone through when the loop is done.
-Below is the syntax for each loop (the items in angle brackets are placeholders for code). The body of each type of loop can either be a single statement or a block (group of statements) deliminated by braces ({}). The body of a loop make contain break or continue statements. Break and continue act the same way as in most programming languages. A break statement will quit out of the loop. A continue statement will resume execution at the beginning of the next iteration of the loop, ignoring everything below the continue in the current iteration of the loop.
+Birthstone supports 3 types of loops: do-while, while, and (three-statement) for loops. These loops behave in the same way as in most programming languages. While loops are used when the condition require to continue through the loop is known. A do-while loop is simular except that the body of the loop will be executed once before the condition is checked. A for loop is used when the required number of iterations is know, or the programmer need to keep track of which iteration the loop is on or how many iterations it has gone through when the loop is done.
+Below is the syntax for each loop (the items in angle brackets are placeholders for code). The body of each type of loop can either be a single statement or a block (group of statements) delimited by braces ({}). The body of a loop make contain break or continue statements. Break and continue act the same way as in most programming languages. A break statement will quit out of the loop. A continue statement will resume execution at the beginning of the next iteration of the loop, ignoring everything below the continue in the current iteration of the loop.
  
 do <statement>; while (<condition>);
  

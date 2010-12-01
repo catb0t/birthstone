@@ -91,7 +91,8 @@ class Parser
 
 		Lexer mLexer;
 		Token mToken;
-		std::list<std::map<std::string,Token> > mSymTbls;
+		typedef std::map<std::string,Token> SymTbl;
+		std::list<SymTbl> mSymTbls;
 		std::stack<SavedTokenStream> mTknStreams;
 		SavedTokenStream *mSave; // save tokens?
 		bool mExec; // execute (true) or ignore (false) commands?
