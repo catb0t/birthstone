@@ -31,9 +31,9 @@ Lexer::Lexer(std::istream &input)
    : mInput(&input), mLineNum(1), mToken(S_END)
 {}
 
-Lexer::Lexer(const Lexer &lexer)
-	: mInput(lexer.mInput), mLineNum(1), mToken(S_END)
-{}
+// Lexer::Lexer(const Lexer &lexer)
+// 	: mInput(lexer.mInput), mLineNum(1), mToken(S_END)
+// {}
 
 Lexer::~Lexer() {}
 
@@ -57,7 +57,6 @@ const std::map <std::string, Token> &Lexer::keywords()
 		return keywordsMap;
 	
 }
-
 
 const Token &Lexer::getNext()
 {

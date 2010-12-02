@@ -20,14 +20,13 @@
 ******************************************************************************/
 #ifndef BS_TYPE_EXCEPTION_H
 #define BS_TYPE_EXCEPTION_H
-#include <string>
 #include <exception>
 class TypeException : public std::exception
 {
 	public:
 		TypeException(const char* description = "") : mWhat(description) {}
 		~TypeException() throw() { delete [] mWhat; }
-		std::string what() throw() { return mWhat; }
+		const char *what() throw() { return mWhat; }
 	private:
 		const char *mWhat;
 };
