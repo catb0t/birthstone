@@ -51,6 +51,7 @@ class Token
 		
 		Token(const Token &token) throw (std::bad_alloc);
 
+		bool 			isRef()                       const throw ();
 		Symbol      getType()                     const throw ();
 		std::string getStr ()                     const throw (TypeException);
 		double      getNum ()                     const throw (TypeException);

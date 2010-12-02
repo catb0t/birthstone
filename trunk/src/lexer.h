@@ -37,7 +37,7 @@ class Lexer : public TokenStream
 {
 	public:
 		Lexer(std::istream &input);
-		Lexer(const Lexer &lexer);
+		//Lexer(const Lexer &lexer);
 		~Lexer();
 
 		const Token &getNext();
@@ -46,8 +46,7 @@ class Lexer : public TokenStream
 
 		Lexer & operator=(const Lexer &lexer);
 	private:
-		void setupKeywords();
-
+		Lexer(const Lexer &lexer); //non-copyable
 		std::istream *mInput;
 		unsigned int  mLineNum;
 		Token         mToken;

@@ -77,12 +77,14 @@ Token::Token(const Token &token) throw (std::bad_alloc)
 	
 }
 
-inline Symbol Token::getType() const  throw () { return mType; }
+
+inline bool   Token::isRef()   const  throw () { return mType == S_REF; }
+inline Symbol Token::getType() const  throw () { return isRef() ? (any_cast<Token *>(mVal)->getType()) : mType; }
 
 
 std::string Token::getStr() const throw (TypeException)
 {
-	
+	if (isRef()) return any_cast<Token *>(mVal)->getStr();
    if ((mType == S_ID) || (mType == S_FAIL) || (mType == S_STR))
 	{
 		try
@@ -101,6 +103,7 @@ std::string Token::getStr() const throw (TypeException)
 
 double Token::getNum() const throw (TypeException)
 {
+	if (isRef()) return any_cast<Token *>(mVal)->getNum();
    if (mType == S_NUM)
 	{
 		try
@@ -119,6 +122,7 @@ double Token::getNum() const throw (TypeException)
 
 bool Token::getBool() const throw (TypeException)
 {
+	if (isRef()) return any_cast<Token *>(mVal)->getBool();
 	if (mType == S_BOOL)
 	{
 		try
@@ -138,6 +142,7 @@ bool Token::getBool() const throw (TypeException)
 
 Func Token::getFunc() const throw (TypeException)
 {
+	if (isRef()) return any_cast<Token *>(mVal)->getFunc();
 	if (mType == S_FUNC)
 	{
 		try
@@ -155,6 +160,7 @@ Func Token::getFunc() const throw (TypeException)
 
 const vector<Token> &Token::getList() const throw (TypeException)
 {
+	if (isRef()) return any_cast<Token *>(mVal)->getList();
 	if (mType == S_LIST)
 	{
 		try
@@ -172,6 +178,7 @@ const vector<Token> &Token::getList() const throw (TypeException)
 
 shared_ptr<fstream> Token::getFile() const throw (TypeException)
 {
+	if (isRef()) return any_cast<Token *>(mVal)->getFile();
 	if (mType == S_FILE)
 	{
 		try
@@ -191,43 +198,54 @@ shared_ptr<fstream> Token::getFile() const throw (TypeException)
 
 void Token::setStr(std::string s)
 {
-	if ((mType != S_ID) && (mType != S_FAIL))
+	if (isRef())
+		any_cast<Token *>(mVal)->setStr(s);
+	else
 	{
-		mType = S_STR;
+		if ((mType != S_ID) && (mType != S_FAIL))
+		{
+			mType = S_STR;
+		}
+		mVal = s;
 	}
-	mVal = s;
 }
 
 void Token::setNum(double n) 
-{
-	mVal = n;
+{	if (isRef())
+		any_cast<Token *>(mVal)->setNum(n);
+	else
+		mVal = n;
 }
 
 void Token::setBool(bool b)
 {
-	mVal = b;
+	if (isRef())
+		any_cast<Token *>(mVal)->setBool(b);
+	else
+		mVal = b;
 }
 
 std::string Token::repr() 	const
 {
+	
 	std::stringstream s;
+	if (isRef())
+		s << "<REF ";
+	s << '<';
+	s << symName[getType()];
 
-		s << '<';
-// 		if ((getType() >= S_NONE) && (getType() <= S_QUIT))
-			 s << symName[getType()];
-// 		else
-// 			s << getType();
-
-		if ((getType() == S_STR) || (getType() == S_FAIL))
-			s << ", \"" << getStr() <<'"';
-		else if (getType() == S_ID)
-			s << ", " << getStr();
-		else if (getType() == S_NUM)
-			s << ", " << getNum();
-		else if (getType() == S_NUM)
-			s << ", " << std::boolalpha << getBool() << std::noboolalpha;
+	if ((getType() == S_STR) || (getType() == S_FAIL))
+		s << ", \"" << getStr() <<'"';
+	else if (getType() == S_ID)
+		s << ", " << getStr();
+	else if (getType() == S_NUM)
+		s << ", " << getNum();
+	else if (getType() == S_NUM)
+		s << ", " << std::boolalpha << getBool() << std::noboolalpha;
+	s << '>';
+	if (isRef())
 		s << '>';
-		return s.str();
+	return s.str();
 }
 
 Token &Token::operator =(const Token &token) throw(std::bad_alloc)

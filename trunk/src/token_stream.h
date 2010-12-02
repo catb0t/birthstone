@@ -40,11 +40,9 @@ class SavedTokenStream : public TokenStream
 		const Token &getNext();
 		void add(const Token &token);
 		bool empty() const;
-		void rewind();
 	private:
 		Token mToken;
 		std::queue<Token> mStream;
-// 		std::vector<Token>::iterator mPos;
 
 };
 
