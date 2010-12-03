@@ -66,6 +66,7 @@ class Token
 		void setNum(double n) ;
 		void setBool(bool b);
 		void setRef(Token &t);
+		Token &deRef();
 				
 		std::string repr() 	 const; // string representation of the token: "<TYPE, value>"
 		

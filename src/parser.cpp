@@ -26,6 +26,7 @@
 #include "func.h"
 #include "parser.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/format.hpp>
 using namespace std;
 using namespace boost;
@@ -180,7 +181,7 @@ Token &Parser::lookup(Token id)
 	if (id.getType() != S_ID) // (token is not an ID)
 	{
 // 		error(std::string("expected identifier, got: ") + id.repr());
-		return noTkn;  
+		return noTkn;
 	}
 	//else: (token is an ID)
 	std::string name = id.getStr();
@@ -301,7 +302,6 @@ bool Parser::defFunc()
 	}
 	SavedTokenStream funcBody; // function body
 
-
 	mSave = &funcBody;
 	expect(S_O_BRACE);
 	while (!accept(S_C_BRACE))
@@ -377,7 +377,10 @@ bool Parser::read()
 		if (!id)
 		{
 			std::string str;
-			std::getline(std::cin, str);
+			if (mExec)
+			{
+				std::getline(std::cin, str);
+			}
 			mSymTbls.back()[name] = Token(str);
 		}
 		else
@@ -499,6 +502,7 @@ bool Parser::elseCond(bool ignore)
 }
 bool Parser::loop()
 {
+#warning TODO: fix do-while loop see functionalTest.bs requirement 5
 	bool isWhile = false, isDoWhile = false, isFor = false, isForIn = false;
 	if ((isWhile = accept(S_WHILE)) || (isDoWhile = accept(S_DO)) \
 			 || (isFor = accept(S_FOR)))
@@ -842,6 +846,8 @@ bool Parser::stmt()
 			if (!accept(S_SC))
 			{
 				mRetVal = asgnmt();
+				if (mRetVal.getType() == S_ID)
+					mRetVal = lookup(mRetVal);
 				mExec = false;
 			}
 			else
@@ -852,6 +858,8 @@ bool Parser::stmt()
 			}
 			
 		}
+		else
+			asgnmt();
 	}
 	else
 		print() || read() || deleteCmd() || asgnmt();
@@ -1295,39 +1303,50 @@ Token Parser::factor()
 		}
 		token = Token(lst);
 	}
-	else if (accept(S_STR) && accept(S_F))
+	else if (accept(S_STR))
 	{
-		Token formatStr = token;
-		if (formatStr.getType() == S_ID)
-			formatStr = lookup(formatStr);
-		if (formatStr.getType() != S_STR)
-			error("format string must be a string");
-		format f(formatStr.getStr());
+		if (accept(S_F))
+		{
+			string formatStr = "";
+			if (mExec)
+			{
+				Token formatStrTkn = token;
+				if (formatStrTkn.getType() == S_ID)
+					formatStrTkn = lookup(formatStrTkn);
+				if (formatStrTkn.getType() != S_STR)
+					error("format string must be a string");
+				formatStr = formatStrTkn.getStr();
+			}
+			format f(formatStr);
 
-		do {
-			Token t = asgnmt();
-			if (t.getType() == S_ID)
-				t = lookup(t);
-
-			if (t.getType() == S_STR)
-				f % t.getStr();
-			else 	if (t.getType() == S_BOOL)
-				f % t.getBool();
-			else 	if (t.getType() == S_NUM)
-				f % t.getNum();
-			else
-				error("format can only be used on numbers, strings and bools");
-
-		} while (accept(S_F));
-		token =  f.str();
+	
+			do {
+				Token t = asgnmt();
+				if (mExec)
+				{
+					if (t.getType() == S_ID)
+						t = lookup(t);
+		
+					if (t.getType() == S_STR)
+						f % t.getStr();
+					else 	if (t.getType() == S_BOOL)
+						f % t.getBool();
+					else 	if (t.getType() == S_NUM)
+						f % t.getNum();
+					else
+						error("format can only be used on numbers, strings and bools");
+				}
+			} while (accept(S_F));
+			token =  f.str();
+		}
 	}
-	else if (accept(S_NUM) || accept(S_STR) || accept(S_BOOL) || accept(S_NONE))
+	else if (accept(S_NUM) || accept(S_BOOL) || accept(S_NONE))
 		; //just accept them, we already saved the accepted token as token
 	else if (accept(S_ID))
 	{
 		if (accept(S_O_PARAN))
 		{
-			call(token);
+			return call(token);
 		}
 		if (accept(S_INCR) && mExec) //post-increment: old value is returned
 		{
@@ -1364,10 +1383,16 @@ Token Parser::factor()
 Token Parser::call(const Token &funcName)
 {
 	Token &funcTkn = lookup(funcName);
+
+
 	if (funcTkn.getType() == S_FUNC)
 	{
+		// this allows the literals to be passed by reference then destroyed when they are no longer used.
+		vector<shared_ptr<Token> > literals;
+
 		Func func = funcTkn.getFunc();
-		std::vector<std::string> vec;
+		vector<string> vec;
+		
 
 		mSymTbls.push_back(SymTbl());
 		
@@ -1382,22 +1407,38 @@ Token Parser::call(const Token &funcName)
 				expect(S_COMMA);
 			}
 			Token arg = asgnmt();
-			
-			mSymTbls.back()[*i] = arg;
-			cerr << __FILE__ << ':' << __LINE__ //<<':'<< __PRETTY_FUNCTION__
-					<< " param: " << *i << " arg: " << arg << " lookup: " << lookup(*i) <<endl;
+			Token *ptr;
+
+			if (arg.getType() == S_ID)
+				ptr = &lookup(arg);
+			else
+			{
+				literals.push_back(shared_ptr<Token>(new Token(arg)));
+				ptr = literals.back().get();
+			}
+			Token ref(ptr);
+
+			mSymTbls.back()[*i] = ref;
 		}
 		if (accept(S_COMMA))
 			error(std::string("Too many arguments to ") + funcName.getStr());
 		expect(S_C_PARAN);
 		Token oldTkn = mToken;
 		mTknStreams.push(func.getFuncBody());
+		getNext();
 		// TODO: implement Token Parser::call(const Token &funcName)
 		block(false);
 		mTknStreams.pop(); //func.getFuncBody()
 		mToken = oldTkn;
 
 		mSymTbls.pop_back();
+		if (mRet)
+		{
+			mRet = false;
+			mExec = true;
+		}
+		else
+			mRetVal = Token();
 		return mRetVal;
 	}
 	return noTkn; //for now

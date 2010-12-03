@@ -211,10 +211,22 @@ void Token::setStr(std::string s)
 }
 
 void Token::setNum(double n) 
-{	if (isRef())
+{
+	if (isRef())
 		any_cast<Token *>(mVal)->setNum(n);
 	else
 		mVal = n;
+}
+void Token::setRef(Token &t)
+{
+	mType = S_REF;
+	mVal = &t;
+}
+Token &Token::deRef()
+{
+	if(isRef())
+		return *any_cast<Token *>(mVal);
+	return *this;
 }
 
 void Token::setBool(bool b)
