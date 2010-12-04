@@ -18,16 +18,16 @@
 *   along with Birthstone.  If not, see <http://www.gnu.org/licenses/>.       *
 *                                                                             *
 ******************************************************************************/
+#include "func.h"
+#include "parser.h"
 #include <iostream>
+#include <boost/lexical_cast.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/format.hpp>
 #include <cstdlib>
 #include <sstream>
 #include <vector>
 #include <fstream>
-#include "func.h"
-#include "parser.h"
-#include <boost/lexical_cast.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/format.hpp>
 using namespace std;
 using namespace boost;
 
@@ -388,23 +388,28 @@ bool Parser::read()
 			Symbol type = id.getType();
 			if (mExec)
 			{
-				if (type == S_BOOL)
+				if (type == S_NUM)
 				{
-					double n;
-					std::cin >> n;
-					id.setBool(n != 0);
-				}
-				else if (type == S_NUM)
-				{
-					double n;
-					std::cin >> n;
-					id.setNum(n);
+					string str;
+					getline(std::cin, str);
+					try
+					{
+						id.setNum(lexical_cast<double>(str));
+					}
+					catch (bad_lexical_cast)
+					{
+						id.setNum(0);
+					}
 				}
 				else if (type == S_STR)
 				{
 					std::string str;
 					std::getline(std::cin, str);
 					id.setStr(str);
+				}
+				else
+				{
+					error("only numbers and strings can be read.");
 				}
 			}
 		}
