@@ -78,7 +78,7 @@ Token::Token(const Token &token) throw (std::bad_alloc)
 }
 
 
-inline bool   Token::isRef()   const  throw () { return mType == S_REF; }
+bool   Token::isRef()   const  throw () { return (mType == S_REF); }
 inline Symbol Token::getType() const  throw () { return isRef() ? (any_cast<Token *>(mVal)->getType()) : mType; }
 
 
