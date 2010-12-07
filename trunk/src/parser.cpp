@@ -246,7 +246,7 @@ inline bool Parser::expect(Symbol sym)
 	// else:
 	error (std::string("ERROR: expected: ") + symName[sym] + " got: " + mToken.repr()
 #ifdef BS_DEBUG
-			+ (mTknStreams.empty()?" from Parser":" from Saved")
+			+ (mTknStreams.empty()?" from Lexer":" from Saved")
 #endif // BS_DEBUG		
 			);
 	return false;
@@ -850,9 +850,9 @@ bool Parser::stmt()
 			mRet = true;
 			if (!accept(S_SC))
 			{
-				mRetVal = asgnmt();
+				mRetVal = asgnmt().deRef();
 				if (mRetVal.getType() == S_ID)
-					mRetVal = lookup(mRetVal);
+					mRetVal = lookup(mRetVal).deRef();
 				mExec = false;
 			}
 			else
@@ -1323,7 +1323,6 @@ Token Parser::factor()
 				formatStr = formatStrTkn.getStr();
 			}
 			format f(formatStr);
-
 	
 			do {
 				Token t = asgnmt();
@@ -1349,11 +1348,29 @@ Token Parser::factor()
 		; //just accept them, we already saved the accepted token as token
 	else if (accept(S_ID))
 	{
-		if (accept(S_O_PARAN))
+		if (accept(S_O_BRACKET))
+		{
+			Token & list = lookup(token);
+			if (list.getType() != S_LIST)
+			{
+				error(token.getStr() + " is not a list.");
+				return token;
+			}
+			//else:
+			int index = static_cast<int>(toNum(asgnmt()));
+			if (index < 0)
+				index = list.getList().size() + index; //negatives index from the back of the list
+			if (index >= list.getList().size())
+				error("list index out of range");
+			Token item = list.getList()[index];
+			expect(S_C_BRACKET);
+			return item;
+		}
+		else if (accept(S_O_PARAN))
 		{
 			return call(token);
 		}
-		if (accept(S_INCR) && mExec) //post-increment: old value is returned
+		else if (accept(S_INCR) && mExec) //post-increment: old value is returned
 		{
 			Token &val = lookup(token);
 			Token oldVal = val;
@@ -1434,7 +1451,7 @@ Token Parser::call(const Token &funcName)
 		// TODO: implement Token Parser::call(const Token &funcName)
 		block(false);
 		mTknStreams.pop(); //func.getFuncBody()
-		mToken = oldTkn;
+ 		mToken = oldTkn;
 
 		mSymTbls.pop_back();
 		if (mRet)
@@ -1444,7 +1461,16 @@ Token Parser::call(const Token &funcName)
 		}
 		else
 			mRetVal = Token();
+
+		#ifdef BS_DEBUG
+			cerr << "function " << funcName.getStr() << " returned: " << mRetVal << endl;
+		#endif
+		accept(S_END);
 		return mRetVal;
 	}
-	return noTkn; //for now
+	else
+	{
+		error(funcName.getStr() + " is not a function.");
+	}
+	return noTkn;
 }
