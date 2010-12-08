@@ -898,6 +898,16 @@ Token Parser::asgnmt()
 					var.setNum(toNum(token2));
 				else if (var.getType() == S_BOOL)
 					var.setBool(toBool(token2));
+				else if (var.getType() == S_LIST)
+				{
+					if (token2.getType() == S_LIST)
+						var = Token(token2.getList());
+					else
+					{
+						var = Token(vector<Token>());
+						var.getList().push_back(token2);
+					}
+				}
 			}
 		}
 	}
@@ -931,6 +941,17 @@ Token Parser::asgnmt()
 					token = Token(token.getNum() + toNum(token2));
 				else if (token.getType() == S_BOOL)
 					error("cannot add to a bool");
+				else if (token.getType() == S_LIST)
+				{
+					if (token2.getType() == S_LIST)
+					{
+						for (std::vector<Token>::const_iterator i = token2.getList().begin();
+											  i < token2.getList().end(); ++i)
+							token.getList().push_back(*i);
+					}
+					else
+						token.getList().push_back(token2);
+				} 
 				mSymTbls.back()[id] = token;
 			}
 		}
@@ -1264,6 +1285,15 @@ Token Parser::unary()
 			return Token(typeName);
 		}
 		return t;
+	}
+	else if (accept(S_LEN))
+	{
+		Token t = factor();
+		if (t.getType() == S_ID)
+			t = lookup(t);
+		if (t.getType() != S_LIST)
+			error("length can only be used on lists");
+		return Token(static_cast<double>(t.getList().size()));	
 	}
 	else if (accept(S_OPEN))
 	{

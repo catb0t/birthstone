@@ -57,7 +57,7 @@ class Token
 		double      getNum ()                     const throw (TypeException);
 		bool        getBool()                     const throw (TypeException);
 		Func        getFunc()                     const throw (TypeException);
-		const std::vector<Token> &getList()       const throw (TypeException);
+		std::vector<Token> &getList()       throw (TypeException);
 		boost::shared_ptr<std::fstream> getFile() const throw (TypeException);
 
 		

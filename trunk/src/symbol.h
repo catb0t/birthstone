@@ -33,7 +33,7 @@ enum Symbol
 	S_IF, S_ELIF, S_ELSE,
 	S_OPEN, S_CLOSE, S_FREAD, S_FWRITE, S_FPRINT,
 	S_WRITE, S_PRINT,	S_READ, S_DEF, S_CLASS, S_RET, S_DEL,
-	S_DO, S_WHILE, S_UNTIL, S_FOR, S_IN, S_BREAK, S_CONT,  
+	S_DO, S_WHILE, S_UNTIL, S_FOR, S_IN, S_BREAK, S_CONT, S_LEN,
 	S_ASSIGN, S_INIT, S_AND, S_OR, S_NOT, S_INCR, S_DECR, S_TYPE, S_COMMA, S_SC,
 	S_F /*format operator: %*/, S_QUIT
 
@@ -48,7 +48,7 @@ const std::string symName[] = {
 	"IF", "ELIF", "ELSE",
 	"OPEN", "CLOSE", "FREAD", "FWRITE", "FPRINT",
 	"WRITE", "PRINT", "READ", "DEF", "CLASS", "RET", "DEL",
-	"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT",
+	"DO", "WHILE", "UNTIL", "FOR", "IN", "BREAK", "CONT", "LEN",
 	"ASSIGN", "INIT", "AND", "OR", "NOT", "INCR", "DECR", "TYPE", "COMMA", "SC", "%", "QUIT"
 		
 };

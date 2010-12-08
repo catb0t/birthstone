@@ -5,15 +5,15 @@ See the file doc_license.txt for copying conditions.
  
 Variables 
 Data Types
-The data types in birthstone are number (floating point), boolean, string, and none. Birthstone is loosely typed, so types will be implicitly converted according the context. To explicitly convert between types, read "type conversion" in the "Tips & Tricks" section of this document.  In general, the type of the result of a binary operation (like a + b) will be the type of the first operand. The exception is the comparison and logical operators, which always return booleans.
+The data types in birthstone are Number (floating point), Boolean, String, List, and None. Birthstone is loosely typed, so types will be implicitly converted according the context. To explicitly convert between types, read "type conversion" in the "Tips & Tricks" section of this document.  In general, the type of the result of a binary operation (like a + b) will be the type of the first operand. The exception is the comparison and logical operators, which always return booleans.
  
 The unary type operator will return a string representation of the type of it's operand. For example:
-  type "abc";  # returns "String"
-  type 0;             # returns "Number"
-  type true;   # returns "Boolean"
-  type x;             # returns "None" if x is undeclared,
-               # or returns one of the above types if x has been declared
-                    # this can be used to determine if a variable has been declared.
+type "abc";          # returns "String"
+type [1, ”aa”, true] # returns “List”
+type 0;                  # returns "Number"
+type true;           # returns "Boolean"
+type x;                  # returns "None" if x is undeclared,
+                    # or returns one of the above types if x has been declared
 Declaring, Initializing, and Assigning Variables
 To declare and initialize a variable use the initialize operator ( := ).
    number := 0;
@@ -80,9 +80,9 @@ message := 'The area of a %.2f x %.2f rectangle is %.2f.' % length
           % width % (length * width);
 In this example, the first “%.2f” formats the first argument (length), the second “%.2f” formats the second argument (width), and the third  “%.2f” formats the third argument (length*width). The result is that the string message is initialized with the value “The area of a 4.00 x 5.00 rectangle is 20.00.” 
  
-The format string supports all of the standard C/C++ printf format flags plus some additional format flags. Formatting strings are implemented using the Boost C++ format library, which implements all the format flags of Unix98 open-group’s printf. You can see those websites for details about which format flags can be used.
+The Birthstone format string supports all of the standard C/C++ printf format flags plus some additional format flags. Formatting strings are implemented using the Boost C++ format library, which implements all the format flags of Unix98 open-group’s printf. You can see those websites for details about which format flags can be used.
 File I/O
-File I/O in Birthstone in a work in progress. Once implement file I/O will work something like this:
+File I/O in Birthstone in a work in progress. Once implemented,  file I/O will work something like this:
 inFile := open “input.txt”;   # open the input file
 outFile := open “output.txt”; # open the output file
 num := 0;
@@ -93,8 +93,14 @@ fprint outFile “hello”; # write “hello” and a newline to outFile
 close  inFile;          # close the input file
 close  outFile;         # close the output file
  
- 
- 
+Conditionals
+A conditional statement in Birthstone consists of an if statement, any number of elif (else if) statements, and optionally an else statement. Note: elif, elsif, and elseif (no space) are all supported for the else if part of the conditional. The body of each part of the conditional can either be either a single statement or a block (group of statements enclosed in braces ({})). Below is the syntax for each loop (the items in angle brackets are placeholders for code and the square brackets ([]) indicate optional components).
+if (<condition1>)
+{
+   ...
+}
+[elif (<condition2>) {...} [elif (<condition3>) {...} [...] ] ]
+[else {...}]
 Loops
 Birthstone supports 3 types of loops: do-while, while, and (three-statement) for loops. These loops behave in the same way as in most programming languages. While loops are used when the condition require to continue through the loop is known. A do-while loop is simular except that the body of the loop will be executed once before the condition is checked. A for loop is used when the required number of iterations is know, or the programmer need to keep track of which iteration the loop is on or how many iterations it has gone through when the loop is done.
 Below is the syntax for each loop (the items in angle brackets are placeholders for code). The body of each type of loop can either be a single statement or a block (group of statements) delimited by braces ({}). The body of a loop make contain break or continue statements. Break and continue act the same way as in most programming languages. A break statement will quit out of the loop. A continue statement will resume execution at the beginning of the next iteration of the loop, ignoring everything below the continue in the current iteration of the loop.
@@ -123,18 +129,15 @@ for (<initialize>;<condition>;<increment>)
    ...
 }
  
-Conditionals
-A conditional statement in Birthstone consists of an if statement, any number of elif (else if) statements, and optionally an else statement. Note: elif, elsif, and elseif (no space) are all supported for the else if part of the conditional. The body of each part of the conditional can either be either a single statement or a block (group of statements enclosed in braces ({})). Below is the syntax for each loop (the items in angle brackets are placeholders for code and the square brackets ([]) indicate optional components).
- 
-if (<condition1>)
+Functions
+Declaring functions
+To declare a function in Birthstone, use the keyword def, then the name of the function, then a comma delimited list of parameters enclosed in parenthesis, then a block of code to be executed when the function is called. For example, consider this simple greet function:
+def greet(name)
 {
-   ...
+        return “Hello, “ + name + “!”;
 }
-[elif (<condition2>) {...} [elif (<condition3>) {...} [...] ] ]
-[else {...}]
+Calling  greet(“John”) will return the string “Hello, John!”.
  
- 
-Tips & Tricks
 Type Conversion
 Converting to Number
 To convert a string to a number, you can either negate it twice or add 0 to it. To convert a boolean to a number, only double negation is possible, because addition is not valid on booleans.
