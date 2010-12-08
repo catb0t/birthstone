@@ -158,7 +158,7 @@ Func Token::getFunc() const throw (TypeException)
 		throw TypeException("ERROR: Token is not a function");
 }
 
-const vector<Token> &Token::getList() const throw (TypeException)
+vector<Token> &Token::getList() throw (TypeException)
 {
 	if (isRef()) return any_cast<Token *>(mVal)->getList();
 	if (mType == S_LIST)
@@ -222,6 +222,8 @@ void Token::setRef(Token &t)
 	mType = S_REF;
 	mVal = &t;
 }
+
+
 Token &Token::deRef()
 {
 	if(isRef())

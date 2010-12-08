@@ -44,7 +44,7 @@ const std::map <std::string, Token> &Lexer::keywords()
 	// http://www.boost.org/doc/libs/1_45_0/libs/assign/doc/index.html#map_list_of
 	
 	static const std::map <std::string, Token> keywordsMap
-		= map_list_of ("None", noTkn) ("if", S_IF) ("elif", S_ELIF)
+		= map_list_of("None", noTkn)("length", S_LEN)("if", S_IF)("elif", S_ELIF)
    	("elsif", S_ELIF)("elseif", S_ELIF)("else", S_ELSE)("do", S_DO)
 		("while", S_WHILE)("until", S_UNTIL)("for", S_FOR)("in", S_IN)
 		("break", S_BREAK)("continue", S_CONT)("read", S_READ)("write", S_WRITE)
