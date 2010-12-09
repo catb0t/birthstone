@@ -1,4 +1,4 @@
-﻿Birthstone Language Reference
+Birthstone Language Reference
 Copyright (C) 2010 by Robert Tolliver (Robb.Tolli@gmail.com)
 This document is part of the Birthstone documentation.
 See the file doc_license.txt for copying conditions.
@@ -14,6 +14,16 @@ type 0;                  # returns "Number"
 type true;           # returns "Boolean"
 type x;                  # returns "None" if x is undeclared,
                     # or returns one of the above types if x has been declared
+Lists
+Lists are declared using a comma separated list of values enclosed by brackets ([]). The length keyword follow by a list literal or variable will give the length of the list. To access an element in the list use the name of the list followed by an index in bracket. An error will be given if the number is out of range. The valid values for a list index are -(length list) to (length list)-1. If the index is negative, it counts from the end of the list (list[-1] is the end of the list and list[-(length list)] is the beginning of the list) . The idea of negative indexing was taken from Python.
+evens := [2,4,6,8];   # initialize the evens list
+print length evens;   # prints 4
+print evens[0];       # prints 0
+print evens[3];       # prints 8
+print evens[-1];      # prints 8
+print evens[-4];      # prints 2
+print evens[-5];      # Error: out of range
+print evens[4];       # Error: out of range
 Declaring, Initializing, and Assigning Variables
 To declare and initialize a variable use the initialize operator ( := ).
    number := 0;
@@ -28,24 +38,6 @@ A variable may also be re-assigned using the assignment operator ( = ). When a v
    y  = 2;
  
 In this example, x is first initialized to "aa", then it is re-declared (re-bound) to the value 1 (a number). The variable y is first initialized to "bb", and then re-assigned to the value 2. Since y is a string, it stays a string when it is reassigned, so the number 2 is converted to the string "2", and y ends up with a value of "2" (as a string).
- 
-Deleting variables
-A variable can be deleted (removed from the symbol table) using the delete operator. For example:
-   x := 0;
-   print x;  # prints 0
-   delete x;
-   print x;  # ERROR: undefined variable: x
- 
-Variables will generally not need to be deleted. Note that deleting a local variable will allow you access to a global variable with the same name.
-x := 0;      # global x
-{
-  x := 999; # local x
-  print x;  # print local x (999)
-  delete x; # delete local x from the symbol table
-  print x;  # print global x (0)
-}
-There are probably very few situations where this would be actually useful.
- 
 Input and Output
 Writing to the console
 Birthstone has two commands to write to the console: print and write. The difference is that print outputs a newline character after printing the data, while write prints just the data without appending a newline character. Here's an example of the classic "Hello, world" program written in birthstone:
@@ -128,7 +120,15 @@ for (<initialize>;<condition>;<increment>)
   <statement>;
    ...
 }
- 
+Here is an example:
+# find the first 20 Fibonacci numbers
+fibs := [0,1];
+for (i:=2; i < 20; ++i)
+{
+        fibs = fibs + (fibs[-1] + fibs[-2]);
+}
+print fibs;
+This will print the first 20 Fibonacci numbers: [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765].
 Functions
 Declaring functions
 To declare a function in Birthstone, use the keyword def, then the name of the function, then a comma delimited list of parameters enclosed in parenthesis, then a block of code to be executed when the function is called. For example, consider this simple greet function:
@@ -165,44 +165,43 @@ a := "" + 7;     # a is the string "7"
 b := "" + false; # b is the string "false"
  
 Reserved Keywords
-None
-if
-elif
-elsif
-elseif
-else
  
-do
-while
-until
-for
-in
-break
-continue
- 
-read
-write
-print
- 
-open
-close
-fread
-fwrite
-fprint
- 
-delete
-def
-class
-return
- 
-and
-or
-not
- 
-type
- 
-true
-false
- 
-exit
-quit
+	None
+	in
+	fprint
+	false
+	if
+	break
+	delete
+	exit
+	elif
+	continue
+	def
+	quit
+	elsif
+	read
+	class
+	 
+	elseif
+	write
+	return
+	 
+	else
+	print
+	and
+	 
+	do
+	open
+	or
+	 
+	while
+	close
+	not
+	 
+	until
+	fread
+	type
+	 
+	for
+	fwrite
+	true
