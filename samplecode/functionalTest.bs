@@ -28,8 +28,8 @@ def pause()
 
 
 # Requirements 1 and 2
-print "Requirement 1: variables and literals";
-print "and Requirement 2: output (print command)";
+print "Requirement 1 (shall): variables and literals";
+print "and Requirement 2 (shall): output (print command)";
 
 
 s := "hello";
@@ -43,7 +43,7 @@ pause();
 
 
 # Requirement 3
-print "\n\nRequirement 3: input (read command)";
+print "\n\nRequirement 3 (shall): input (read command)";
 
 write "enter a string: ";
 read str;
@@ -58,7 +58,7 @@ pause();
 
 
 # Requirement 4
-print "\n\nRequirement 4: if/elif/else";
+print "\n\nRequirement 4 (shall): if/elif/else";
 if (true)
 {
   print "1 inside  if  of if(true),  else       TEST PASSED";
@@ -81,7 +81,7 @@ pause();
 
 
 # Requirement 5
-#print "\n\nRequirement 5: loop(s)";
+print "\n\nRequirement 5 (shall): loop(s)";
 #print "do-while loop: numbers 1-10 should be printed";
 #i:=1;
 # do
@@ -124,7 +124,7 @@ pause();
 
 
 # Requirement 7
-print "\n\nRequirement 7: order of operations";
+print "\n\nRequirement 7 (shall): order of operations";
 print "1 + 2 * 3 = " + (1 + 2 * 3);
 print "1 - 3 / 2 = " + (1 - 3 / 2);
 print "2 * 3 - 4 = " + (2 * 3 - 4);
@@ -133,7 +133,7 @@ pause();
 
 
 # Requirement 8
-print "\n\nRequirement 8: parenthesis";
+print "\n\nRequirement 8 (shall): parenthesis";
 
 print "1 * (2 + 3) = " + (1 * (2 + 3));
 print "1 - (2 * (3 - 4)) = " + (1 - (2 * (3 - 4)));
@@ -142,7 +142,7 @@ pause();
 
 
 # Requirement 9
-print "\n\nRequirement 9: string appending and concatenation";
+print "\n\nRequirement 9 (shall): string appending and concatenation";
 A := "aa";
 B := "bb";
 print 'A = "aa", B = "bb"';
@@ -158,7 +158,7 @@ pause();
 
 
 # Requirement 10
-print "\n\nRequirement 10: and (&&), or(||), and not(!) operators";
+print "\n\nRequirement 10 (shall): and (&&), or(||), and not(!) operators";
 if (true && true)   print 'true  && true  TEST PASSED';
 if (true || true)   print 'true  || true  TEST PASSED';
 if (false && false) print 'false && false TEST FAILED';
@@ -172,7 +172,7 @@ pause();
 
 
 # Requirement 11
-print "\n\nRequirement 11: Comparison operators (numbers and strings)";
+print "\n\nRequirement 11 (shall): Comparison operators (numbers and strings)";
 
 if ("aa" <  "ab") print '"aa" <  "ab" TEST PASSED';
 if ("aa" <= "ab") print '"aa" <= "ab" TEST PASSED';
@@ -207,10 +207,8 @@ if (1.5 != 1.5) print '1.5 != 1.5 TEST FAILED';
 print;
 
 pause();
-
-
 # Requirement 12
-print "\n\nRequirement 12: Comparison operators (booleans)";
+print "\n\nRequirement 12 (shall): Comparison operators (booleans)";
 if (true  == true)  print 'true  == true  TEST PASSED';
 if (true  != true)  print 'true  != true  TEST FAILED';
 if (false == false) print 'false == false TEST PASSED';
@@ -218,3 +216,20 @@ if (false != false) print 'false != false TEST FAILED';
 if (true  == false) print 'true  == false TEST FAILED';
 if (true  != false) print 'true  != false TEST PASSED';
 print;
+
+pause();
+# Requirement 13
+print "\n\nRequirement 13 (will): List Variables";
+list := ['hello', 1.23, true];
+print list;
+
+pause();
+# Requirement 14
+print "\n\nRequirement 14 (will): Functions";
+def func()
+{
+	print "running a function..";
+}
+
+print "calling a function..";
+func();
